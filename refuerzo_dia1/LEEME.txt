@@ -1,0 +1,81 @@
+TOPOGRAFÍA AGRARIA — REFUERZO · DÍA 1
+Aritmética de ángulos: notación, conversiones y razones trigonométricas
+1.º CFGS Técnico Superior en Gestión Forestal
+
+
+CÓMO SE ABRE
+------------
+Descomprime la carpeta y haz doble clic en "index.html". Se abre en el navegador que
+tengas (Firefox, Chrome, Edge). No hace falta internet, ni instalar nada, ni registrarse:
+todo —textos, dibujos y ejercicios— va dentro de los propios ficheros. Tampoco se envía
+ningún dato a ninguna parte.
+
+Si al descomprimir se pierden los nombres de los ficheros, no pasa nada: basta con abrir
+"index.html" y navegar desde ahí.
+
+
+QUÉ HAY EN ESTE BLOQUE
+----------------------
+Es el material del primer día. Seis páginas:
+
+  01_notacion_angular.html ....... Qué es un ángulo y los tres sistemas (grados
+                                   sexagesimales, centesimales y radianes).
+  02_sexagesimal_a_decimal.html .. De forma compleja a decimal, y vuelta: el reparto por 60.
+  03_centesimal.html ............. Base 100, el factor 9/10 y la m que no es un metro.
+  04_radianes.html ............... Radianes y el modo de la calculadora.
+  05_razones_trigonometricas.html  Seno, coseno, tangente y sus inversas.
+
+  gen_01_conversiones.html ....... Generador de ejercicios de conversión, en cinco niveles.
+
+En el índice están los mismos enlaces en el orden en que conviene verlos.
+
+
+CÓMO SE TRABAJA
+---------------
+1. Abre las láminas en orden, de la 1 a la 5. La 2 es la que más cuesta y la que más se
+   usa después; si no sale, no tiene sentido pasar a la 3.
+
+2. En cada lámina hay deslizadores. Muévelos ANTES de leer la fórmula: el número de la
+   pantalla cambia y así se ve por qué cambia. Leer sin mover no deja nada.
+
+3. Al terminar una lámina, haz cinco ejercicios del generador A en el nivel que
+   corresponda a esa lámina.
+
+4. Cierra el día con quince ejercicios mezclados (nivel 5), alternando los dos sentidos:
+   de compleja a decimal y de decimal a compleja. Si salen sin mirar la solución, el
+   bloque está superado.
+
+
+CÓMO FUNCIONA EL GENERADOR
+--------------------------
+Cada vez que pulsas "Otro ejercicio" aparece un ejercicio nuevo, con números distintos.
+Escribes el resultado en la casilla (vale coma o punto decimal) y pulsas "Comprobar":
+
+  - el campo se pone verde y el mensaje confirma el acierto;
+  - o se pone rojo y el mensaje te dice QUÉ revisar, no solo que está mal.
+
+Si no sale, abre el desplegable "Ver solución paso a paso": está el desarrollo completo
+con tus números ya sustituidos. Después de dos intentos fallidos, mírala: seguir probando
+a ciegas no enseña nada.
+
+Los márgenes con los que se corrige están ajustados a lo que es cada magnitud: son muy
+estrechos en los grados decimales y en los radianes, y algo más anchos cuando la respuesta
+arrastra minutos y segundos, porque de eso depende que un buen resultado con el redondeo
+normal no salga marcado en rojo. Sirven para absorber el redondeo, no para perdonar un
+error de método: si el número se va más allá, vuelve a la lámina.
+
+Si el resultado es absurdo (un ángulo de 300° dentro de un triángulo, o miles de metros),
+mira el modo de la calculadora: DEG, GRA o RAD. Es el fallo más frecuente de todo el
+módulo y no tiene nada que ver con la topografía.
+
+
+EL DÍA 2
+--------
+Este bloque termina aquí. El día 2 (triángulo rectángulo, dos posiciones, ley del coseno,
+gonios a coordenadas y errores de calculadora) llega como un paquete aparte, con su
+propio "index.html". Alguna frase de estas páginas menciona láminas de ese segundo día:
+son solo para situarte, hoy no hacen falta.
+
+Detalle: algunas láminas terminan remitiendo a un generador que no está en esta carpeta
+(el del triángulo rectángulo). Es el del día 2. Todo lo necesario para lo de hoy está
+explicado en estas páginas.

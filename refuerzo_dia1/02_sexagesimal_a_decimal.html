@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>De forma compleja a decimal, y vuelta</title>
+<style>
+:root{
+  --ink:#1b2530; --navy:#16324f; --navy2:#2c5a84; --line:#d3d9df; --bg:#f7f8f9;
+  --soft:#edf1f4; --ok:#1f6b3a; --bad:#8f2222; --warnc:#7a5a00;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:19px/1.62 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+.wrap{max-width:980px;margin:0 auto;padding:26px 26px 90px}
+header.top{border-bottom:2px solid var(--navy);padding-bottom:12px;margin-bottom:26px}
+.kicker{font-size:13.5px;letter-spacing:.14em;text-transform:uppercase;color:#5b6875;font-weight:600}
+h1{font-size:31px;line-height:1.22;margin:.22em 0 .28em;color:var(--navy);font-weight:660;letter-spacing:-.01em}
+.sub{font-size:19px;color:#3c4a58;margin:0}
+h2{font-size:22.5px;margin:2.1em 0 .45em;color:var(--navy);font-weight:650;
+   border-left:4px solid var(--navy);padding-left:11px;line-height:1.3}
+h2:first-of-type{margin-top:1.2em}
+h3{font-size:19.5px;margin:1.5em 0 .3em;font-weight:650;color:#22303d}
+h4{font-size:17px;margin:1.2em 0 .3em;font-weight:650;color:#22303d}
+p{margin:.62em 0}
+.lead{font-size:20px;color:#2c3a48}
+ul,ol{padding-left:1.4em;margin:.55em 0}
+li{margin:.3em 0}
+li>ul,li>ol{margin:.3em 0}
+a{color:var(--navy2)}
+strong{font-weight:660}
+.num{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.formula{
+  font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:17px;line-height:1.7;
+  background:var(--soft);border-left:3px solid var(--navy);padding:11px 15px;margin:1em 0;
+  overflow-x:auto;white-space:pre-wrap;
+}
+.formula em{font-style:normal;color:var(--navy);font-weight:600}
+.demo{background:#fff;border:1px solid var(--line);padding:16px 16px 18px;margin:1.3em 0}
+.demo .tat{font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:#5b6875;
+  font-weight:650;margin:0 0 12px}
+.ctrl{display:grid;grid-template-columns:165px 1fr 135px;gap:12px;align-items:center;margin:.55em 0}
+.ctrl label{font-size:17px}
+.ctrl .val{text-align:right;font-family:ui-monospace,monospace;font-size:18px;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:#16324f;height:22px}
+input[type=number],input[type=text],select{
+  font:inherit;font-size:18px;padding:6px 9px;border:1px solid #b7c0c9;background:#fff;
+  color:var(--ink);border-radius:0;width:100%
+}
+input:focus,select:focus,button:focus{outline:2px solid var(--navy2);outline-offset:1px}
+input.ok{border-color:var(--ok);background:#f1f7f3}
+input.bad{border-color:var(--bad);background:#fdf3f3}
+button{
+  font:inherit;font-size:16px;padding:7px 15px;border:1px solid var(--navy);border-radius:0;
+  background:var(--navy);color:#fff;cursor:pointer
+}
+button:hover{background:#1d4368}
+button.ghost{background:#fff;color:var(--navy)}
+button.ghost:hover{background:var(--soft)}
+.botones{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:9px;margin:12px 0 0}
+.readout div{background:var(--soft);padding:8px 11px}
+.readout b{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  color:#5b6875;font-weight:650;margin-bottom:2px}
+.readout span{font-family:ui-monospace,monospace;font-size:18px;font-variant-numeric:tabular-nums}
+.note{background:#fbfaf4;border-left:3px solid #b08a2e;padding:11px 15px;margin:1.1em 0}
+.warn{background:#fcf4f4;border-left:3px solid var(--bad);padding:11px 15px;margin:1.1em 0}
+.good{background:#f1f7f3;border-left:3px solid var(--ok);padding:11px 15px;margin:1.1em 0}
+.feedback{margin-top:11px;font-size:17.5px;line-height:1.55}
+.feedback.good::before{content:"";}
+.fb-good{color:var(--ok)}
+.fb-bad{color:var(--bad)}
+.fb-neutral{color:#3c4a58}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:17px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--soft);font-weight:650;font-size:16px}
+td.num,th.num{font-family:ui-monospace,monospace;font-variant-numeric:tabular-nums}
+nav.strip{display:flex;gap:15px;align-items:center;flex-wrap:wrap;font-size:15.5px;
+  border-bottom:1px solid var(--line);padding:0 0 10px;margin:-4px 0 24px;color:#5b6875}
+nav.strip a{color:var(--navy2);text-decoration:none;border-bottom:1px solid #c5d3e0}
+nav.strip a:hover{border-bottom-color:var(--navy2)}
+nav.strip .act{color:#5b6875;font-weight:650}
+nav.strip .sep{color:#ccd4db}
+nav.pager{display:flex;justify-content:space-between;gap:14px;margin-top:54px;padding-top:16px;
+  border-top:1px solid var(--line);font-size:16px}
+nav.pager a{color:var(--navy);text-decoration:none;border-bottom:1px solid #a9bdd0;padding-bottom:1px}
+nav.pager a:hover{border-bottom-color:var(--navy)}
+nav.pager .sp{flex:1}
+svg{display:block;max-width:100%;height:auto;font-family:ui-monospace,monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.tiny{font-size:15.5px;color:#5b6875;line-height:1.5}
+.pasos{counter-reset:p;list-style:none;padding-left:0}
+.pasos>li{counter-increment:p;position:relative;padding-left:42px;margin:.85em 0}
+.pasos>li::before{
+  content:counter(p);position:absolute;left:0;top:.05em;width:28px;height:28px;border:1.5px solid var(--navy);
+  color:var(--navy);font-size:15px;font-weight:700;text-align:center;line-height:25px;
+  font-family:ui-monospace,monospace
+}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin:1.2em 0}
+.card{background:#fff;border:1px solid var(--line);padding:14px 16px;display:block;
+  text-decoration:none;color:var(--ink)}
+.card:hover{border-color:var(--navy);background:#fbfcfd}
+.card .n{font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:#5b6875;font-weight:650}
+.card .t{font-size:19px;color:var(--navy);font-weight:650;margin:.15em 0 .25em;line-height:1.28;min-height:2.56em}
+.card .d{font-size:16px;color:#46545f;line-height:1.45}
+.tag{display:inline-block;font-size:13px;border:1px solid var(--line);background:var(--soft);
+  padding:1px 7px;margin:4px 4px 0 0;color:#46545f}
+kbd{font-family:ui-monospace,monospace;font-size:15px;border:1px solid #b7c0c9;border-bottom-width:2px;
+  padding:1px 5px;background:#fff}
+.checkline{display:flex;gap:10px;align-items:baseline;margin:.4em 0}
+.checkline input[type=checkbox]{width:18px;height:18px;accent-color:#16324f;flex:none}
+@media (max-width:740px){
+  body{font-size:18px}
+  .wrap{padding:18px 16px 70px}
+  h1{font-size:26px} h2{font-size:20.5px}
+  .ctrl{grid-template-columns:110px 1fr 105px;gap:8px}
+  .grid2{grid-template-columns:1fr}
+}
+@media print{
+  body{background:#fff}
+  .demo{break-inside:avoid}
+  nav.pager{display:none}
+}
+</style>
+
+<script>
+/* ---------- utilidades comunes (idénticas en todas las páginas) ---------- */
+const $  = (s, r) => (r||document).querySelector(s);
+const $$ = (s, r) => Array.from((r||document).querySelectorAll(s));
+
+/* Lee un número escrito por el alumno: admite coma o punto decimal,
+   espacios, el símbolo de grado y el sufijo de gonios. */
+function leerNum(v){
+  if (typeof v === 'number') return v;
+  let s = String(v == null ? '' : v).trim();
+  s = s.replace(/\s+/g,'').replace(/[°º]/g,'').replace(/(rad|gon|g|m|s)$/i,'');
+  if (s === '') return NaN;
+  if (s.includes(',') && s.includes('.')) s = s.replace(/\./g,'').replace(',', '.');
+  else if (s.includes(',')) s = s.replace(',', '.');
+  return parseFloat(s);
+}
+/* Formato español: coma decimal, cifras fijas. */
+function fmt(x, d){
+  d = (d === undefined) ? 2 : d;
+  if (!isFinite(x)) return '—';
+  return x.toFixed(d).replace('.', ',');
+}
+/* Sexagesimal: {g,m,s} a partir de grados decimales */
+function aSexa(x){
+  let neg = x < 0; x = Math.abs(x);
+  let g = Math.floor(x + 1e-12);
+  let mm = (x - g) * 60;
+  let m = Math.floor(mm + 1e-9);
+  let s = (mm - m) * 60;
+  if (s >= 59.9995){ s = 0; m += 1; }
+  if (m >= 60){ m -= 60; g += 1; }
+  return {g:(neg?-g:g), m:m, s:s};
+}
+/* Centesimal: {g,m,s} */
+function aCentes(x){
+  let neg = x < 0; x = Math.abs(x);
+  let g = Math.floor(x + 1e-12);
+  let mm = (x - g) * 100;
+  let m = Math.floor(mm + 1e-9);
+  let s = (mm - m) * 100;
+  if (s >= 99.995){ s = 0; m += 1; }
+  if (m >= 100){ m -= 100; g += 1; }
+  return {g:(neg?-g:g), m:m, s:s};
+}
+function txtSexa(x, ds){
+  ds = (ds === undefined) ? 1 : ds;
+  const f = Math.pow(10, ds);
+  let total = Math.round(Math.abs(x) * 3600 * f);
+  const g = Math.floor(total / (3600 * f));
+  let rem = total - g * 3600 * f;
+  const m = Math.floor(rem / (60 * f));
+  rem = rem - m * 60 * f;
+  const si = String(Math.floor(rem / f)).padStart(2, '0');
+  const dec = ds > 0 ? ',' + String(rem % f).padStart(ds, '0') : '';
+  return (x < 0 ? '−' : '') + g + '° ' + String(m).padStart(2, '0') + '\u2032 ' + si + dec + '\u2033';
+}
+function txtCentes(x, ds){
+  ds = (ds === undefined) ? 1 : ds;
+  const f = Math.pow(10, ds);
+  let total = Math.round(Math.abs(x) * 10000 * f);
+  const g = Math.floor(total / (10000 * f));
+  let rem = total - g * 10000 * f;
+  const m = Math.floor(rem / (100 * f));
+  rem = rem - m * 100 * f;
+  const si = String(Math.floor(rem / f)).padStart(2, '0');
+  const dec = ds > 0 ? ',' + String(rem % f).padStart(ds, '0') : '';
+  return (x < 0 ? '−' : '') + g + 'g ' + String(m).padStart(2, '0') + 'm ' + si + dec + 's';
+}
+/* Retorno de estado en un campo: ok / mal */
+function marcar(el, estado){
+  el.classList.remove('ok','bad');
+  if (estado === 1) el.classList.add('ok');
+  else if (estado === 0) el.classList.add('bad');
+}
+function fb(el, tipo, texto){
+  el.className = 'feedback ' + (tipo === 1 ? 'fb-good' : tipo === 0 ? 'fb-bad' : 'fb-neutral');
+  el.innerHTML = texto;
+  return tipo;
+}
+/* Formatea un ángulo en radianes como múltiplo exacto de π si el denominador es pequeño */
+function aPi(x){
+  const r = x / Math.PI;
+  for (let q = 1; q <= 24; q++){
+    const p = r * q;
+    if (Math.abs(p - Math.round(p)) < 1e-9){
+      const n = Math.round(p);
+      if (q === 1) return (n === 1 ? 'π' : n + 'π');
+      if (n === 1) return 'π/' + q;
+      return n + 'π/' + q;
+    }
+  }
+  return null;
+}
+/* Sincroniza el relleno visual de los sliders (solo estética) */
+function refrescaSliders(root){
+  $$('input[type=range]', root || document).forEach(function(r){
+    const p = (r.value - r.min) / (r.max - r.min) * 100;
+    r.style.background = 'linear-gradient(90deg,#16324f ' + p + '%,#cfd7de ' + p + '%)';
+    r.style.height = '6px';
+    r.style.borderRadius = '0';
+    r.style.appearance = 'none';
+    r.style.webkitAppearance = 'none';
+  });
+}
+</script>
+<style>
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:16px;height:16px;background:#16324f;border:2px solid #fff;
+  box-shadow:0 0 0 1px #16324f;cursor:pointer
+}
+input[type=range]::-moz-range-thumb{
+  width:14px;height:14px;background:#16324f;border:2px solid #fff;box-shadow:0 0 0 1px #16324f;cursor:pointer
+}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<header class="top"><div class="kicker">Día 1 · Peldaño 1</div><h1>De forma compleja a decimal, y vuelta</h1><p class="sub">El paso que hay detrás de todas las conversiones de la ficha</p></header><nav class="strip"><a href="index.html">Índice</a><span class="sep">·</span><span class="act">Lección 2</span><span class="sep">·</span><a href="gen_01_conversiones.html">Generador A &rarr;</a></nav>
+<main>
+<p class="lead">Un ángulo se puede escribir de dos maneras y las dos son la misma cosa: partido en grados, minutos y segundos,
+o como un solo número con coma decimal. Pasar de una a otra es el paso que hay escondido detrás de casi todos los
+ejercicios de la primera parte de la ficha, incluidos los que además cambian de sistema. Esta lámina hace solo eso,
+en los dos sentidos, hasta que salga sin pensar.</p>
+
+<h2>1. Por qué el grado se parte en 60</h2>
+<p>La vuelta completa son 360 grados, y eso ya lo sabes. Lo que casi nadie se pregunta es por qué debajo del grado
+hay sesentavas partes y no centésimas. La respuesta es histórica y a la vez muy práctica: la división en 60 viene de
+la astronomía babilónica, que contaba en base 60, y se conservó durante dos mil años porque funciona
+extraordinariamente bien para partir cosas en trozos iguales.</p>
+<p>El motivo es que 60 tiene muchos divisores: se puede repartir en 2, 3, 4, 5, 6, 10, 12, 15, 20 y 30 partes sin que
+sobre nada. Y 360, que es seis veces 60, tampoco se queda corto. Eso significa que las fracciones que aparecen todo el
+rato en el campo —un tercio, un cuarto, la mitad— caen siempre en números redondos:</p>
+<div class="formula">1/3 de vuelta = 120°      1/3 de grado = 20′      1/4 de grado = 15′
+1/2 de grado  =  30′      1/6 de grado = 10′      1/5 de grado = 12′</div>
+<p>Con una base 100 eso no ocurriría: un tercio de grado serían 33,33… centésimas y no habría manera de escribirlo
+exacto. El sistema sexagesimal, por tanto, no es un capricho: es el que permite decir «un tercio de grado» con una
+sola cifra.</p>
+<p>La misma herencia explica el reloj. Las horas se parten en 60 minutos y los minutos en 60 segundos, con la misma
+palabra y casi el mismo símbolo. Es una coincidencia muy útil: si sabes leer «las tres y veinte», ya sabes leer
+«37 grados y veinte minutos», y sabes que veinte minutos de hora no son veinte centésimas de hora.</p>
+
+<h2>2. Qué significa «forma compleja»</h2>
+<p>Se llama <strong>forma compleja</strong> a la escritura de una cantidad con varias unidades encajadas unas dentro
+de otras, cada una sesenta veces menor que la anterior. En un ángulo hay tres órdenes:</p>
+<div class="formula">37° 30′ 00″</div>
+<p>Cada orden solo puede llegar hasta 59, porque al llegar a 60 se convierte en una unidad del orden superior. Un
+minuto son 60 segundos y no 100, y un grado son 60 minutos y no 100: ese tope es la única regla que hay que respetar
+al escribir.</p>
+<p>La <strong>forma decimal</strong> es la contraria: un solo número, con la unidad base (el grado) y una fracción
+escrita en base 10. El mismo ángulo de antes:</p>
+<div class="formula">37° 30′ 00″   =   37,5°</div>
+<p>Las dos valen exactamente lo mismo. La diferencia es de comodidad: el instrumento, cuando visás, te da la lectura
+en forma compleja porque el limbo está graduado en grados, minutos y segundos; la calculadora, en cambio, solo sabe
+operar con números decimales. Toda conversión de la ficha es el puente entre esos dos mundos.</p>
+<div class="note">
+<p><strong>La idea que hay que retener.</strong> En forma compleja solo hay una unidad de verdad, el grado. Los
+minutos y los segundos no son unidades independientes: son <em>fracciones de grado</em> escritas de otra manera. Por
+eso 36 minutos no son «36» de nada, son 36 sesentavas partes de un grado, que es lo mismo que 0,6 grados.</p>
+</div>
+
+<h2>3. La fórmula, deducida sin memorizarla</h2>
+<p>Si los minutos y los segundos son fracciones de grado, pasar a decimal es sumar esas fracciones. Vamos despacio,
+porque cada paso explica uno de los errores que aparecen después:</p>
+<ol class="pasos">
+  <li><p>El grado se parte en 60 partes iguales y cada una es un minuto. Por tanto, un minuto vale una sesentava
+  parte de un grado:</p>
+  <div class="formula">1° = 60′     ⇒     1′ = 1/60 ° = 0,016667°</div></li>
+
+  <li><p>Cada minuto se parte a su vez en 60 segundos. Un segundo es, entonces, la sesentava parte de un minuto, y
+  como el minuto ya era la sesentava parte de un grado, un segundo es una tresmilseiscentésima parte del grado:</p>
+  <div class="formula">1′ = 60″     ⇒     1″ = 1/60 ′ = 1/3 600 ° = 0,000278°</div></li>
+
+  <li><p>Un ángulo en forma compleja tiene tres aportaciones: los grados enteros, los minutos convertidos a grados y
+  los segundos convertidos a grados. Se suman y ya está:</p>
+  <div class="formula">dec = G + M/60 + S/3 600</div></li>
+
+  <li><p>Se opera en ese orden y se redondea solo al final. Con 24° 36′ 18″:</p>
+  <div class="formula">dec = 24 + 36/60 + 18/3 600
+    = 24 + 0,6 + 0,005
+    = 24,605°</div></li>
+</ol>
+<p>Fíjate en el tamaño de cada aportación, porque es lo que da la sensación de si un resultado es razonable. Los
+minutos mueven el resultado en centésimas de grado; los segundos, en milésimas:</p>
+<table>
+  <tr><th>Parte</th><th>Cuánto vale en grados</th><th>Ejemplo</th></tr>
+  <tr><td class="num">1′</td><td class="num">0,016 667°</td><td class="num">36′ = 0,600°</td></tr>
+  <tr><td class="num">1″</td><td class="num">0,000 278°</td><td class="num">18″ = 0,005°</td></tr>
+  <tr><td class="num">6′</td><td class="num">0,1°</td><td class="num">30′ = 0,5°</td></tr>
+  <tr><td class="num">60″</td><td class="num">0,016 667°</td><td class="num">1′ = 0,016 667°</td></tr>
+</table>
+<p>De ahí sale un atajo que conviene tener a mano: seis minutos son una décima de grado, doce minutos son dos
+décimas, quince minutos son un cuarto de grado y treinta minutos son medio grado. Es la tabla del reloj aplicada al
+limbo, y sirve para estimar el resultado antes de tocar la calculadora.</p>
+
+<h2>4. Demostración interactiva: cuánto pesa cada orden</h2>
+<p>Mueve los tres deslizadores. La primera barra enseña los minutos repartidos sobre un grado entero: si pones 36
+minutos, la barra se llena algo más de la mitad, porque 36/60 = 0,6. La segunda barra hace lo mismo con los segundos,
+pero sobre un minuto, que es su escala natural. La tercera acumula las dos aportaciones sobre el grado completo, y
+ahí se ve por qué un segundo casi no mueve la aguja: hacen falta sesenta para igualar a un minuto.</p>
+
+<div class="demo">
+<p class="tat">Demostración 1 · El reparto del grado en sus tres órdenes</p>
+<div class="ctrl">
+  <label for="dg">Grados</label>
+  <input id="dg" type="range" min="0" max="90" step="1" value="24">
+  <span class="val" id="dgV">24°</span>
+</div>
+<div class="ctrl">
+  <label for="dm">Minutos</label>
+  <input id="dm" type="range" min="0" max="59" step="1" value="36">
+  <span class="val" id="dmV">36′</span>
+</div>
+<div class="ctrl">
+  <label for="ds">Segundos</label>
+  <input id="ds" type="range" min="0" max="59" step="1" value="18">
+  <span class="val" id="dsV">18″</span>
+</div>
+<svg id="barras" viewBox="0 0 562 186" width="562" height="186" role="img"
+     aria-label="Tres barras que muestran el peso de minutos y segundos dentro del grado"></svg>
+<div class="readout">
+  <div><b>Forma compleja</b><span id="oComp">24° 36′ 18″</span></div>
+  <div><b>Forma decimal</b><span id="oDec">24,605°</span></div>
+  <div><b>Aportan los minutos</b><span id="oPm">0,600°</span></div>
+  <div><b>Aportan los segundos</b><span id="oPs">0,005°</span></div>
+</div>
+<p class="tiny">Prueba a dejar los grados en 24 y subir los segundos de 18 a 59: el decimal pasa de 24,605 a 24,616.
+Un segundo vale tan poco que en la práctica muchos trabajos se redondean al minuto; pero en un itinerario largo esos
+segundos se acumulan y hay que conservarlos.</p>
+</div>
+
+<script>
+(function(){
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = $('#barras');
+  const W = 562;
+
+  function limpia(){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function el(tag, attrs, txt){
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (txt !== undefined) e.textContent = txt;
+    svg.appendChild(e); return e;
+  }
+  function num(x, dec){
+    const s = fmt(x, dec);
+    return s.indexOf(',') >= 0 ? s.replace(/0+$/, '').replace(/,$/, '') : s;
+  }
+  function barra(y, etiqueta, frac, color, nota){
+    el('text', {x:0, y:y - 8, 'font-size':12.5, fill:'#5b6875'}, etiqueta);
+    el('text', {x:W, y:y - 8, 'font-size':13, fill:color, 'text-anchor':'end'}, nota);
+    el('rect', {x:0, y:y, width:W, height:20, fill:'#eef1f4', stroke:'#d3d9df', 'stroke-width':1});
+    el('rect', {x:0, y:y, width:Math.max(0, Math.min(1, frac)) * W, height:20, fill:color});
+  }
+  function marcas(y, n, color, etiquetas, den){
+    for (let i = 1; i < n; i++){
+      const x = W * i / n;
+      el('line', {x1:x, y1:y, x2:x, y2:y + 20, stroke:color, 'stroke-width':1, opacity:'0.45'});
+    }
+    etiquetas.forEach(function(v){
+      el('text', {x:W * v / den, y:y + 34, 'font-size':11.5, fill:'#5b6875',
+                  'text-anchor': v === 0 ? 'start' : (v === den ? 'end' : 'middle')}, v + '\u2032');
+    });
+  }
+  function dibuja(g, m, s){
+    limpia();
+    barra(26, 'Minutos sobre un grado (la barra entera es 1°)', m / 60, '#2c5a84',
+          m + '\u2032 = ' + fmt(m / 60, 3) + '°');
+    marcas(26, 12, '#ffffff', [0, 15, 30, 45, 60], 60);
+
+    barra(86, 'Segundos sobre un minuto (la barra entera es 1\u2032)', s / 60, '#1f6b3a',
+          s + '\u2033 = ' + fmt(s / 60, 2) + '\u2032');
+    marcas(86, 4, '#ffffff', [0, 15, 30, 45, 60], 60);
+
+    barra(146, 'Las dos aportaciones juntas sobre el grado completo',
+          m / 60 + s / 3600, '#16324f', 'total ' + fmt(m / 60 + s / 3600, 3) + '°');
+    [0, 0.5, 1].forEach(function(v){
+      el('text', {x:W * v, y:180, 'font-size':11.5, fill:'#5b6875',
+                  'text-anchor': v === 0 ? 'start' : (v === 1 ? 'end' : 'middle')},
+         fmt(v, v === 0 || v === 1 ? 0 : 1) + '°');
+    });
+    el('line', {x1:W * 0.5, y1:146, x2:W * 0.5, y2:166, stroke:'#8f2222', 'stroke-width':1,
+                'stroke-dasharray':'3 3'});
+  }
+
+  function actualiza(){
+    const g = parseInt($('#dg').value, 10);
+    const m = parseInt($('#dm').value, 10);
+    const s = parseInt($('#ds').value, 10);
+    const dec = g + m / 60 + s / 3600;
+    $('#dgV').textContent = g + '°';
+    $('#dmV').textContent = m + '\u2032';
+    $('#dsV').textContent = s + '\u2033';
+    $('#oComp').textContent = txtSexa(dec, 0);
+    $('#oDec').textContent = num(dec, 5) + '°';
+    $('#oPm').textContent = num(m / 60, 3) + '°';
+    $('#oPs').textContent = num(s / 3600, 5) + '°';
+    dibuja(g, m, s);
+    refrescaSliders();
+  }
+  ['dg', 'dm', 'ds'].forEach(function(id){ $('#' + id).addEventListener('input', actualiza); });
+  actualiza();
+})();
+</script>
+
+<h2>5. El camino de vuelta: de decimal a complejo</h2>
+<p>Volver es repartir, y se hace con la misma lógica pero al revés: quitar la parte entera, multiplicar lo que sobra
+por 60, y repetir. Cada multiplicación «baja» un escalón.</p>
+<ol class="pasos">
+  <li><p><strong>Los grados son la parte entera</strong> del número decimal. En 57,296° hay 57 grados y sobra 0,296.</p></li>
+  <li><p><strong>Esa parte decimal se multiplica por 60</strong>, porque un grado son 60 minutos. 0,296 × 60 = 17,76.
+  La parte entera del resultado son los minutos: 17. La parte decimal, 0,76, sigue siendo una fracción de minuto.</p></li>
+  <li><p><strong>Lo que sobra se multiplica otra vez por 60</strong>, porque un minuto son 60 segundos.
+  0,76 × 60 = 45,6. Esos son los segundos, y no hace falta seguir: 45,6 cierra el reparto.</p></li>
+</ol>
+<div class="formula">57,296°
+  57°           ← parte entera
+  0,296 × 60 = 17,76   →  17′  y sobran 0,76
+  0,76  × 60 = 45,6    →  45,6″
+57° 17′ 45,6″        (y no 57° 17′ 76″, ni 57° 18′ 00″)</div>
+<p>El detalle que se pierde casi siempre está en el segundo paso: 17,76 <em>no</em> significa «17 minutos y 76
+segundos». El 17 son minutos; el 0,76 son setenta y seis centésimas de minuto, que hay que volver a multiplicar por 60
+para convertirlas en segundos. Si redondeas 17,76 a 18 y sigues, te quedas con 57° 18′ 00″, que está casi medio
+minuto fuera del valor real.</p>
+<div class="good">
+<p><strong>Comprobación de ida y vuelta.</strong> Suma otra vez: 17/60 = 0,283 33 y 45,6/3 600 = 0,012 67. Las dos
+juntas dan 0,296, que es justo lo que habíamos quitado. Si la suma no cuadra, el reparto está mal hecho.</p>
+</div>
+
+<h2>6. Demostración interactiva: el conversor en las dos direcciones</h2>
+<p>Escribe en cualquiera de las dos zonas y la otra se actualiza sola. Prueba en este orden: primero teclea 24,605 en
+la caja decimal y mira lo que aparece al lado; después cambia los segundos a 60 y observa el aviso. Es la mejor
+manera de ver que el número puede ser el mismo y la escritura estar mal de todas formas.</p>
+
+<div class="demo">
+<p class="tat">Demostración 2 · Conversor sincronizado</p>
+<div class="grid2">
+  <div>
+    <p class="tiny" style="margin-top:0">Forma decimal (grados con coma)</p>
+    <input id="inDec" type="text" inputmode="decimal" value="24,605" aria-label="Ángulo en grados decimales">
+    <div class="readout">
+      <div><b>Leído como</b><span id="oLeido">24,605</span></div>
+      <div><b>En radián</b><span id="oRad">0,4294</span></div>
+    </div>
+  </div>
+  <div>
+    <p class="tiny" style="margin-top:0">Forma compleja (grados, minutos, segundos)</p>
+    <div class="ctrl">
+      <label for="inG">Grados</label>
+      <input id="inG" type="text" inputmode="numeric" value="24" aria-label="Grados">
+      <span class="val">°</span>
+    </div>
+    <div class="ctrl">
+      <label for="inM">Minutos</label>
+      <input id="inM" type="text" inputmode="numeric" value="36" aria-label="Minutos">
+      <span class="val">′</span>
+    </div>
+    <div class="ctrl">
+      <label for="inS">Segundos</label>
+      <input id="inS" type="text" inputmode="decimal" value="18" aria-label="Segundos">
+      <span class="val">″</span>
+    </div>
+  </div>
+</div>
+<div class="feedback" id="fbConv"></div>
+<div class="botones">
+  <button class="ghost" id="bC01">Cargar 24° 36′ 18″</button>
+  <button class="ghost" id="bAcarreo">Cargar 57,296°</button>
+  <button class="ghost" id="bTercea">Cargar 120° 00′ 00″</button>
+</div>
+<p class="tiny">Se admiten segundos con decimales, como 45,6, y también el punto en lugar de la coma. Un valor de
+minutos o segundos igual o mayor que 60 no rompe la cuenta, pero se avisa porque en un examen se considera error de
+escritura.</p>
+</div>
+
+<script>
+(function(){
+  const inDec = $('#inDec'), inG = $('#inG'), inM = $('#inM'), inS = $('#inS');
+  let bloqueo = false;
+
+  function corto(x, dec){
+    const r = Math.round(x * Math.pow(10, dec)) / Math.pow(10, dec);
+    return String(r).replace('.', ',');
+  }
+
+  function desdeDecimal(){
+    if (bloqueo) return;
+    const d = leerNum(inDec.value);
+    bloqueo = true;
+    if (!isFinite(d)){
+      inG.value = ''; inM.value = ''; inS.value = '';
+    } else {
+      const c = aSexa(d);
+      inG.value = String(c.g);
+      inM.value = String(c.m).padStart(2, '0');
+      inS.value = corto(c.s, 2);
+    }
+    bloqueo = false;
+    revisa();
+  }
+
+  function desdeComplejo(){
+    if (bloqueo) return;
+    const g = leerNum(inG.value), m = leerNum(inM.value), s = leerNum(inS.value);
+    bloqueo = true;
+    if (!isFinite(g) || !isFinite(m) || !isFinite(s)){
+      inDec.value = '';
+      bloqueo = false;
+      revisa();
+      return;
+    }
+    inDec.value = corto(g + m / 60 + s / 3600, 6);
+    bloqueo = false;
+    revisa();
+  }
+
+  function revisa(){
+    const d = leerNum(inDec.value);
+    const g = leerNum(inG.value), m = leerNum(inM.value), s = leerNum(inS.value);
+    const caja = $('#fbConv');
+    if (!isFinite(d)){
+      caja.className = 'feedback fb-neutral';
+      caja.innerHTML = 'Escribe un número en cualquiera de las dos zonas.';
+      return;
+    }
+    $('#oLeido').textContent = corto(d, 6) + '°';
+    $('#oRad').textContent = fmt(d * Math.PI / 180, 5) + ' rad';
+
+    if (m >= 60 || s >= 60){
+      const bien = aSexa(d);
+      caja.className = 'feedback fb-bad';
+      caja.innerHTML = 'Esa forma compleja está mal escrita: los minutos y los segundos solo pueden llegar a 59. ' +
+        'El valor de la cuenta sigue siendo ' + corto(d, 5) + '°, pero en forma compleja correcta sería ' +
+        txtSexa(d, 0) + ' (' + bien.g + '° ' + String(bien.m).padStart(2, '0') + '′). Un minuto de más hay que ' +
+        'llevarlo al orden superior.';
+      return;
+    }
+    if (d < 0){
+      caja.className = 'feedback fb-neutral';
+      caja.innerHTML = 'El resultado es negativo (' + fmt(d, 5) + '°). En notación angular existe como giro en ' +
+        'sentido horario, pero casi todos los ejercicios de la ficha trabajan con valores positivos.';
+      return;
+    }
+    caja.className = 'feedback fb-good';
+    caja.innerHTML = fmt(g, 0) + '° ' + String(isFinite(g) ? m : 0).replace(/^(\d)$/, '0$1') +
+      '′ ' + corto(isFinite(s) ? s : 0, 2) + '″ = ' + corto(d, 5) + '° = ' + txtSexa(d, 1) +
+      '. Comprueba el sentido: el decimal tiene que estar entre ' + Math.floor(d) + ' y ' + (Math.floor(d) + 1) +
+      ' grados, y más cerca del principio cuanto menores sean los minutos.';
+  }
+
+  inDec.addEventListener('input', desdeDecimal);
+  [inG, inM, inS].forEach(function(e){ e.addEventListener('input', desdeComplejo); });
+
+  $('#bC01').addEventListener('click', function(){
+    inDec.value = '24,605'; inG.value = '24'; inM.value = '36'; inS.value = '18';
+    desdeComplejo();
+  });
+  $('#bAcarreo').addEventListener('click', function(){
+    inDec.value = '57,296'; desdeDecimal();
+  });
+  $('#bTercea').addEventListener('click', function(){
+    inDec.value = '120'; inG.value = '120'; inM.value = '00'; inS.value = '00';
+    desdeComplejo();
+  });
+
+  revisa();
+})();
+</script>
+
+<h2>7. Los ejercicios de la ficha, resueltos</h2>
+
+<h3>C01 · Pasar 24° 36′ 18″ a forma decimal</h3>
+<p>Es el ejercicio base y conviene hacerlo entero, sin atajos, hasta que las tres sumas salgan solas. Datos:
+<span class="num">G = 24</span>, <span class="num">M = 36</span>, <span class="num">S = 18</span>.</p>
+<ol class="pasos">
+  <li><p>Aplico la fórmula con los números sustituidos:</p>
+  <div class="formula">dec = 24 + 36/60 + 18/3 600</div></li>
+  <li><p>Resuelvo cada fracción por separado, que es lo que evita equivocarse:</p>
+  <div class="formula">36/60  = 0,6
+18/3 600 = 0,005</div></li>
+  <li><p>Sumo:</p>
+  <div class="formula">dec = 24 + 0,6 + 0,005 = <em>24,605°</em></div></li>
+  <li><p>Compruebo el sentido: el resultado cae entre 24 y 25, y a 0,605 del principio, algo más de la mitad del
+  grado. Es lo que se espera de 36 minutos, que son algo más de medio grado.</p></li>
+</ol>
+<p>La comprobación de vuelta, que es la que de verdad confirma el resultado: 24,605 → 0,605 × 60 = 36,3 → 36′ y 0,3 ×
+60 = 18″. Se recupera exactamente el ángulo de partida.</p>
+
+<h3>C02 · Pasar 68,425° a forma compleja</h3>
+<p>Ahora al revés, y aquí es donde se ve si el reparto está entendido. Datos: <span class="num">68,425°</span>.</p>
+<ol class="pasos">
+  <li><p>Los grados son la parte entera: <span class="num">68</span>. Sobra 0,425.</p></li>
+  <li><p>Multiplico la parte decimal por 60 para obtener minutos:</p>
+  <div class="formula">0,425 × 60 = 25,5     ⇒  25′  y sobran 0,5</div></li>
+  <li><p>Multiplico lo que sobra por 60 otra vez:</p>
+  <div class="formula">0,5 × 60 = 30        ⇒  30″</div></li>
+  <li><p>Escribo el resultado con dos cifras en los órdenes inferiores:</p>
+  <div class="formula">68,425°  =  <em>68° 25′ 30″</em></div></li>
+</ol>
+<p>Comprobación: 25/60 = 0,416 67 y 30/3 600 = 0,008 33. La suma es 0,425, exacta. Y el control de cabeza: 25 minutos
+son menos de medio grado, así que el decimal tenía que quedar en la mitad baja de la parte fraccionaria, por debajo de
+68,5. Está en 68,425. Correcto.</p>
+
+<h2>8. Los tres errores que se cometen siempre</h2>
+<ol>
+  <li><p><strong>Pegar las cifras detrás de la coma.</strong> Leer 24° 36′ 18″ como 24,3618° es el error número uno
+  de toda la ficha. Los 36 minutos no son 36 centésimas de grado, son 36 sesentavas partes, que son 0,6 grados.
+  La diferencia entre 24,3618 y 24,605 es de más de un sexto de grado, y en una poligonal eso son metros.
+  La pregunta que hay que hacerse siempre es la misma: <em>¿en cuántas partes está partido el grado?</em> Si es en
+  60, se divide entre 60; nunca se pega la cifra.</p></li>
+
+  <li><p><strong>Dejar segundos o minutos en 60.</strong> Un ángulo escrito 24° 36′ 60″ no existe, aunque su valor
+  numérico sea correcto: 60 segundos son un minuto, así que hay que escribirlo 24° 37′ 00″. El mismo acarreo que se
+  hace al sumar horas. El conversor de la demostración 2 lo avisa en cuanto lo tecleas; en el examen no hay aviso,
+  solo corrector.</p></li>
+
+  <li><p><strong>Redondear en medio del cálculo.</strong> Si en lugar de 24,605° trabajas con 24,61° porque «con dos
+  decimales basta», al volver a forma compleja sale 24° 36′ 36″: has ganado 18 segundos de la nada. Y si eso ocurre
+  en cada vértice de un itinerario de veinte estaciones, el error final deja de ser despreciable. Regla: se redondea
+  una sola vez, en la última línea, y nunca antes.</p></li>
+</ol>
+<div class="warn">
+<p>Los tres errores tienen la misma raíz: tratar los minutos y los segundos como si fueran decimales. En cuanto te
+acostumbras a pensar «esto es una fracción de grado escrita en base 60», los tres desaparecen a la vez.</p>
+</div>
+
+<h2>9. Cómo se escribe en el examen</h2>
+<p>Cuatro líneas. Con ellas el corrector ve el método aunque un número salga mal, y el reparto queda a la vista:</p>
+<div class="formula">1)  Dato:  24° 36′ 18″      (G = 24, M = 36, S = 18)
+2)  dec = G + M/60 + S/3 600 = 24 + 0,6 + 0,005
+3)  dec = 24,605°
+4)  Compruebo: 0,605 × 60 = 36,3 → 36′ 18″  ✓</div>
+<p>Y en el sentido contrario, cuando el dato es decimal:</p>
+<div class="formula">1)  Dato:  68,425°        →  68° y 0,425
+2)  0,425 × 60 = 25,5    →  25′ y 0,5
+3)  0,5 × 60 = 30        →  30″
+4)  Resultado:  68° 25′ 30″     Compruebo: 25/60 + 30/3 600 = 0,425  ✓</div>
+
+<p>Con esto el peldaño está superado, y el <a href="gen_01_conversiones.html">generador de conversiones</a> tiene un
+nivel entero dedicado a este paso: números nuevos, en los dos sentidos, con la corrección al instante. Haz diez
+seguidos, y si a partir del quinto ya no necesitas mirar la fórmula, pasa a la lámina siguiente, que mete el sistema
+centesimal y el cruce entre los dos.</p>
+</main>
+<nav class="pager"><a href="01_notacion_angular.html">&larr; Notación angular: los tres sistemas</a><span class="sp"></span><a href="index.html">Índice</a><span class="sp"></span><a href="03_centesimal.html">Grados centesimales y el cruce 9/10 &rarr;</a></nav>
+</div>
+<script>refrescaSliders();</script>
+</body>
+</html>

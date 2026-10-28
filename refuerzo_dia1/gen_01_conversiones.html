@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Generador · Conversiones de ángulos</title>
+<style>
+:root{
+  --ink:#1b2530; --navy:#16324f; --navy2:#2c5a84; --line:#d3d9df; --bg:#f7f8f9;
+  --soft:#edf1f4; --ok:#1f6b3a; --bad:#8f2222; --warnc:#7a5a00;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:19px/1.62 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+.wrap{max-width:980px;margin:0 auto;padding:26px 26px 90px}
+header.top{border-bottom:2px solid var(--navy);padding-bottom:12px;margin-bottom:26px}
+.kicker{font-size:13.5px;letter-spacing:.14em;text-transform:uppercase;color:#5b6875;font-weight:600}
+h1{font-size:31px;line-height:1.22;margin:.22em 0 .28em;color:var(--navy);font-weight:660;letter-spacing:-.01em}
+.sub{font-size:19px;color:#3c4a58;margin:0}
+h2{font-size:22.5px;margin:2.1em 0 .45em;color:var(--navy);font-weight:650;
+   border-left:4px solid var(--navy);padding-left:11px;line-height:1.3}
+h2:first-of-type{margin-top:1.2em}
+h3{font-size:19.5px;margin:1.5em 0 .3em;font-weight:650;color:#22303d}
+h4{font-size:17px;margin:1.2em 0 .3em;font-weight:650;color:#22303d}
+p{margin:.62em 0}
+.lead{font-size:20px;color:#2c3a48}
+ul,ol{padding-left:1.4em;margin:.55em 0}
+li{margin:.3em 0}
+li>ul,li>ol{margin:.3em 0}
+a{color:var(--navy2)}
+strong{font-weight:660}
+.num{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.formula{
+  font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:17px;line-height:1.7;
+  background:var(--soft);border-left:3px solid var(--navy);padding:11px 15px;margin:1em 0;
+  overflow-x:auto;white-space:pre-wrap;
+}
+.formula em{font-style:normal;color:var(--navy);font-weight:600}
+.demo{background:#fff;border:1px solid var(--line);padding:16px 16px 18px;margin:1.3em 0}
+.demo .tat{font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:#5b6875;
+  font-weight:650;margin:0 0 12px}
+.ctrl{display:grid;grid-template-columns:165px 1fr 135px;gap:12px;align-items:center;margin:.55em 0}
+.ctrl label{font-size:17px}
+.ctrl .val{text-align:right;font-family:ui-monospace,monospace;font-size:18px;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:#16324f;height:22px}
+input[type=number],input[type=text],select{
+  font:inherit;font-size:18px;padding:6px 9px;border:1px solid #b7c0c9;background:#fff;
+  color:var(--ink);border-radius:0;width:100%
+}
+input:focus,select:focus,button:focus{outline:2px solid var(--navy2);outline-offset:1px}
+input.ok{border-color:var(--ok);background:#f1f7f3}
+input.bad{border-color:var(--bad);background:#fdf3f3}
+button{
+  font:inherit;font-size:16px;padding:7px 15px;border:1px solid var(--navy);border-radius:0;
+  background:var(--navy);color:#fff;cursor:pointer
+}
+button:hover{background:#1d4368}
+button.ghost{background:#fff;color:var(--navy)}
+button.ghost:hover{background:var(--soft)}
+.botones{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:9px;margin:12px 0 0}
+.readout div{background:var(--soft);padding:8px 11px}
+.readout b{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  color:#5b6875;font-weight:650;margin-bottom:2px}
+.readout span{font-family:ui-monospace,monospace;font-size:18px;font-variant-numeric:tabular-nums}
+.note{background:#fbfaf4;border-left:3px solid #b08a2e;padding:11px 15px;margin:1.1em 0}
+.warn{background:#fcf4f4;border-left:3px solid var(--bad);padding:11px 15px;margin:1.1em 0}
+.good{background:#f1f7f3;border-left:3px solid var(--ok);padding:11px 15px;margin:1.1em 0}
+.feedback{margin-top:11px;font-size:17.5px;line-height:1.55}
+.feedback.good::before{content:"";}
+.fb-good{color:var(--ok)}
+.fb-bad{color:var(--bad)}
+.fb-neutral{color:#3c4a58}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:17px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--soft);font-weight:650;font-size:16px}
+td.num,th.num{font-family:ui-monospace,monospace;font-variant-numeric:tabular-nums}
+nav.strip{display:flex;gap:15px;align-items:center;flex-wrap:wrap;font-size:15.5px;
+  border-bottom:1px solid var(--line);padding:0 0 10px;margin:-4px 0 24px;color:#5b6875}
+nav.strip a{color:var(--navy2);text-decoration:none;border-bottom:1px solid #c5d3e0}
+nav.strip a:hover{border-bottom-color:var(--navy2)}
+nav.strip .act{color:#5b6875;font-weight:650}
+nav.strip .sep{color:#ccd4db}
+nav.pager{display:flex;justify-content:space-between;gap:14px;margin-top:54px;padding-top:16px;
+  border-top:1px solid var(--line);font-size:16px}
+nav.pager a{color:var(--navy);text-decoration:none;border-bottom:1px solid #a9bdd0;padding-bottom:1px}
+nav.pager a:hover{border-bottom-color:var(--navy)}
+nav.pager .sp{flex:1}
+svg{display:block;max-width:100%;height:auto;font-family:ui-monospace,monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.tiny{font-size:15.5px;color:#5b6875;line-height:1.5}
+.pasos{counter-reset:p;list-style:none;padding-left:0}
+.pasos>li{counter-increment:p;position:relative;padding-left:42px;margin:.85em 0}
+.pasos>li::before{
+  content:counter(p);position:absolute;left:0;top:.05em;width:28px;height:28px;border:1.5px solid var(--navy);
+  color:var(--navy);font-size:15px;font-weight:700;text-align:center;line-height:25px;
+  font-family:ui-monospace,monospace
+}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin:1.2em 0}
+.card{background:#fff;border:1px solid var(--line);padding:14px 16px;display:block;
+  text-decoration:none;color:var(--ink)}
+.card:hover{border-color:var(--navy);background:#fbfcfd}
+.card .n{font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:#5b6875;font-weight:650}
+.card .t{font-size:19px;color:var(--navy);font-weight:650;margin:.15em 0 .25em;line-height:1.28;min-height:2.56em}
+.card .d{font-size:16px;color:#46545f;line-height:1.45}
+.tag{display:inline-block;font-size:13px;border:1px solid var(--line);background:var(--soft);
+  padding:1px 7px;margin:4px 4px 0 0;color:#46545f}
+kbd{font-family:ui-monospace,monospace;font-size:15px;border:1px solid #b7c0c9;border-bottom-width:2px;
+  padding:1px 5px;background:#fff}
+.checkline{display:flex;gap:10px;align-items:baseline;margin:.4em 0}
+.checkline input[type=checkbox]{width:18px;height:18px;accent-color:#16324f;flex:none}
+@media (max-width:740px){
+  body{font-size:18px}
+  .wrap{padding:18px 16px 70px}
+  h1{font-size:26px} h2{font-size:20.5px}
+  .ctrl{grid-template-columns:110px 1fr 105px;gap:8px}
+  .grid2{grid-template-columns:1fr}
+}
+@media print{
+  body{background:#fff}
+  .demo{break-inside:avoid}
+  nav.pager{display:none}
+}
+</style>
+
+<script>
+/* ---------- utilidades comunes (idénticas en todas las páginas) ---------- */
+const $  = (s, r) => (r||document).querySelector(s);
+const $$ = (s, r) => Array.from((r||document).querySelectorAll(s));
+
+/* Lee un número escrito por el alumno: admite coma o punto decimal,
+   espacios, el símbolo de grado y el sufijo de gonios. */
+function leerNum(v){
+  if (typeof v === 'number') return v;
+  let s = String(v == null ? '' : v).trim();
+  s = s.replace(/\s+/g,'').replace(/[°º]/g,'').replace(/(rad|gon|g|m|s)$/i,'');
+  if (s === '') return NaN;
+  if (s.includes(',') && s.includes('.')) s = s.replace(/\./g,'').replace(',', '.');
+  else if (s.includes(',')) s = s.replace(',', '.');
+  return parseFloat(s);
+}
+/* Formato español: coma decimal, cifras fijas. */
+function fmt(x, d){
+  d = (d === undefined) ? 2 : d;
+  if (!isFinite(x)) return '—';
+  return x.toFixed(d).replace('.', ',');
+}
+/* Sexagesimal: {g,m,s} a partir de grados decimales */
+function aSexa(x){
+  let neg = x < 0; x = Math.abs(x);
+  let g = Math.floor(x + 1e-12);
+  let mm = (x - g) * 60;
+  let m = Math.floor(mm + 1e-9);
+  let s = (mm - m) * 60;
+  if (s >= 59.9995){ s = 0; m += 1; }
+  if (m >= 60){ m -= 60; g += 1; }
+  return {g:(neg?-g:g), m:m, s:s};
+}
+/* Centesimal: {g,m,s} */
+function aCentes(x){
+  let neg = x < 0; x = Math.abs(x);
+  let g = Math.floor(x + 1e-12);
+  let mm = (x - g) * 100;
+  let m = Math.floor(mm + 1e-9);
+  let s = (mm - m) * 100;
+  if (s >= 99.995){ s = 0; m += 1; }
+  if (m >= 100){ m -= 100; g += 1; }
+  return {g:(neg?-g:g), m:m, s:s};
+}
+function txtSexa(x, ds){
+  ds = (ds === undefined) ? 1 : ds;
+  const f = Math.pow(10, ds);
+  let total = Math.round(Math.abs(x) * 3600 * f);
+  const g = Math.floor(total / (3600 * f));
+  let rem = total - g * 3600 * f;
+  const m = Math.floor(rem / (60 * f));
+  rem = rem - m * 60 * f;
+  const si = String(Math.floor(rem / f)).padStart(2, '0');
+  const dec = ds > 0 ? ',' + String(rem % f).padStart(ds, '0') : '';
+  return (x < 0 ? '−' : '') + g + '° ' + String(m).padStart(2, '0') + '\u2032 ' + si + dec + '\u2033';
+}
+function txtCentes(x, ds){
+  ds = (ds === undefined) ? 1 : ds;
+  const f = Math.pow(10, ds);
+  let total = Math.round(Math.abs(x) * 10000 * f);
+  const g = Math.floor(total / (10000 * f));
+  let rem = total - g * 10000 * f;
+  const m = Math.floor(rem / (100 * f));
+  rem = rem - m * 100 * f;
+  const si = String(Math.floor(rem / f)).padStart(2, '0');
+  const dec = ds > 0 ? ',' + String(rem % f).padStart(ds, '0') : '';
+  return (x < 0 ? '−' : '') + g + 'g ' + String(m).padStart(2, '0') + 'm ' + si + dec + 's';
+}
+/* Retorno de estado en un campo: ok / mal */
+function marcar(el, estado){
+  el.classList.remove('ok','bad');
+  if (estado === 1) el.classList.add('ok');
+  else if (estado === 0) el.classList.add('bad');
+}
+function fb(el, tipo, texto){
+  el.className = 'feedback ' + (tipo === 1 ? 'fb-good' : tipo === 0 ? 'fb-bad' : 'fb-neutral');
+  el.innerHTML = texto;
+  return tipo;
+}
+/* Formatea un ángulo en radianes como múltiplo exacto de π si el denominador es pequeño */
+function aPi(x){
+  const r = x / Math.PI;
+  for (let q = 1; q <= 24; q++){
+    const p = r * q;
+    if (Math.abs(p - Math.round(p)) < 1e-9){
+      const n = Math.round(p);
+      if (q === 1) return (n === 1 ? 'π' : n + 'π');
+      if (n === 1) return 'π/' + q;
+      return n + 'π/' + q;
+    }
+  }
+  return null;
+}
+/* Sincroniza el relleno visual de los sliders (solo estética) */
+function refrescaSliders(root){
+  $$('input[type=range]', root || document).forEach(function(r){
+    const p = (r.value - r.min) / (r.max - r.min) * 100;
+    r.style.background = 'linear-gradient(90deg,#16324f ' + p + '%,#cfd7de ' + p + '%)';
+    r.style.height = '6px';
+    r.style.borderRadius = '0';
+    r.style.appearance = 'none';
+    r.style.webkitAppearance = 'none';
+  });
+}
+</script>
+<style>
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:16px;height:16px;background:#16324f;border:2px solid #fff;
+  box-shadow:0 0 0 1px #16324f;cursor:pointer
+}
+input[type=range]::-moz-range-thumb{
+  width:14px;height:14px;background:#16324f;border:2px solid #fff;box-shadow:0 0 0 1px #16324f;cursor:pointer
+}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<header class="top"><div class="kicker">Día 1 · Generador A</div><h1>Generador · Conversiones de ángulos</h1><p class="sub">Cuatro niveles: un paso, forma compleja, cruce de sistemas y encadenada</p></header><nav class="strip"><a href="index.html">Índice</a><span class="sep">·</span><span class="act">Generador A</span><span class="sep">·</span><a href="02_sexagesimal_a_decimal.html">Lección 2 &rarr;</a><span class="sep">·</span><a href="03_centesimal.html">Lección 3 &rarr;</a></nav>
+<main>
+<p class="lead">Este generador produce ejercicios de conversión nuevos cada vez, con números distintos, y corrige la
+respuesta en el acto. Está organizado en los cuatro niveles de la ficha del curso: primero un solo paso, luego la
+vuelta a la forma compleja, después el cruce entre sistemas y, al final, la conversión encadenada. Conviene no pasar
+de nivel hasta sacar tres seguidos sin mirar la solución.</p>
+
+<h2>Cómo se usa</h2>
+<ol>
+  <li>Elige el nivel con los botones de arriba. El nivel 5 mezcla todos los anteriores al azar.</li>
+  <li>Lee el enunciado y escribe el resultado en los campos. Se admite coma o punto decimal, y no hacen falta los
+  símbolos de grado o de gonio.</li>
+  <li>Pulsa <strong>Comprobar</strong>. Si está bien, el campo se pone en verde; si no, en rojo, y el marcador cuenta
+  el intento. Después de dos intentos fallidos conviene abrir <strong>Ver solución</strong> en vez de seguir probando
+  números.</li>
+  <li>Cuando la respuesta sea correcta, pulsa <strong>Otro ejercicio</strong>.</li>
+</ol>
+<p class="tiny">Los márgenes están indicados en cada campo. En grados decimales y en gonios se admite un error de
+seis milésimas, de modo que redondear a dos decimales nunca se cuenta como fallo; en segundos, de medio segundo; en
+radianes, de dos diezmilésimas. Si el resultado se sale de esos márgenes, el error está en el método y no en el
+redondeo.</p>
+
+<h2>Practicar</h2>
+<div class="demo" id="maquina">
+  <p class="tat">Ejercicio <span id="numE">1</span> &nbsp;·&nbsp; <span id="tipoE">—</span></p>
+  <div class="botones" id="niveles" style="margin-bottom:6px">
+    <button class="ghost" data-n="1">Nivel 1 · un paso</button>
+    <button class="ghost" data-n="2">Nivel 2 · forma compleja</button>
+    <button class="ghost" data-n="3">Nivel 3 · cruce de sistemas</button>
+    <button class="ghost" data-n="4">Nivel 4 · encadenada</button>
+    <button class="ghost" data-n="5">Nivel 5 · mezcla</button>
+  </div>
+  <div id="enun" style="margin:16px 0 4px;font-size:19.5px;line-height:1.55"></div>
+  <div id="campos" style="margin:10px 0 4px"></div>
+  <div class="botones">
+    <button id="bCheck">Comprobar</button>
+    <button id="bOtro" class="ghost">Otro ejercicio</button>
+  </div>
+  <div class="feedback" id="fbk"></div>
+  <details id="soldet" style="margin-top:14px">
+    <summary style="cursor:pointer;font-size:16.5px;color:#16324f">Ver solución paso a paso</summary>
+    <div id="sol" style="margin-top:10px"></div>
+  </details>
+</div>
+
+<div class="readout" style="margin-top:-6px">
+  <div><b>Nivel</b><span id="mNiv">1</span></div>
+  <div><b>Aciertos</b><span id="mAci">0</span></div>
+  <div><b>Intentos</b><span id="mInt">0</span></div>
+  <div><b>Racha</b><span id="mRac">0</span></div>
+</div>
+
+<script>
+(function(){
+  const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  const TAN = g => Math.tan(g * Math.PI / 180);
+
+  let nivel = 1, nEjer = 0, aciertos = 0, intentos = 0, racha = 0, actual = null;
+
+  /* ---------- generadores de ejercicio ---------- */
+  function complejoSexa(){
+    const g = rnd(3, 350), m = rnd(0, 59), s = rnd(0, 59);
+    return {g:g, m:m, s:s, dec: g + m/60 + s/3600};
+  }
+  function complejoCent(){
+    const g = rnd(3, 390), m = rnd(0, 99), s = rnd(0, 99);
+    return {g:g, m:m, s:s, dec: g + m/100 + s/10000};
+  }
+
+  const TIPOS = {
+    /* --- nivel 1: un solo paso, salida decimal --- */
+    sexa_dec: function(){
+      const c = complejoSexa();
+      return {
+        titulo: 'Sexagesimal complejo → grados decimales',
+        enun: 'Convierte <span class="num">' + txtSexa(c.dec, 0) + '</span> a grados decimales.',
+        campos: [{et:'Resultado', suf:'°', tol:0.006, val:c.dec}],
+        sol: '<div class="formula">decimal = G + M/60 + S/3 600\n' +
+             '        = ' + c.g + ' + ' + c.m + '/60 + ' + c.s + '/3 600\n' +
+             '        = ' + c.g + ' + ' + fmt(c.m/60, 6) + ' + ' + fmt(c.s/3600, 6) + '\n' +
+             '        = ' + fmt(c.dec, 4) + '°</div>' +
+             '<p>Comprobación de sentido: el resultado tiene que quedar entre ' + c.g + '° y ' + (c.g+1) +
+             '°, y más cerca de abajo cuanto menores sean los minutos. Los minutos y segundos nunca se pegan ' +
+             'detrás de la coma.</p>'
+      };
+    },
+    cent_dec: function(){
+      const c = complejoCent();
+      return {
+        titulo: 'Centesimal complejo → gonios decimales',
+        enun: 'Convierte <span class="num">' + txtCentes(c.dec, 0) + '</span> a grados centesimales decimales.',
+        campos: [{et:'Resultado', suf:'g', tol:0.006, val:c.dec}],
+        sol: '<div class="formula">decimal = G + m/100 + s/10 000\n' +
+             '        = ' + c.g + ' + ' + c.m + '/100 + ' + c.s + '/10 000\n' +
+             '        = ' + fmt(c.dec, 4) + ' g</div>' +
+             '<p>Aquí el reparto es por 100, no por 60: la <span class="num">m</span> de minuto centesimal ' +
+             'no es un metro y la <span class="num">s</span> no es un segundo de tiempo.</p>'
+      };
+    },
+    sexa_rad: function(){
+      const c = complejoSexa();
+      const rad = c.dec * Math.PI / 180;
+      return {
+        titulo: 'Sexagesimal → radianes',
+        enun: 'Convierte <span class="num">' + txtSexa(c.dec, 0) + '</span> a radianes (valor decimal, 4 cifras).',
+        campos: [{et:'Resultado', suf:'rad', tol:0.0002, val:rad}],
+        sol: '<div class="formula">1)  a decimal:  ' + c.g + ' + ' + c.m + '/60 + ' + c.s + '/3 600 = ' +
+             fmt(c.dec, 4) + '°\n' +
+             '2)  a radianes: ' + fmt(c.dec, 4) + ' × π/180\n' +
+             '              = ' + fmt(c.dec, 4) + ' × 0,0174533\n' +
+             '              = ' + fmt(rad, 5) + ' rad</div>' +
+             '<p>Regla de control: un radián son unos 57°, así que un ángulo de ' + c.g + '° tiene que dar ' +
+             'menos que ' + Math.ceil(c.g / 57) + ' radianes.</p>'
+      };
+    },
+    cent_rad: function(){
+      const c = complejoCent();
+      const rad = c.dec * Math.PI / 200;
+      return {
+        titulo: 'Centesimal → radianes',
+        enun: 'Convierte <span class="num">' + txtCentes(c.dec, 0) + '</span> a radianes (valor decimal, 4 cifras).',
+        campos: [{et:'Resultado', suf:'rad', tol:0.0002, val:rad}],
+        sol: '<div class="formula">1)  a decimal:  ' + c.g + ' + ' + c.m + '/100 + ' + c.s + '/10 000 = ' +
+             fmt(c.dec, 4) + ' g\n' +
+             '2)  a radianes: ' + fmt(c.dec, 4) + ' × π/200 = ' + fmt(rad, 5) + ' rad</div>' +
+             '<p>Ojo con el divisor: es 200, no 180. Con 200 g = π rad, la vuelta completa son 2π radianes ' +
+             'también por esta vía.</p>'
+      };
+    },
+
+    /* --- nivel 2: decimal → forma compleja --- */
+    dec_sexa: function(){
+      const c = complejoSexa();
+      const d = aSexa(c.dec);
+      return {
+        titulo: 'Grados decimales → forma compleja',
+        enun: 'Expresa <span class="num">' + fmt(c.dec, 4) + '°</span> en grados, minutos y segundos.',
+        campos: [
+          {et:'Grados', suf:'°', tol:0.5, val:d.g, ent:true},
+          {et:'Minutos', suf:'′', tol:0.5, val:d.m, ent:true},
+          {et:'Segundos', suf:'″', tol:0.6, val:d.s}
+        ],
+        sol: '<div class="formula">G = parte entera = ' + d.g + '°\n' +
+             'decimal restante = ' + fmt(c.dec, 4) + ' − ' + d.g + ' = ' + fmt(c.dec - d.g, 5) + '\n' +
+             'M = ' + fmt(c.dec - d.g, 5) + ' × 60 = ' + fmt((c.dec - d.g)*60, 4) + '  → ' + d.m + '′\n' +
+             'resto = ' + fmt((c.dec - d.g)*60 - d.m, 4) + '\n' +
+             'S = ' + fmt((c.dec - d.g)*60 - d.m, 4) + ' × 60 = ' + fmt(d.s, 2) + '″</div>' +
+             '<p>Resultado: <strong>' + txtSexa(c.dec, 1) + '</strong>. Si los segundos salieran 59,9 o más, ' +
+             'se suben a un minuto y los segundos pasan a cero: no existe 12° 34′ 60″.</p>'
+      };
+    },
+    dec_cent: function(){
+      const c = complejoCent();
+      const d = aCentes(c.dec);
+      return {
+        titulo: 'Gonios decimales → forma compleja',
+        enun: 'Expresa <span class="num">' + fmt(c.dec, 4) + ' g</span> en gonios, minutos y segundos centesimales.',
+        campos: [
+          {et:'Gonios', suf:'g', tol:0.5, val:d.g, ent:true},
+          {et:'Minutos', suf:'m', tol:0.5, val:d.m, ent:true},
+          {et:'Segundos', suf:'s', tol:0.6, val:d.s}
+        ],
+        sol: '<div class="formula">G = ' + d.g + ' g\n' +
+             'resto = ' + fmt(c.dec - d.g, 5) + '\n' +
+             'm = ' + fmt(c.dec - d.g, 5) + ' × 100 = ' + fmt((c.dec - d.g)*100, 4) + '  → ' + d.m + 'm\n' +
+             's = resto × 100 = ' + fmt(d.s, 2) + 's</div>' +
+             '<p>Resultado: <strong>' + txtCentes(c.dec, 1) + '</strong>. El reparto es por 100: no se usan ' +
+             'ni el 60 ni el 3 600.</p>'
+      };
+    },
+    rad_sexa: function(){
+      const grados = pick([15, 20, 30, 36, 45, 60, 72, 75, 90, 108, 120, 135, 144, 150]);
+      const rad = grados * Math.PI / 180;
+      const d = aSexa(grados);
+      return {
+        titulo: 'Radianes → sexagesimal',
+        enun: 'Convierte <span class="num">' + fmt(rad, 4) + ' rad</span> a grados sexagesimales.',
+        campos: [{et:'Resultado', suf:'°', tol:0.006, val:grados}],
+        sol: '<div class="formula">°  = rad × 180/π\n' +
+             '   = ' + fmt(rad, 4) + ' × 57,29578\n' +
+             '   = ' + fmt(grados, 3) + '°</div>' +
+             '<p>Ese ángulo es exactamente <strong>' + txtSexa(grados, 0) + '</strong>, y en forma exacta con π ' +
+             'equivale a ' + (aPi(rad) || '—') + ' rad. Con 180° = π rad, multiplicar por 180/π deshace la ' +
+             'conversión anterior.</p>'
+      };
+    },
+
+    /* --- nivel 3: cruce entre los dos sistemas complejos --- */
+    sexa_cent: function(){
+      const c = complejoSexa();
+      const gon = c.dec * 10 / 9;
+      const dc = aCentes(gon);
+      return {
+        titulo: 'Sexagesimal → centesimal',
+        enun: 'Convierte <span class="num">' + txtSexa(c.dec, 0) + '</span> a grados centesimales, en forma compleja.',
+        campos: [
+          {et:'Gonios', suf:'g', tol:0.5, val:dc.g, ent:true},
+          {et:'Minutos', suf:'m', tol:0.5, val:dc.m, ent:true},
+          {et:'Segundos', suf:'s', tol:0.8, val:dc.s}
+        ],
+        sol: '<div class="formula">1)  a decimal:  ' + fmt(c.dec, 5) + '°\n' +
+             '2)  factor °→g: × 10/9\n' +
+             '    ' + fmt(c.dec, 5) + ' × 1,111111 = ' + fmt(gon, 5) + ' g\n' +
+             '3)  descomponer: ' + txtCentes(gon, 1) + '</div>' +
+             '<p>El número de gonios siempre es mayor que el de grados, porque un gonio es más pequeño. ' +
+             'Si te sale al revés, has multiplicado por 9/10 en lugar de 10/9.</p>'
+      };
+    },
+    cent_sexa: function(){
+      const c = complejoCent();
+      const deg = c.dec * 9 / 10;
+      const d = aSexa(deg);
+      return {
+        titulo: 'Centesimal → sexagesimal',
+        enun: 'Convierte <span class="num">' + txtCentes(c.dec, 0) + '</span> a grados sexagesimales, en forma compleja.',
+        campos: [
+          {et:'Grados', suf:'°', tol:0.5, val:d.g, ent:true},
+          {et:'Minutos', suf:'′', tol:0.5, val:d.m, ent:true},
+          {et:'Segundos', suf:'″', tol:0.8, val:d.s}
+        ],
+        sol: '<div class="formula">1)  a decimal:  ' + fmt(c.dec, 5) + ' g\n' +
+             '2)  factor g→°: × 9/10\n' +
+             '    ' + fmt(c.dec, 5) + ' × 0,9 = ' + fmt(deg, 5) + '°\n' +
+             '3)  descomponer: ' + txtSexa(deg, 1) + '</div>' +
+             '<p>Aquí el número baja: 400 g son 360°, así que los grados son siempre menos que los gonios.</p>'
+      };
+    },
+
+    /* --- nivel 4: encadenada --- */
+    encad: function(){
+      const c = complejoSexa();
+      const gon = c.dec * 10 / 9;
+      const rad = c.dec * Math.PI / 180;
+      return {
+        titulo: 'Conversión encadenada: ° ′ ″ → g → rad',
+        enun: 'Convierte <span class="num">' + txtSexa(c.dec, 0) + '</span> a gonios decimales y, con ese valor, ' +
+              'a radianes.',
+        campos: [
+          {et:'Gonios', suf:'g', tol:0.006, val:gon},
+          {et:'Radianes', suf:'rad', tol:0.0002, val:rad}
+        ],
+        sol: '<div class="formula">1)  a decimal:   ' + fmt(c.dec, 5) + '°\n' +
+             '2)  ° → g:       ' + fmt(c.dec, 5) + ' × 10/9 = ' + fmt(gon, 5) + ' g\n' +
+             '3)  g → rad:     ' + fmt(gon, 5) + ' × π/200 = ' + fmt(rad, 5) + ' rad\n\n' +
+             'Vía directa (comprobación): ' + fmt(c.dec, 5) + ' × π/180 = ' + fmt(rad, 5) + ' rad</div>' +
+             '<p>Las dos vías tienen que dar lo mismo, y por eso la conversión encadenada sirve de autocomprobación: ' +
+             'si el segundo resultado no coincide con el directo, el error está en el primer paso y se arrastra.</p>'
+      };
+    }
+  };
+
+  const POR_NIVEL = {
+    1: ['sexa_dec', 'cent_dec', 'sexa_rad', 'cent_rad'],
+    2: ['dec_sexa', 'dec_cent', 'rad_sexa'],
+    3: ['sexa_cent', 'cent_sexa'],
+    4: ['encad'],
+    5: ['sexa_dec', 'cent_dec', 'sexa_rad', 'cent_rad', 'dec_sexa', 'dec_cent', 'rad_sexa',
+        'sexa_cent', 'cent_sexa', 'encad']
+  };
+
+  /* ---------- interfaz ---------- */
+  function nuevo(){
+    const tipo = pick(POR_NIVEL[nivel]);
+    actual = TIPOS[tipo]();
+    nEjer++;
+    $('#numE').textContent = nEjer;
+    $('#tipoE').textContent = actual.titulo;
+    $('#enun').innerHTML = actual.enun;
+    $('#fbk').className = 'feedback';
+    $('#fbk').innerHTML = '';
+    $('#soldet').open = false;
+    const cont = $('#campos');
+    cont.innerHTML = '';
+    actual.campos.forEach(function(c, i){
+      const fila = document.createElement('div');
+      fila.style.cssText = 'display:flex;gap:10px;align-items:center;margin:8px 0;flex-wrap:wrap';
+      const lab = document.createElement('span');
+      lab.textContent = c.et;
+      lab.style.cssText = 'min-width:96px;font-size:17px;color:#3c4a58';
+      const inp = document.createElement('input');
+      inp.type = 'text';
+      inp.inputMode = 'decimal';
+      inp.id = 'c' + i;
+      inp.style.width = '150px';
+      inp.addEventListener('keydown', function(e){ if (e.key === 'Enter') comprobar(); });
+      const suf = document.createElement('span');
+      suf.className = 'num';
+      suf.textContent = c.suf;
+      suf.style.cssText = 'font-size:18px;color:#3c4a58';
+      fila.appendChild(lab); fila.appendChild(inp); fila.appendChild(suf);
+      cont.appendChild(fila);
+    });
+    $('#sol').innerHTML = actual.sol;
+    const primero = $('#c0');
+    if (primero) primero.focus();
+  }
+
+  function comprobar(){
+    intentos++;
+    let todoBien = true, vacio = false, fallos = [];
+    actual.campos.forEach(function(c, i){
+      const inp = $('#c' + i);
+      const v = leerNum(inp.value);
+      if (inp.value.trim() === '') vacio = true;
+      const bien = isFinite(v) && Math.abs(v - c.val) <= c.tol;
+      marcar(inp, bien ? 1 : 0);
+      if (!bien){ todoBien = false; fallos.push(c.et.toLowerCase()); }
+    });
+    if (vacio){
+      const n = actual.campos.length;
+      fb($('#fbk'), null, 'Falta algún campo por rellenar. ' + (n > 1
+        ? 'Hay ' + n + ' casillas y hay que rellenarlas todas.'
+        : 'Escribe el resultado numérico antes de comprobar.'));
+      return;
+    }
+    if (todoBien){
+      aciertos++; racha++;
+      fb($('#fbk'), 1, 'Correcto. ' + (racha >= 3 ? 'Tres seguidas: puedes subir de nivel.' : 'Sigue así.'));
+    } else {
+      racha = 0;
+      fb($('#fbk'), 0, 'Todavía no. Revisa ' + (fallos.length === 1 ? 'el valor de ' + fallos[0]
+        : 'los valores de ' + fallos.join(', ')) + '. Pregunta clave: ¿has dividido entre 60 (o entre 100) ' +
+        'o has pegado las cifras detrás de la coma?');
+    }
+    $('#mAci').textContent = aciertos;
+    $('#mInt').textContent = intentos;
+    $('#mRac').textContent = racha;
+  }
+
+  $$('#niveles button').forEach(function(b){
+    b.addEventListener('click', function(){
+      nivel = parseInt(b.dataset.n, 10);
+      $('#mNiv').textContent = nivel;
+      $$('#niveles button').forEach(function(o){ o.classList.add('ghost'); });
+      b.classList.remove('ghost');
+      nuevo();
+    });
+  });
+  $('#bCheck').addEventListener('click', comprobar);
+  $('#bOtro').addEventListener('click', nuevo);
+  /* gancho de depuración: permite comprobar el ejercicio desde fuera sin mostrarlo */
+  window.__topoDebug = function(){
+    return {titulo: $('#tipoE').textContent, enunciado: $('#enun').textContent,
+            respuestas: actual.campos.map(function(c){ return c.val; }),
+            tolerancias: actual.campos.map(function(c){ return c.tol; })};
+  };
+  nuevo();
+})();
+</script>
+
+<h2>Qué se practica en cada nivel</h2>
+<table>
+  <tr><th style="width:20%">Nivel</th><th>Qué aparece</th><th style="width:27%">Lo que se entrena</th></tr>
+  <tr><td>1 · un paso</td><td>Complejo → decimal, en los dos sistemas, y a radianes</td>
+      <td>El reparto por 60 o por 100, sin más</td></tr>
+  <tr><td>2 · forma compleja</td><td>Decimal → complejo, y radianes → grados</td>
+      <td>El reparto inverso y el acarreo de los segundos</td></tr>
+  <tr><td>3 · cruce</td><td>Sexagesimal complejo ↔ centesimal complejo</td>
+      <td>Los factores 10/9 y 9/10 pasando siempre por decimal</td></tr>
+  <tr><td>4 · encadenada</td><td>° ′ ″ → g → rad, con comprobación por vía directa</td>
+      <td>Que un error del primer paso no se disimule en el segundo</td></tr>
+  <tr><td>5 · mezcla</td><td>Todo lo anterior al azar</td>
+      <td>Reconocer qué tipo de conversión pide el enunciado</td></tr>
+</table>
+
+<h2>Los tres errores que aparecen una y otra vez</h2>
+<ol>
+  <li><p><strong>Pegar las cifras detrás de la coma.</strong> Escribir 24,3618 cuando el ángulo es 24° 36′ 18″.
+  Los minutos se dividen entre 60, no se colocan detrás de la coma.</p></li>
+  <li><p><strong>Usar el factor del otro sistema.</strong> De grados a gonios se multiplica por 10/9 (el número
+  sube); de gonios a grados, por 9/10 (el número baja). Si el resultado va en la dirección contraria a la esperada,
+  el factor está invertido.</p></li>
+  <li><p><strong>Dejar los segundos en 60 o los minutos en 60.</strong> Tras cualquier redondeo hay que mirar si
+  el último orden ha llegado a su tope y, si es así, arrastrar al anterior. En centesimal el tope es 100, no 60.</p></li>
+</ol>
+
+<p>Cuando el nivel 4 salga sin mirar la solución y sin dudar del factor, el bloque de conversiones está cerrado y lo
+que queda es trigonometría: el siguiente paso es el generador de
+<span>triángulo rectángulo</span>, y antes de él, la
+<a href="02_sexagesimal_a_decimal.html">lección 2</a> y la <a href="03_centesimal.html">lección 3</a> si algún reparto
+todavía se atasca.</p>
+</main>
+<nav class="pager"><a href="05_razones_trigonometricas.html">&larr; Seno, coseno y tangente</a><span class="sp"></span><a href="index.html">Índice</a><span class="sp"></span><a href="index.html">Volver al índice &rarr;</a></nav>
+</div>
+<script>refrescaSliders();</script>
+</body>
+</html>

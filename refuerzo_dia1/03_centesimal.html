@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grados centesimales y el cruce 9/10</title>
+<style>
+:root{
+  --ink:#1b2530; --navy:#16324f; --navy2:#2c5a84; --line:#d3d9df; --bg:#f7f8f9;
+  --soft:#edf1f4; --ok:#1f6b3a; --bad:#8f2222; --warnc:#7a5a00;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:19px/1.62 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+.wrap{max-width:980px;margin:0 auto;padding:26px 26px 90px}
+header.top{border-bottom:2px solid var(--navy);padding-bottom:12px;margin-bottom:26px}
+.kicker{font-size:13.5px;letter-spacing:.14em;text-transform:uppercase;color:#5b6875;font-weight:600}
+h1{font-size:31px;line-height:1.22;margin:.22em 0 .28em;color:var(--navy);font-weight:660;letter-spacing:-.01em}
+.sub{font-size:19px;color:#3c4a58;margin:0}
+h2{font-size:22.5px;margin:2.1em 0 .45em;color:var(--navy);font-weight:650;
+   border-left:4px solid var(--navy);padding-left:11px;line-height:1.3}
+h2:first-of-type{margin-top:1.2em}
+h3{font-size:19.5px;margin:1.5em 0 .3em;font-weight:650;color:#22303d}
+h4{font-size:17px;margin:1.2em 0 .3em;font-weight:650;color:#22303d}
+p{margin:.62em 0}
+.lead{font-size:20px;color:#2c3a48}
+ul,ol{padding-left:1.4em;margin:.55em 0}
+li{margin:.3em 0}
+li>ul,li>ol{margin:.3em 0}
+a{color:var(--navy2)}
+strong{font-weight:660}
+.num{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.formula{
+  font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:17px;line-height:1.7;
+  background:var(--soft);border-left:3px solid var(--navy);padding:11px 15px;margin:1em 0;
+  overflow-x:auto;white-space:pre-wrap;
+}
+.formula em{font-style:normal;color:var(--navy);font-weight:600}
+.demo{background:#fff;border:1px solid var(--line);padding:16px 16px 18px;margin:1.3em 0}
+.demo .tat{font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:#5b6875;
+  font-weight:650;margin:0 0 12px}
+.ctrl{display:grid;grid-template-columns:165px 1fr 135px;gap:12px;align-items:center;margin:.55em 0}
+.ctrl label{font-size:17px}
+.ctrl .val{text-align:right;font-family:ui-monospace,monospace;font-size:18px;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:#16324f;height:22px}
+input[type=number],input[type=text],select{
+  font:inherit;font-size:18px;padding:6px 9px;border:1px solid #b7c0c9;background:#fff;
+  color:var(--ink);border-radius:0;width:100%
+}
+input:focus,select:focus,button:focus{outline:2px solid var(--navy2);outline-offset:1px}
+input.ok{border-color:var(--ok);background:#f1f7f3}
+input.bad{border-color:var(--bad);background:#fdf3f3}
+button{
+  font:inherit;font-size:16px;padding:7px 15px;border:1px solid var(--navy);border-radius:0;
+  background:var(--navy);color:#fff;cursor:pointer
+}
+button:hover{background:#1d4368}
+button.ghost{background:#fff;color:var(--navy)}
+button.ghost:hover{background:var(--soft)}
+.botones{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:9px;margin:12px 0 0}
+.readout div{background:var(--soft);padding:8px 11px}
+.readout b{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  color:#5b6875;font-weight:650;margin-bottom:2px}
+.readout span{font-family:ui-monospace,monospace;font-size:18px;font-variant-numeric:tabular-nums}
+.note{background:#fbfaf4;border-left:3px solid #b08a2e;padding:11px 15px;margin:1.1em 0}
+.warn{background:#fcf4f4;border-left:3px solid var(--bad);padding:11px 15px;margin:1.1em 0}
+.good{background:#f1f7f3;border-left:3px solid var(--ok);padding:11px 15px;margin:1.1em 0}
+.feedback{margin-top:11px;font-size:17.5px;line-height:1.55}
+.feedback.good::before{content:"";}
+.fb-good{color:var(--ok)}
+.fb-bad{color:var(--bad)}
+.fb-neutral{color:#3c4a58}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:17px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--soft);font-weight:650;font-size:16px}
+td.num,th.num{font-family:ui-monospace,monospace;font-variant-numeric:tabular-nums}
+nav.strip{display:flex;gap:15px;align-items:center;flex-wrap:wrap;font-size:15.5px;
+  border-bottom:1px solid var(--line);padding:0 0 10px;margin:-4px 0 24px;color:#5b6875}
+nav.strip a{color:var(--navy2);text-decoration:none;border-bottom:1px solid #c5d3e0}
+nav.strip a:hover{border-bottom-color:var(--navy2)}
+nav.strip .act{color:#5b6875;font-weight:650}
+nav.strip .sep{color:#ccd4db}
+nav.pager{display:flex;justify-content:space-between;gap:14px;margin-top:54px;padding-top:16px;
+  border-top:1px solid var(--line);font-size:16px}
+nav.pager a{color:var(--navy);text-decoration:none;border-bottom:1px solid #a9bdd0;padding-bottom:1px}
+nav.pager a:hover{border-bottom-color:var(--navy)}
+nav.pager .sp{flex:1}
+svg{display:block;max-width:100%;height:auto;font-family:ui-monospace,monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.tiny{font-size:15.5px;color:#5b6875;line-height:1.5}
+.pasos{counter-reset:p;list-style:none;padding-left:0}
+.pasos>li{counter-increment:p;position:relative;padding-left:42px;margin:.85em 0}
+.pasos>li::before{
+  content:counter(p);position:absolute;left:0;top:.05em;width:28px;height:28px;border:1.5px solid var(--navy);
+  color:var(--navy);font-size:15px;font-weight:700;text-align:center;line-height:25px;
+  font-family:ui-monospace,monospace
+}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin:1.2em 0}
+.card{background:#fff;border:1px solid var(--line);padding:14px 16px;display:block;
+  text-decoration:none;color:var(--ink)}
+.card:hover{border-color:var(--navy);background:#fbfcfd}
+.card .n{font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:#5b6875;font-weight:650}
+.card .t{font-size:19px;color:var(--navy);font-weight:650;margin:.15em 0 .25em;line-height:1.28;min-height:2.56em}
+.card .d{font-size:16px;color:#46545f;line-height:1.45}
+.tag{display:inline-block;font-size:13px;border:1px solid var(--line);background:var(--soft);
+  padding:1px 7px;margin:4px 4px 0 0;color:#46545f}
+kbd{font-family:ui-monospace,monospace;font-size:15px;border:1px solid #b7c0c9;border-bottom-width:2px;
+  padding:1px 5px;background:#fff}
+.checkline{display:flex;gap:10px;align-items:baseline;margin:.4em 0}
+.checkline input[type=checkbox]{width:18px;height:18px;accent-color:#16324f;flex:none}
+@media (max-width:740px){
+  body{font-size:18px}
+  .wrap{padding:18px 16px 70px}
+  h1{font-size:26px} h2{font-size:20.5px}
+  .ctrl{grid-template-columns:110px 1fr 105px;gap:8px}
+  .grid2{grid-template-columns:1fr}
+}
+@media print{
+  body{background:#fff}
+  .demo{break-inside:avoid}
+  nav.pager{display:none}
+}
+</style>
+
+<script>
+/* ---------- utilidades comunes (idénticas en todas las páginas) ---------- */
+const $  = (s, r) => (r||document).querySelector(s);
+const $$ = (s, r) => Array.from((r||document).querySelectorAll(s));
+
+/* Lee un número escrito por el alumno: admite coma o punto decimal,
+   espacios, el símbolo de grado y el sufijo de gonios. */
+function leerNum(v){
+  if (typeof v === 'number') return v;
+  let s = String(v == null ? '' : v).trim();
+  s = s.replace(/\s+/g,'').replace(/[°º]/g,'').replace(/(rad|gon|g|m|s)$/i,'');
+  if (s === '') return NaN;
+  if (s.includes(',') && s.includes('.')) s = s.replace(/\./g,'').replace(',', '.');
+  else if (s.includes(',')) s = s.replace(',', '.');
+  return parseFloat(s);
+}
+/* Formato español: coma decimal, cifras fijas. */
+function fmt(x, d){
+  d = (d === undefined) ? 2 : d;
+  if (!isFinite(x)) return '—';
+  return x.toFixed(d).replace('.', ',');
+}
+/* Sexagesimal: {g,m,s} a partir de grados decimales */
+function aSexa(x){
+  let neg = x < 0; x = Math.abs(x);
+  let g = Math.floor(x + 1e-12);
+  let mm = (x - g) * 60;
+  let m = Math.floor(mm + 1e-9);
+  let s = (mm - m) * 60;
+  if (s >= 59.9995){ s = 0; m += 1; }
+  if (m >= 60){ m -= 60; g += 1; }
+  return {g:(neg?-g:g), m:m, s:s};
+}
+/* Centesimal: {g,m,s} */
+function aCentes(x){
+  let neg = x < 0; x = Math.abs(x);
+  let g = Math.floor(x + 1e-12);
+  let mm = (x - g) * 100;
+  let m = Math.floor(mm + 1e-9);
+  let s = (mm - m) * 100;
+  if (s >= 99.995){ s = 0; m += 1; }
+  if (m >= 100){ m -= 100; g += 1; }
+  return {g:(neg?-g:g), m:m, s:s};
+}
+function txtSexa(x, ds){
+  ds = (ds === undefined) ? 1 : ds;
+  const f = Math.pow(10, ds);
+  let total = Math.round(Math.abs(x) * 3600 * f);
+  const g = Math.floor(total / (3600 * f));
+  let rem = total - g * 3600 * f;
+  const m = Math.floor(rem / (60 * f));
+  rem = rem - m * 60 * f;
+  const si = String(Math.floor(rem / f)).padStart(2, '0');
+  const dec = ds > 0 ? ',' + String(rem % f).padStart(ds, '0') : '';
+  return (x < 0 ? '−' : '') + g + '° ' + String(m).padStart(2, '0') + '\u2032 ' + si + dec + '\u2033';
+}
+function txtCentes(x, ds){
+  ds = (ds === undefined) ? 1 : ds;
+  const f = Math.pow(10, ds);
+  let total = Math.round(Math.abs(x) * 10000 * f);
+  const g = Math.floor(total / (10000 * f));
+  let rem = total - g * 10000 * f;
+  const m = Math.floor(rem / (100 * f));
+  rem = rem - m * 100 * f;
+  const si = String(Math.floor(rem / f)).padStart(2, '0');
+  const dec = ds > 0 ? ',' + String(rem % f).padStart(ds, '0') : '';
+  return (x < 0 ? '−' : '') + g + 'g ' + String(m).padStart(2, '0') + 'm ' + si + dec + 's';
+}
+/* Retorno de estado en un campo: ok / mal */
+function marcar(el, estado){
+  el.classList.remove('ok','bad');
+  if (estado === 1) el.classList.add('ok');
+  else if (estado === 0) el.classList.add('bad');
+}
+function fb(el, tipo, texto){
+  el.className = 'feedback ' + (tipo === 1 ? 'fb-good' : tipo === 0 ? 'fb-bad' : 'fb-neutral');
+  el.innerHTML = texto;
+  return tipo;
+}
+/* Formatea un ángulo en radianes como múltiplo exacto de π si el denominador es pequeño */
+function aPi(x){
+  const r = x / Math.PI;
+  for (let q = 1; q <= 24; q++){
+    const p = r * q;
+    if (Math.abs(p - Math.round(p)) < 1e-9){
+      const n = Math.round(p);
+      if (q === 1) return (n === 1 ? 'π' : n + 'π');
+      if (n === 1) return 'π/' + q;
+      return n + 'π/' + q;
+    }
+  }
+  return null;
+}
+/* Sincroniza el relleno visual de los sliders (solo estética) */
+function refrescaSliders(root){
+  $$('input[type=range]', root || document).forEach(function(r){
+    const p = (r.value - r.min) / (r.max - r.min) * 100;
+    r.style.background = 'linear-gradient(90deg,#16324f ' + p + '%,#cfd7de ' + p + '%)';
+    r.style.height = '6px';
+    r.style.borderRadius = '0';
+    r.style.appearance = 'none';
+    r.style.webkitAppearance = 'none';
+  });
+}
+</script>
+<style>
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:16px;height:16px;background:#16324f;border:2px solid #fff;
+  box-shadow:0 0 0 1px #16324f;cursor:pointer
+}
+input[type=range]::-moz-range-thumb{
+  width:14px;height:14px;background:#16324f;border:2px solid #fff;box-shadow:0 0 0 1px #16324f;cursor:pointer
+}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<header class="top"><div class="kicker">Día 1 · Peldaño 2-3</div><h1>Grados centesimales y el cruce 9/10</h1><p class="sub">Base 100, la m que no es un metro, y el cambio entre los dos sistemas complejos</p></header><nav class="strip"><a href="index.html">Índice</a><span class="sep">·</span><span class="act">Lección 3</span><span class="sep">·</span><a href="gen_01_conversiones.html">Generador A &rarr;</a></nav>
+<main>
+<p class="lead">El sistema centesimal existe por una razón muy poco romántica: hace que las cuentas de la libreta de campo se
+puedan hacer de cabeza. La vuelta se parte en 400 grados centesimales y cada uno se subdivide en 100 y en 100, todo
+en base diez. El precio que se paga por esa comodidad es que hay que saber pasar de un sistema al otro, y ahí está el
+cruce 9/10, que es la parte de la ficha que más errores acumula.</p>
+
+<h2>1. La vuelta partida en 400 partes</h2>
+<p>En el sistema centesimal la vuelta completa son <span class="num">400 g</span>. A esa unidad se la llama
+<strong>grado centesimal</strong>, y en la práctica se le dice <em>gonio</em> (o <em>grado</em> a secas cuando el
+contexto lo deja claro, cosa que casi nunca ocurre, y de ahí vienen la mitad de los líos). El reparto sigue el mismo
+esquema que en sexagesimal, pero con otra base: cada grado se parte en 100 partes y cada una de esas partes, en otras
+100.</p>
+<div class="formula">1 vuelta = 400 g     1 g = 100 m     1 m = 100 s     ⇒     1 g = 10 000 s</div>
+<p>El superíndice de la unidad es una <em>g</em> minúscula: se llama gonio y no tiene nada que ver con la gravedad ni
+con los gramos. Los dos órdenes inferiores se escriben con <em>m</em> y con <em>s</em>, y esa elección de letras es
+la que ha arruinado la primera clase de topografía de mucha gente.</p>
+
+<div class="warn">
+<p><strong>La trampa de las letras.</strong> Esa <span class="num">m</span> no es un metro, y esa
+<span class="num">s</span> no es un segundo de tiempo. Son minutos y segundos <em>centesimales</em>, y son
+fracciones de ángulo. Un ángulo de «42 g 35 m 60 s» no mide 42 metros: mide 42,3560 gonios, que son unos 38,12
+grados. Cuando veas una <em>g</em> acompañando al número, todo lo que va detrás es ángulo, por mucho que la letra
+siguiente sea la misma que usas para medir una parcela.</p>
+</div>
+
+<h2>2. Por qué la topografía adoptó la base 100</h2>
+<p>La razón no es científica, es de taller. Imagina una libreta con doscientas visuales anotadas a mano, cada una con
+su ángulo de limbo, y una tarde para reducirlas. Con gonios, cada ángulo ya está en forma decimal sin hacer nada:</p>
+<div class="formula">42 g 35 m 60 s   →   42,3560 g        (basta con correr la coma)
+42° 35′ 60″      →   42 + 35/60 + 60/3 600 = 42,6°   (hay que dividir dos veces)</div>
+<p>En base 100, sumar una columna de ángulos es sumar decimales alineando la coma; hacer la media de dos lecturas es
+dividir entre 2 sin acarreos; y comprobar una visual repetida es restar dos números y ver si la diferencia es pequeña.
+Con base 60 hay que hacer dos acarreos por suma y tres por división, y en una libreta de doscientas filas eso son
+horas y errores.</p>
+<p>El otro motivo es el instrumento. Los limbos de los goniómetros se fabricaban dividiendo el círculo en 400 partes
+iguales, que se marcan en el taller con reglas y mesas divisorias de forma mucho más sencilla que 360. Por eso
+muchas estaciones totales vienen configuradas de fábrica en gonios, y por eso el que llega a una obra y no cambia la
+configuración se pasa media mañana midiendo «mal» sin saberlo. La lección sobre gonios y coordenadas lo trata con
+detalle, porque es el error más caro de todos.</p>
+<p>Conviene dejar claro que el sistema centesimal no es más preciso ni más moderno: es más <em>cómodo</em>. Un gonio
+es más pequeño que un grado, así que un mismo ángulo tiene un número mayor en gonios, pero la precisión la da el
+instrumento, no la unidad.</p>
+
+<h2>3. El reparto: de complejo centesimal a decimal y vuelta</h2>
+<p>La fórmula es exactamente la misma que en sexagesimal, cambiando los doses por cienes:</p>
+<div class="formula">dec(g) = G + M/100 + S/10 000</div>
+<ol class="pasos">
+  <li><p>El grado centesimal se parte en 100 partes iguales y cada una es un minuto centesimal, de modo que un
+  minuto vale una centésima de gonio:</p>
+  <div class="formula">1 g = 100 m   ⇒   1 m = 1/100 g = 0,01 g</div></li>
+
+  <li><p>Cada minuto se parte en otras 100, así que un segundo centesimal es una diezmilésima parte del gonio:</p>
+  <div class="formula">1 m = 100 s   ⇒   1 s = 1/10 000 g = 0,0001 g</div></li>
+
+  <li><p>Con eso, el reparto de 42 g 35 m 60 s sale sin calculadora, moviendo la coma dos veces:</p>
+  <div class="formula">42 g 35 m 60 s  =  42 + 35/100 + 60/10 000
+                  =  42 + 0,35 + 0,006
+                  =  <em>42,3560 g</em></div></li>
+</ol>
+<p>Fíjate en que el resultado tiene cuatro decimales y no dos: los dos primeros son los minutos y los dos últimos, los
+segundos. En centesimal, la forma compleja y la decimal son la misma cadena de cifras con la coma puesta en otro
+sitio. Esa es toda la gracia del sistema y también su única trampa, porque invita a escribir 42,35 y olvidarse los
+sesenta segundos, que valen 0,006.</p>
+<p>Para volver, el reparto es el mismo de la lección anterior con la base cambiada: la parte entera son los gonios, el
+resto se multiplica por 100 para sacar minutos, y lo que sobre se vuelve a multiplicar por 100 para sacar segundos.</p>
+
+<h2>4. De dónde sale el 9/10</h2>
+<p>Las dos escalas miden la misma vuelta, solo que la parten en trozos distintos. Eso basta para relacionarlas: si 360
+grados y 400 gonios son la misma vuelta, un grado vale 400/360 gonios, y simplificando esa fracción aparece el factor
+de todo el capítulo.</p>
+<ol class="pasos">
+  <li><p>Igualo la vuelta en los dos sistemas:</p>
+  <div class="formula">360°  =  400 g</div></li>
+  <li><p>Despejo cuántos gonios es un grado, dividiendo los dos miembros entre 360:</p>
+  <div class="formula">1°  =  400/360 g  =  10/9 g  =  1,1111… g</div></li>
+  <li><p>Y al revés, despejando el grado, divido entre 400:</p>
+  <div class="formula">1 g  =  360/400 °  =  9/10 °  =  0,9°</div></li>
+  <li><p>Por tanto, para pasar de grados a gonios se multiplica por 10/9, y para pasar de gonios a grados se
+  multiplica por 9/10. El segundo factor tiene un atajo que se hace de cabeza en obra, porque multiplicar por 0,9 es
+  restarle al número su décima parte: 85,2540 g menos 8,5254 g (su décima) da 76,7286°, que es el valor exacto. El
+  primero no tiene atajo cómodo y se hace con la calculadora.</p></li>
+</ol>
+<div class="note">
+<p><strong>La regla que evita el factor invertido.</strong> Como un gonio es más pequeño que un grado, hacen falta
+<em>más</em> gonios para el mismo giro: el número en gonios siempre es mayor que el número en grados. Un ángulo de
+90° son 100 g, no 81 g. Si al convertir te sale un número menor del que tenías y vas de grados a gonios, has
+invertido el factor. No hay que recordar cuál es 10/9 y cuál 9/10: basta con saber en qué sentido crece el
+número.</p>
+</div>
+<p>Con eso, las equivalencias que se usan a diario en el campo se calculan en dos segundos:</p>
+<table>
+  <tr><th>Grados sexagesimales</th><th>Gonios</th><th>Cómo se obtiene</th></tr>
+  <tr><td class="num">0°</td><td class="num">0 g</td><td>el origen</td></tr>
+  <tr><td class="num">45°</td><td class="num">50 g</td><td>45 × 10/9</td></tr>
+  <tr><td class="num">90°</td><td class="num">100 g</td><td>el ángulo recto</td></tr>
+  <tr><td class="num">180°</td><td class="num">200 g</td><td>media vuelta</td></tr>
+  <tr><td class="num">270°</td><td class="num">300 g</td><td>tres cuartos</td></tr>
+  <tr><td class="num">360°</td><td class="num">400 g</td><td>vuelta completa</td></tr>
+  <tr><td class="num">1°</td><td class="num">1,1111 g</td><td>1 g 11 m 11,1 s</td></tr>
+  <tr><td class="num">30°</td><td class="num">33,3333 g</td><td>33 g 33 m 33,3 s</td></tr>
+</table>
+<p>Los cuatro primeros son los que hay que saber de memoria, porque son los que permiten comprobar de un vistazo si un
+resultado está en el orden de magnitud correcto. Los dos últimos enseñan algo importante: las fracciones sencillas de
+la vuelta, que en sexagesimal caían en números redondos, en centesimal se vuelven periódicas. Es el precio de la base
+100, y es exactamente el motivo por el que el sistema centesimal no sustituyó al sexagesimal en los planos ni en los
+rumbos.</p>
+
+<h2>5. Demostración interactiva: el mismo ángulo en las dos escalas</h2>
+<p>Mueve el deslizador y mira las dos coronas del círculo: la de fuera está graduada cada 10 grados sexagesimales y la
+de dentro cada 10 gonios. Las marcas de la corona interior caen siempre un poco antes que las de la exterior, y esa
+diferencia es el factor 9/10 visto como dibujo. Los dos números de la derecha son el mismo giro.</p>
+
+<div class="demo">
+<p class="tat">Demostración 1 · Un ángulo, dos sistemas complejos</p>
+<div class="grid2">
+  <div>
+    <svg id="dosEscalas" viewBox="0 0 360 332" width="360" height="332" role="img"
+         aria-label="Círculo graduado simultáneamente en grados y en gonios"></svg>
+  </div>
+  <div>
+    <div class="ctrl">
+      <label for="giroS">Giro</label>
+      <input id="giroS" type="range" min="0" max="360" step="0.1" value="72.3">
+      <span class="val" id="giroSV">72,3°</span>
+    </div>
+    <div class="readout">
+      <div><b>Sexagesimal</b><span id="sSexa">72° 18′ 00″</span></div>
+      <div><b>Decimal (°)</b><span id="sDeg">72,3000°</span></div>
+      <div><b>Centesimal</b><span id="sCent">80 g 33 m 33,3 s</span></div>
+      <div><b>Decimal (g)</b><span id="sGon">80,3333 g</span></div>
+      <div><b>Gonios por grado</b><span id="sFac">1,1111</span></div>
+    </div>
+    <p class="tiny" style="margin-top:12px">Con el mismo deslizador se ve la propiedad que hay que retener: el número
+    centesimal siempre va por delante del sexagesimal, porque el gonio es más pequeño.</p>
+  </div>
+</div>
+</div>
+
+<script>
+(function(){
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = $('#dosEscalas');
+  const cx = 180, cy = 166, R = 145, rInt = 108;
+  const limpia = function(){ while (svg.firstChild) svg.removeChild(svg.firstChild); };
+  function el(tag, attrs, txt){
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (txt !== undefined) e.textContent = txt;
+    svg.appendChild(e); return e;
+  }
+  function pt(g, r){
+    const a = g * Math.PI / 180;
+    return [cx + r * Math.cos(a), cy - r * Math.sin(a)];
+  }
+  function num(x, dec){
+    const s = fmt(x, dec);
+    return s.indexOf(',') >= 0 ? s.replace(/0+$/, '').replace(/,$/, '') : s;
+  }
+  function dibuja(deg){
+    limpia();
+    el('circle', {cx:cx, cy:cy, r:R, fill:'#fff', stroke:'#b7c0c9', 'stroke-width':1});
+    el('circle', {cx:cx, cy:cy, r:rInt, fill:'none', stroke:'#d3d9df', 'stroke-width':1});
+    el('circle', {cx:cx, cy:cy, r:96, fill:'none', stroke:'#e3e8ec', 'stroke-width':1});
+
+    // corona exterior: cada 10 grados sexagesimales
+    for (let g = 0; g < 360; g += 10){
+      const largo = (g % 90 === 0) ? 14 : (g % 30 === 0 ? 9 : 5);
+      const p1 = pt(g, R), p2 = pt(g, R - largo);
+      el('line', {x1:p1[0], y1:p1[1], x2:p2[0], y2:p2[1],
+        stroke: (g % 90 === 0) ? '#16324f' : '#b7c0c9',
+        'stroke-width': (g % 90 === 0) ? 1.7 : 1});
+    }
+    ['0°','90°','180°','270°'].forEach(function(t, i){
+      const p = pt(i * 90, R + 14);
+      el('text', {x:p[0], y:p[1] + 4, 'text-anchor':'middle', 'font-size':12, fill:'#16324f'}, t);
+    });
+
+    // corona interior: cada 10 gonios (es decir, cada 9 grados)
+    for (let gon = 0; gon < 400; gon += 10){
+      const g = gon * 0.9;
+      const largo = (gon % 100 === 0) ? 12 : 6;
+      const p1 = pt(g, rInt), p2 = pt(g, rInt - largo);
+      el('line', {x1:p1[0], y1:p1[1], x2:p2[0], y2:p2[1],
+        stroke: (gon % 100 === 0) ? '#1f6b3a' : '#a8c2b2',
+        'stroke-width': (gon % 100 === 0) ? 1.7 : 1});
+    }
+    [0, 100, 200, 300].forEach(function(gon){
+      const p = pt(gon * 0.9, rInt - 24);
+      el('text', {x:p[0], y:p[1] + 4, 'text-anchor':'middle', 'font-size':11.5, fill:'#1f6b3a'},
+         gon + ' g');
+    });
+
+    // brazo y sector
+    const p = pt(deg, 96);
+    const grande = deg > 180 ? 1 : 0;
+    el('path', {d:'M ' + cx + ' ' + cy + ' L ' + (cx + 96) + ' ' + cy +
+      ' A 96 96 0 ' + grande + ' 0 ' + p[0] + ' ' + p[1] + ' Z',
+      fill:'#16324f', opacity:'0.10'});
+    el('line', {x1:cx, y1:cy, x2:p[0], y2:p[1], stroke:'#16324f', 'stroke-width':2.4});
+    el('circle', {cx:p[0], cy:p[1], r:4.5, fill:'#16324f'});
+    el('circle', {cx:cx, cy:cy, r:3, fill:'#5b6875'});
+  }
+
+  function actualiza(){
+    const deg = parseFloat($('#giroS').value);
+    const gon = deg * 10 / 9;
+    $('#giroSV').textContent = fmt(deg, 1) + '°';
+    $('#sSexa').textContent = txtSexa(deg, 0);
+    $('#sDeg').textContent = num(deg, 4) + '°';
+    $('#sCent').textContent = txtCentes(gon, 1);
+    $('#sGon').textContent = num(gon, 4) + ' g';
+    $('#sFac').textContent = num(gon / deg, 4);
+    dibuja(deg);
+    refrescaSliders();
+  }
+  $('#giroS').addEventListener('input', actualiza);
+  actualiza();
+})();
+</script>
+
+<h2>6. Demostración interactiva: conversor entre las dos formas complejas</h2>
+<p>Escribe en la columna que quieras. Si tocas los minutos sexagesimales, se recalcula todo lo demás, incluida la
+columna centesimal con sus dos órdenes. Los dos recuadros de abajo del todo son la comprobación: los dos números
+decimales tienen que estar en la proporción 9/10, y el de gonios siempre mayor.</p>
+
+<div class="demo">
+<p class="tat">Demostración 2 · Del complejo sexagesimal al complejo centesimal y vuelta</p>
+<div class="grid2">
+  <div>
+    <p class="tiny" style="margin-top:0">Sexagesimal</p>
+    <div class="ctrl">
+      <label for="xG">Grados</label>
+      <input id="xG" type="text" inputmode="numeric" value="72" aria-label="Grados sexagesimales">
+      <span class="val">°</span>
+    </div>
+    <div class="ctrl">
+      <label for="xM">Minutos</label>
+      <input id="xM" type="text" inputmode="numeric" value="18" aria-label="Minutos sexagesimales">
+      <span class="val">′</span>
+    </div>
+    <div class="ctrl">
+      <label for="xS">Segundos</label>
+      <input id="xS" type="text" inputmode="decimal" value="00" aria-label="Segundos sexagesimales">
+      <span class="val">″</span>
+    </div>
+  </div>
+  <div>
+    <p class="tiny" style="margin-top:0">Centesimal</p>
+    <div class="ctrl">
+      <label for="yG">Gonios</label>
+      <input id="yG" type="text" inputmode="numeric" value="80" aria-label="Gonios">
+      <span class="val">g</span>
+    </div>
+    <div class="ctrl">
+      <label for="yM">Minutos</label>
+      <input id="yM" type="text" inputmode="numeric" value="33" aria-label="Minutos centesimales">
+      <span class="val">m</span>
+    </div>
+    <div class="ctrl">
+      <label for="yS">Segundos</label>
+      <input id="yS" type="text" inputmode="decimal" value="33,3" aria-label="Segundos centesimales">
+      <span class="val">s</span>
+    </div>
+  </div>
+</div>
+<div class="readout">
+  <div><b>Decimal (°)</b><span id="cDeg">72,3000</span></div>
+  <div><b>Decimal (g)</b><span id="cGon">80,3333</span></div>
+  <div><b>Cociente g/°</b><span id="cRatio">1,1111</span></div>
+  <div><b>En radianes</b><span id="cRad">1,2619</span></div>
+</div>
+<div class="feedback" id="fbCruce"></div>
+<div class="botones">
+  <button class="ghost" id="bC04">Cargar C04 · 72° 18′</button>
+  <button class="ghost" id="bC05">Cargar C05 · 85 g 25 m 40 s</button>
+  <button class="ghost" id="bC03">Cargar C03 · 42 g 35 m 60 s</button>
+</div>
+</div>
+
+<script>
+(function(){
+  const xG = $('#xG'), xM = $('#xM'), xS = $('#xS');
+  const yG = $('#yG'), yM = $('#yM'), yS = $('#yS');
+  let bloqueo = false;
+
+  function num(x, dec){
+    const s = fmt(x, dec);
+    return s.indexOf(',') >= 0 ? s.replace(/0+$/, '').replace(/,$/, '') : s;
+  }
+  function corto(x, dec){
+    if (!isFinite(x)) return '';
+    const f = Math.pow(10, dec);
+    return String(Math.round(x * f) / f).replace('.', ',');
+  }
+  function desdeSexa(){
+    if (bloqueo) return;
+    const g = leerNum(xG.value), m = leerNum(xM.value), s = leerNum(xS.value);
+    if (!isFinite(g) || !isFinite(m) || !isFinite(s)){ revisa(); return; }
+    const deg = g + m / 60 + s / 3600;
+    const gon = deg * 10 / 9;
+    const c = aCentes(gon);
+    bloqueo = true;
+    yG.value = String(c.g);
+    yM.value = String(c.m).padStart(2, '0');
+    yS.value = corto(c.s, 2);
+    bloqueo = false;
+    pinta(deg);
+  }
+  function desdeCentes(){
+    if (bloqueo) return;
+    const g = leerNum(yG.value), m = leerNum(yM.value), s = leerNum(yS.value);
+    if (!isFinite(g) || !isFinite(m) || !isFinite(s)){ revisa(); return; }
+    const gon = g + m / 100 + s / 10000;
+    const deg = gon * 9 / 10;
+    const c = aSexa(deg);
+    bloqueo = true;
+    xG.value = String(c.g);
+    xM.value = String(c.m).padStart(2, '0');
+    xS.value = corto(c.s, 2);
+    bloqueo = false;
+    pinta(deg);
+  }
+  function pinta(deg){
+    const gon = deg * 10 / 9;
+    $('#cDeg').textContent = num(deg, 4) + '°';
+    $('#cGon').textContent = num(gon, 4) + ' g';
+    $('#cRatio').textContent = deg > 0 ? num(gon / deg, 4) : '—';
+    $('#cRad').textContent = num(deg * Math.PI / 180, 4) + ' rad';
+    revisa();
+  }
+  function revisa(){
+    const caja = $('#fbCruce');
+    const mS = leerNum(xM.value), sS = leerNum(xS.value);
+    const mC = leerNum(yM.value), sC = leerNum(yS.value);
+    if (mS >= 60 || sS >= 60){
+      caja.className = 'feedback fb-bad';
+      caja.innerHTML = 'En sexagesimal los minutos y los segundos llegan como mucho a 59. Has escrito ' +
+        (mS >= 60 ? 'minutos' : 'segundos') + ' de más, y eso en la libreta es un acarreo pendiente: hay que ' +
+        'pasarlo al orden superior antes de seguir.';
+      return;
+    }
+    if (mC >= 100 || sC >= 100){
+      caja.className = 'feedback fb-bad';
+      caja.innerHTML = 'En centesimal el tope es 99, no 60: cada gonio son 100 minutos y cada minuto 100 segundos. ' +
+        'Un valor de 100 o más significa un acarreo que no está hecho.';
+      return;
+    }
+    caja.className = 'feedback fb-good';
+    caja.innerHTML = 'Las dos columnas describen el mismo giro. El número de gonios es mayor que el de grados, como ' +
+      'tiene que ser, y el cociente entre ambos es 10/9 = 1,1111.';
+  }
+
+  xG.addEventListener('input', desdeSexa);
+  xM.addEventListener('input', desdeSexa);
+  xS.addEventListener('input', desdeSexa);
+  yG.addEventListener('input', desdeCentes);
+  yM.addEventListener('input', desdeCentes);
+  yS.addEventListener('input', desdeCentes);
+
+  $('#bC04').addEventListener('click', function(){
+    xG.value = '72'; xM.value = '18'; xS.value = '00';
+    desdeSexa();
+  });
+  $('#bC05').addEventListener('click', function(){
+    yG.value = '85'; yM.value = '25'; yS.value = '40';
+    desdeCentes();
+  });
+  $('#bC03').addEventListener('click', function(){
+    yG.value = '42'; yM.value = '35'; yS.value = '60';
+    desdeCentes();
+  });
+
+  desdeSexa();
+})();
+</script>
+
+<h2>7. Los tres ejercicios de la ficha, resueltos</h2>
+
+<h3>C03 · Pasar 42 g 35 m 60 s a forma decimal</h3>
+<p>Es el ejercicio que fija el reparto en base 100. Datos: <span class="num">G = 42</span>,
+<span class="num">M = 35</span>, <span class="num">S = 60</span>.</p>
+<ol class="pasos">
+  <li><p>Reparto cada orden sobre su base:</p>
+  <div class="formula">35/100    = 0,35
+60/10 000 = 0,0060</div></li>
+  <li><p>Sumo con los grados enteros:</p>
+  <div class="formula">dec = 42 + 0,35 + 0,0060 = <em>42,3560 g</em></div></li>
+  <li><p>Compruebo el sentido: el resultado cae entre 42 y 43 gonios, y a 0,356 del principio. Y si lo paso a
+  grados, 42,3560 × 0,9 = 38,1204°, es decir 38° 07′ 13,4″. Un ángulo algo mayor que la mitad de un recto: razonable
+  para un gonio de 42 y pico.</p></li>
+</ol>
+<p class="tiny">Fíjate en un detalle que despista: sesenta segundos centesimales son 0,0060 gonios, no un minuto. En
+este sistema nadie llega a 60 como tope, pero el valor 60 es perfectamente legal como cifra, porque el límite está en
+100.</p>
+
+<h3>C04 · Pasar 72° 18′ a las dos formas complejas</h3>
+<p>Este es el ejercicio completo del cruce y conviene hacerlo en dos tramos separados: primero a decimal, después al
+otro sistema. Datos: <span class="num">72° 18′ 00″</span>.</p>
+<ol class="pasos">
+  <li><p>A forma decimal sexagesimal, como en la lección anterior:</p>
+  <div class="formula">dec = 72 + 18/60 + 0/3 600 = 72 + 0,3 = <em>72,3°</em></div></li>
+  <li><p>Cruzo al sistema centesimal multiplicando por 10/9. El número tiene que crecer:</p>
+  <div class="formula">72,3 × 10/9 = 723/9 = <em>80,3333 g</em></div></li>
+  <li><p>Reparto la parte decimal en base 100 para escribir la forma compleja:</p>
+  <div class="formula">0,3333 × 100 = 33,33   →  33 m  y sobran 0,33
+0,33   × 100 = 33,3    →  33,3 s</div></li>
+  <li><p>Resultado y comprobación de vuelta:</p>
+  <div class="formula">72° 18′ = 72,3° = 80,3333 g = <em>80 g 33 m 33,3 s</em>
+80,3333 × 9/10 = 72,2999… ≈ 72,3°  ✓</div></li>
+</ol>
+<div class="note">
+<p>El 80 g 33 m 33,3 s es un número con pinta de error y no lo es: es el resultado de que 72° no sea divisible de forma
+exacta por 9. Los tercios de la vuelta, que en sexagesimal caían redondos, en centesimal salen periódicos. Si en un
+examen obtienes 33 m 33 s, no lo «arregles» a 34: la comprobación de vuelta confirma que es correcto.</p>
+</div>
+
+<h3>C05 · Pasar 85 g 25 m 40 s a grados sexagesimales</h3>
+<p>El sentido inverso, que es el que hace falta cuando el instrumento está en gonios y el enunciado pide grados. Datos:
+<span class="num">85 g 25 m 40 s</span>.</p>
+<ol class="pasos">
+  <li><p>Primero a forma decimal centesimal, moviendo la coma dos veces:</p>
+  <div class="formula">dec = 85 + 25/100 + 40/10 000 = 85 + 0,25 + 0,0040 = <em>85,2540 g</em></div></li>
+  <li><p>Cruzo a grados multiplicando por 9/10. Ahora el número tiene que <em>disminuir</em>:</p>
+  <div class="formula">85,2540 × 0,9 = <em>76,7286°</em></div></li>
+  <li><p>Reparto en base 60, con cuidado de no arrastrar el tope 100:</p>
+  <div class="formula">0,7286 × 60 = 43,716   →  43′  y sobran 0,716
+0,716  × 60 = 42,96    →  43,0″</div></li>
+  <li><p>Resultado y comprobación:</p>
+  <div class="formula">85 g 25 m 40 s = 85,2540 g = <em>76,7286° = 76° 43′ 43,0″</em>
+43/60 + 43/3 600 = 0,7167 + 0,0119 = 0,7286  ✓</div></li>
+</ol>
+<p>El control de sentido que hay que hacer siempre en este sentido: 76 grados son menos que 85 gonios, y la diferencia
+es de un 10 %, que es exactamente el factor. Si al pasar de gonios a grados el número te sube, has multiplicado por
+10/9 en lugar de por 9/10.</p>
+
+<h2>8. Los tres errores que hay que matar hoy</h2>
+<ol>
+  <li><p><strong>Usar el factor invertido.</strong> Es el error más frecuente y el más silencioso, porque el resultado
+  que sale es un número perfectamente plausible. Se multiplica por 10/9 cuando había que multiplicar por 9/10 y el
+  ángulo se va un 23 % largo. La defensa no es memorizar los factores, es la regla de tamaño: <em>el número de gonios
+  siempre es mayor</em>. De grados a gonios, multiplico; de gonios a grados, divido. Y si el resultado no cumple esa
+  desigualdad, está mal antes de comprobar nada más.</p></li>
+
+  <li><p><strong>Pegar las cifras tras la coma en centesimal.</strong> Parece que en este sistema sí se puede —
+  42 g 35 m es 42,35 g — pero solo si los segundos son cero. Con 42 g 35 m 60 s, escribir 42,35 se come los sesenta
+  segundos, que valen 0,006 gonios. La costumbre de pegar cifras que viene de la base 100 falla exactamente en el
+  tercer orden, que es donde se pierden las centésimas de metro en una poligonal.</p></li>
+
+  <li><p><strong>Arrastrar el tope 100 al volver a sexagesimal.</strong> El reparto de 76,7286° se hace multiplicando
+  la parte decimal por 60, no por 100. Quien viene de hacer gonios y sigue con el 100 obtiene
+  <span class="num">76° 72′ 86″</span>, un ángulo que no existe y que además vale media hora de trabajo perdida.
+  El tope de cada sistema es el de su base: 60 arriba, 100 abajo, y no se mezclan.</p></li>
+</ol>
+<div class="warn">
+<p>Los tres errores tienen una prueba común de una línea: <strong>comprueba el tamaño del número y el tope de cada
+orden</strong>. Si el resultado en gonios es mayor que el de grados, si los minutos sexagesimales no llegan a 60 y si
+los centesimales no llegan a 100, tienes muchas más probabilidades de que la cuenta esté bien. Es la comprobación más
+barata de toda la asignatura.</p>
+</div>
+
+<h2>9. Cómo se escribe en el examen</h2>
+<p>El cruce se escribe siempre en dos líneas separadas: primero la forma decimal en el sistema de partida, después el
+cambio de sistema. Mezclar las dos cosas en una sola línea es lo que produce los factores invertidos.</p>
+<div class="formula">1)  Dato:  72° 18′
+2)  dec = 72 + 18/60 = 72,3°
+3)  Paso a gonios (×10/9):  72,3 × 10/9 = 80,3333 g
+4)  Reparto:  0,3333 × 100 = 33,33 → 33 m;  0,33 × 100 = 33,3 s
+5)  Resultado:  80 g 33 m 33,3 s     Compruebo: ×9/10 = 72,3°  ✓</div>
+<p>Y en el sentido contrario, con el mismo orden pero el factor al revés:</p>
+<div class="formula">1)  Dato:  85 g 25 m 40 s
+2)  dec = 85 + 0,25 + 0,0040 = 85,2540 g
+3)  Paso a grados (×9/10):  85,2540 × 0,9 = 76,7286°
+4)  Reparto en base 60:  0,7286 × 60 = 43,716 → 43′;  0,716 × 60 = 42,96 → 43,0″
+5)  Resultado:  76° 43′ 43,0″     Compruebo: 43/60 + 43/3 600 = 0,7286  ✓</div>
+
+<p>Con estas dos plantillas y la regla de que el número de gonios siempre es mayor, el cruce deja de dar miedo. El
+<a href="gen_01_conversiones.html">generador de conversiones</a> tiene un nivel dedicado justo a esto, con el factor
+escondido y la corrección inmediata; haz diez ejercicios alternando los dos sentidos. La lámina siguiente deja el
+ángulo plano y entra en los radianes, que es el tercer sistema y el que usan las calculadoras por debajo.</p>
+</main>
+<nav class="pager"><a href="02_sexagesimal_a_decimal.html">&larr; De forma compleja a decimal, y vuelta</a><span class="sp"></span><a href="index.html">Índice</a><span class="sp"></span><a href="04_radianes.html">Radianes: el ángulo medido en radios &rarr;</a></nav>
+</div>
+<script>refrescaSliders();</script>
+</body>
+</html>

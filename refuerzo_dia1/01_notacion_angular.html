@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Notación angular: los tres sistemas</title>
+<style>
+:root{
+  --ink:#1b2530; --navy:#16324f; --navy2:#2c5a84; --line:#d3d9df; --bg:#f7f8f9;
+  --soft:#edf1f4; --ok:#1f6b3a; --bad:#8f2222; --warnc:#7a5a00;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:19px/1.62 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+.wrap{max-width:980px;margin:0 auto;padding:26px 26px 90px}
+header.top{border-bottom:2px solid var(--navy);padding-bottom:12px;margin-bottom:26px}
+.kicker{font-size:13.5px;letter-spacing:.14em;text-transform:uppercase;color:#5b6875;font-weight:600}
+h1{font-size:31px;line-height:1.22;margin:.22em 0 .28em;color:var(--navy);font-weight:660;letter-spacing:-.01em}
+.sub{font-size:19px;color:#3c4a58;margin:0}
+h2{font-size:22.5px;margin:2.1em 0 .45em;color:var(--navy);font-weight:650;
+   border-left:4px solid var(--navy);padding-left:11px;line-height:1.3}
+h2:first-of-type{margin-top:1.2em}
+h3{font-size:19.5px;margin:1.5em 0 .3em;font-weight:650;color:#22303d}
+h4{font-size:17px;margin:1.2em 0 .3em;font-weight:650;color:#22303d}
+p{margin:.62em 0}
+.lead{font-size:20px;color:#2c3a48}
+ul,ol{padding-left:1.4em;margin:.55em 0}
+li{margin:.3em 0}
+li>ul,li>ol{margin:.3em 0}
+a{color:var(--navy2)}
+strong{font-weight:660}
+.num{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.formula{
+  font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:17px;line-height:1.7;
+  background:var(--soft);border-left:3px solid var(--navy);padding:11px 15px;margin:1em 0;
+  overflow-x:auto;white-space:pre-wrap;
+}
+.formula em{font-style:normal;color:var(--navy);font-weight:600}
+.demo{background:#fff;border:1px solid var(--line);padding:16px 16px 18px;margin:1.3em 0}
+.demo .tat{font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:#5b6875;
+  font-weight:650;margin:0 0 12px}
+.ctrl{display:grid;grid-template-columns:165px 1fr 135px;gap:12px;align-items:center;margin:.55em 0}
+.ctrl label{font-size:17px}
+.ctrl .val{text-align:right;font-family:ui-monospace,monospace;font-size:18px;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:#16324f;height:22px}
+input[type=number],input[type=text],select{
+  font:inherit;font-size:18px;padding:6px 9px;border:1px solid #b7c0c9;background:#fff;
+  color:var(--ink);border-radius:0;width:100%
+}
+input:focus,select:focus,button:focus{outline:2px solid var(--navy2);outline-offset:1px}
+input.ok{border-color:var(--ok);background:#f1f7f3}
+input.bad{border-color:var(--bad);background:#fdf3f3}
+button{
+  font:inherit;font-size:16px;padding:7px 15px;border:1px solid var(--navy);border-radius:0;
+  background:var(--navy);color:#fff;cursor:pointer
+}
+button:hover{background:#1d4368}
+button.ghost{background:#fff;color:var(--navy)}
+button.ghost:hover{background:var(--soft)}
+.botones{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:9px;margin:12px 0 0}
+.readout div{background:var(--soft);padding:8px 11px}
+.readout b{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  color:#5b6875;font-weight:650;margin-bottom:2px}
+.readout span{font-family:ui-monospace,monospace;font-size:18px;font-variant-numeric:tabular-nums}
+.note{background:#fbfaf4;border-left:3px solid #b08a2e;padding:11px 15px;margin:1.1em 0}
+.warn{background:#fcf4f4;border-left:3px solid var(--bad);padding:11px 15px;margin:1.1em 0}
+.good{background:#f1f7f3;border-left:3px solid var(--ok);padding:11px 15px;margin:1.1em 0}
+.feedback{margin-top:11px;font-size:17.5px;line-height:1.55}
+.feedback.good::before{content:"";}
+.fb-good{color:var(--ok)}
+.fb-bad{color:var(--bad)}
+.fb-neutral{color:#3c4a58}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:17px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--soft);font-weight:650;font-size:16px}
+td.num,th.num{font-family:ui-monospace,monospace;font-variant-numeric:tabular-nums}
+nav.strip{display:flex;gap:15px;align-items:center;flex-wrap:wrap;font-size:15.5px;
+  border-bottom:1px solid var(--line);padding:0 0 10px;margin:-4px 0 24px;color:#5b6875}
+nav.strip a{color:var(--navy2);text-decoration:none;border-bottom:1px solid #c5d3e0}
+nav.strip a:hover{border-bottom-color:var(--navy2)}
+nav.strip .act{color:#5b6875;font-weight:650}
+nav.strip .sep{color:#ccd4db}
+nav.pager{display:flex;justify-content:space-between;gap:14px;margin-top:54px;padding-top:16px;
+  border-top:1px solid var(--line);font-size:16px}
+nav.pager a{color:var(--navy);text-decoration:none;border-bottom:1px solid #a9bdd0;padding-bottom:1px}
+nav.pager a:hover{border-bottom-color:var(--navy)}
+nav.pager .sp{flex:1}
+svg{display:block;max-width:100%;height:auto;font-family:ui-monospace,monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.tiny{font-size:15.5px;color:#5b6875;line-height:1.5}
+.pasos{counter-reset:p;list-style:none;padding-left:0}
+.pasos>li{counter-increment:p;position:relative;padding-left:42px;margin:.85em 0}
+.pasos>li::before{
+  content:counter(p);position:absolute;left:0;top:.05em;width:28px;height:28px;border:1.5px solid var(--navy);
+  color:var(--navy);font-size:15px;font-weight:700;text-align:center;line-height:25px;
+  font-family:ui-monospace,monospace
+}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin:1.2em 0}
+.card{background:#fff;border:1px solid var(--line);padding:14px 16px;display:block;
+  text-decoration:none;color:var(--ink)}
+.card:hover{border-color:var(--navy);background:#fbfcfd}
+.card .n{font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:#5b6875;font-weight:650}
+.card .t{font-size:19px;color:var(--navy);font-weight:650;margin:.15em 0 .25em;line-height:1.28;min-height:2.56em}
+.card .d{font-size:16px;color:#46545f;line-height:1.45}
+.tag{display:inline-block;font-size:13px;border:1px solid var(--line);background:var(--soft);
+  padding:1px 7px;margin:4px 4px 0 0;color:#46545f}
+kbd{font-family:ui-monospace,monospace;font-size:15px;border:1px solid #b7c0c9;border-bottom-width:2px;
+  padding:1px 5px;background:#fff}
+.checkline{display:flex;gap:10px;align-items:baseline;margin:.4em 0}
+.checkline input[type=checkbox]{width:18px;height:18px;accent-color:#16324f;flex:none}
+@media (max-width:740px){
+  body{font-size:18px}
+  .wrap{padding:18px 16px 70px}
+  h1{font-size:26px} h2{font-size:20.5px}
+  .ctrl{grid-template-columns:110px 1fr 105px;gap:8px}
+  .grid2{grid-template-columns:1fr}
+}
+@media print{
+  body{background:#fff}
+  .demo{break-inside:avoid}
+  nav.pager{display:none}
+}
+</style>
+
+<script>
+/* ---------- utilidades comunes (idénticas en todas las páginas) ---------- */
+const $  = (s, r) => (r||document).querySelector(s);
+const $$ = (s, r) => Array.from((r||document).querySelectorAll(s));
+
+/* Lee un número escrito por el alumno: admite coma o punto decimal,
+   espacios, el símbolo de grado y el sufijo de gonios. */
+function leerNum(v){
+  if (typeof v === 'number') return v;
+  let s = String(v == null ? '' : v).trim();
+  s = s.replace(/\s+/g,'').replace(/[°º]/g,'').replace(/(rad|gon|g|m|s)$/i,'');
+  if (s === '') return NaN;
+  if (s.includes(',') && s.includes('.')) s = s.replace(/\./g,'').replace(',', '.');
+  else if (s.includes(',')) s = s.replace(',', '.');
+  return parseFloat(s);
+}
+/* Formato español: coma decimal, cifras fijas. */
+function fmt(x, d){
+  d = (d === undefined) ? 2 : d;
+  if (!isFinite(x)) return '—';
+  return x.toFixed(d).replace('.', ',');
+}
+/* Sexagesimal: {g,m,s} a partir de grados decimales */
+function aSexa(x){
+  let neg = x < 0; x = Math.abs(x);
+  let g = Math.floor(x + 1e-12);
+  let mm = (x - g) * 60;
+  let m = Math.floor(mm + 1e-9);
+  let s = (mm - m) * 60;
+  if (s >= 59.9995){ s = 0; m += 1; }
+  if (m >= 60){ m -= 60; g += 1; }
+  return {g:(neg?-g:g), m:m, s:s};
+}
+/* Centesimal: {g,m,s} */
+function aCentes(x){
+  let neg = x < 0; x = Math.abs(x);
+  let g = Math.floor(x + 1e-12);
+  let mm = (x - g) * 100;
+  let m = Math.floor(mm + 1e-9);
+  let s = (mm - m) * 100;
+  if (s >= 99.995){ s = 0; m += 1; }
+  if (m >= 100){ m -= 100; g += 1; }
+  return {g:(neg?-g:g), m:m, s:s};
+}
+function txtSexa(x, ds){
+  ds = (ds === undefined) ? 1 : ds;
+  const f = Math.pow(10, ds);
+  let total = Math.round(Math.abs(x) * 3600 * f);
+  const g = Math.floor(total / (3600 * f));
+  let rem = total - g * 3600 * f;
+  const m = Math.floor(rem / (60 * f));
+  rem = rem - m * 60 * f;
+  const si = String(Math.floor(rem / f)).padStart(2, '0');
+  const dec = ds > 0 ? ',' + String(rem % f).padStart(ds, '0') : '';
+  return (x < 0 ? '−' : '') + g + '° ' + String(m).padStart(2, '0') + '\u2032 ' + si + dec + '\u2033';
+}
+function txtCentes(x, ds){
+  ds = (ds === undefined) ? 1 : ds;
+  const f = Math.pow(10, ds);
+  let total = Math.round(Math.abs(x) * 10000 * f);
+  const g = Math.floor(total / (10000 * f));
+  let rem = total - g * 10000 * f;
+  const m = Math.floor(rem / (100 * f));
+  rem = rem - m * 100 * f;
+  const si = String(Math.floor(rem / f)).padStart(2, '0');
+  const dec = ds > 0 ? ',' + String(rem % f).padStart(ds, '0') : '';
+  return (x < 0 ? '−' : '') + g + 'g ' + String(m).padStart(2, '0') + 'm ' + si + dec + 's';
+}
+/* Retorno de estado en un campo: ok / mal */
+function marcar(el, estado){
+  el.classList.remove('ok','bad');
+  if (estado === 1) el.classList.add('ok');
+  else if (estado === 0) el.classList.add('bad');
+}
+function fb(el, tipo, texto){
+  el.className = 'feedback ' + (tipo === 1 ? 'fb-good' : tipo === 0 ? 'fb-bad' : 'fb-neutral');
+  el.innerHTML = texto;
+  return tipo;
+}
+/* Formatea un ángulo en radianes como múltiplo exacto de π si el denominador es pequeño */
+function aPi(x){
+  const r = x / Math.PI;
+  for (let q = 1; q <= 24; q++){
+    const p = r * q;
+    if (Math.abs(p - Math.round(p)) < 1e-9){
+      const n = Math.round(p);
+      if (q === 1) return (n === 1 ? 'π' : n + 'π');
+      if (n === 1) return 'π/' + q;
+      return n + 'π/' + q;
+    }
+  }
+  return null;
+}
+/* Sincroniza el relleno visual de los sliders (solo estética) */
+function refrescaSliders(root){
+  $$('input[type=range]', root || document).forEach(function(r){
+    const p = (r.value - r.min) / (r.max - r.min) * 100;
+    r.style.background = 'linear-gradient(90deg,#16324f ' + p + '%,#cfd7de ' + p + '%)';
+    r.style.height = '6px';
+    r.style.borderRadius = '0';
+    r.style.appearance = 'none';
+    r.style.webkitAppearance = 'none';
+  });
+}
+</script>
+<style>
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:16px;height:16px;background:#16324f;border:2px solid #fff;
+  box-shadow:0 0 0 1px #16324f;cursor:pointer
+}
+input[type=range]::-moz-range-thumb{
+  width:14px;height:14px;background:#16324f;border:2px solid #fff;box-shadow:0 0 0 1px #16324f;cursor:pointer
+}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<header class="top"><div class="kicker">Día 1 · Peldaño 0 · Prerrequisito</div><h1>Notación angular: los tres sistemas</h1><p class="sub">Qué es un ángulo y cómo se escribe en grados sexagesimales, centesimales y radianes</p></header><nav class="strip"><a href="index.html">Índice</a><span class="sep">·</span><span class="act">Lección 1</span><span class="sep">·</span><a href="gen_01_conversiones.html">Generador A &rarr;</a></nav>
+<main>
+<p class="lead">Un ángulo no mide longitud: mide un <strong>giro</strong>. Esa es la primera idea y la que evita casi todos
+los errores posteriores. Como un giro no pesa ni ocupa sitio, hay que decidir convencionalmente cuántas partes tiene
+una vuelta completa, y de esa decisión salen los tres sistemas que se usan en topografía.</p>
+
+<h2>1. Un ángulo es un giro</h2>
+<p>Imagina que estás en el centro de una parcela y giras el cuerpo señalando con el brazo. Si el brazo vuelve al
+punto de partida has dado una vuelta entera. Si solo has girado una cuarta parte, has descrito <em>el mismo giro</em>
+que ese cuarto de vuelta, se mida como se mida. El número que usamos para nombrarlo depende del sistema; el giro es
+el mismo.</p>
+<p>De ahí una consecuencia práctica: <strong>un ángulo siempre tiene que llevar su unidad</strong>. Escribir «37»
+no significa nada; significa 37° si estamos en sexagesimal, 37 g si estamos en centesimal o 37 radianes si estamos
+en radianes, y esa última posibilidad es absurda (37 radianes son casi seis vueltas), pero el número desnudo no lo
+desmiente. En los exámenes, un resultado sin unidad se considera incompleto.</p>
+
+<h2>2. El sistema sexagesimal: la vuelta en 360 partes</h2>
+<p>Es el que se usa en el día a día y el que traen los enunciados de la ficha de trigonometría. La vuelta completa
+son <span class="num">360°</span>, y cada grado se parte en <span class="num">60′</span> (minutos) y cada minuto en
+<span class="num">60″</span> (segundos).</p>
+<div class="formula">1 vuelta = 360°     1° = 60′     1′ = 60″     ⇒     1° = 3 600″</div>
+<p>La herencia es babilónica, y nos resulta familiar porque es la misma que la del reloj: las horas también se
+parten en 60 minutos y los minutos en 60 segundos. Por eso los minutos de ángulo se escriben con la misma prima que
+los de tiempo. Es una coincidencia útil: si sabes leer «las tres y veinte», sabes leer «37 grados y veinte minutos».</p>
+<p>Cuando un ángulo se escribe con sus tres órdenes (grados, minutos y segundos) se dice que está en
+<strong>forma compleja</strong>. Cuando se escribe como un solo número con decimales se dice que está en
+<strong>forma decimal</strong>:</p>
+<div class="formula">37° 30′ 00″   ← forma compleja (tres órdenes)
+  37,5°       ← forma decimal (un solo número)</div>
+<p>Las dos expresiones valen lo mismo. Toda la ficha de conversiones consiste en pasar de una a otra y en cambiar
+además de sistema.</p>
+
+<h2>3. El sistema centesimal: la vuelta en 400 partes</h2>
+<p>En topografía se usó durante todo el siglo XX —y se sigue usando en muchos instrumentos— un sistema decimal:
+la vuelta se parte en <span class="num">400 g</span> (grados centesimales o <em>gonios</em>). Cada grado centesimal
+son <span class="num">100 m</span> (minutos centesimales) y cada minuto, <span class="num">100 s</span> (segundos
+centesimales).</p>
+<div class="formula">1 vuelta = 400 g     1 g = 100 m     1 m = 100 s     ⇒     1 g = 10 000 s</div>
+<div class="warn">
+<p><strong>La trampa del sistema centesimal.</strong> Esa <span class="num">m</span> de «minuto centesimal» no tiene
+nada que ver con el metro, y la <span class="num">s</span> no es un segundo de tiempo. Son letras que se repiten por
+comodidad y que confunden a todo el mundo la primera vez. Un ángulo de «42 g 35 m» no mide 42 metros ni 35 metros;
+mide 42,35 gonios. Cuando veas <em>m</em> o <em>s</em> pegadas a un número con <em>g</em> al lado, está leyendo un
+ángulo, no una distancia.</p>
+</div>
+<p>La razón de que exista este sistema es puramente aritmética: en base 100, sumar y multiplicar ángulos se hace
+como con el dinero. Pasar de 42 g 35 m a 42,35 g es mover la coma; en sexagesimal, pasar de 42° 35′ a decimal exige
+dividir entre 60. En una libreta de campo con cientos de ángulos anotados, eso ahorra horas y errores. Por eso los
+goniómetros de las estaciones totales suelen venir configurados en gonios de fábrica.</p>
+
+<h2>4. El sistema radial: la vuelta en 2π partes</h2>
+<p>El radián no parte la vuelta en un número entero de trozos, sino que la mide <em>con el propio radio</em>: un
+radián es el ángulo en el que el arco mide exactamente lo mismo que el radio. Como la longitud de la circunferencia
+es <span class="num">2πr</span>, caben <span class="num">2π ≈ 6,283</span> radios en la vuelta. Es el sistema del
+cálculo y de la trigonometría teórica, y el que esperan por defecto las calculadoras y los lenguajes de programación.</p>
+<p>Lo desarrollamos en la lección 4. Aquí basta con retener la equivalencia que lo une todo:</p>
+<div class="formula">360°  =  400 g  =  2π rad        (una vuelta completa)</div>
+
+<h2>5. Demostración: el mismo giro, tres notaciones</h2>
+<p>Mueve el deslizador. El brazo gira y las tres lecturas cambian a la vez: son el mismo ángulo escrito en tres
+idiomas. Fíjate en dos cosas mientras lo mueves. Primera: los grados centesimales siempre van <em>por delante</em>
+del número sexagesimal (360° son 400 g, así que un gonio es más pequeño que un grado y hacen falta más para el mismo
+giro). Segunda: los radianes empiezan a crecer despacio y no llegan a 6,283 ni en la vuelta completa.</p>
+
+<div class="demo">
+<p class="tat">Demostración 1 · El mismo giro en los tres sistemas</p>
+<div class="grid2">
+  <div>
+    <svg id="circ" viewBox="0 0 340 320" width="340" height="320" role="img"
+         aria-label="Círculo graduado con un brazo que gira"></svg>
+  </div>
+  <div>
+    <div class="ctrl">
+      <label for="giro">Giro</label>
+      <input id="giro" type="range" min="0" max="360" step="0.5" value="37.5">
+      <span class="val" id="giroV">37,5°</span>
+    </div>
+    <div class="readout">
+      <div><b>Sexagesimal</b><span id="rSexa">37° 30′ 00″</span></div>
+      <div><b>Decimal (grados)</b><span id="rDec">37,500°</span></div>
+      <div><b>Centesimal</b><span id="rCent">41 g 66 m 66,7 s</span></div>
+      <div><b>Radianes</b><span id="rRad">0,6545 rad</span></div>
+      <div><b>Como múltiplo de π</b><span id="rPi">—</span></div>
+    </div>
+    <p class="tiny" style="margin-top:12px">El brazo sale del centro y gira en sentido antihorario desde la
+    horizontal derecha, que es la convención matemática y la que usan casi todos los programas.</p>
+  </div>
+</div>
+</div>
+
+<script>
+(function(){
+  const cx = 170, cy = 165, R = 128;
+  const svg = $('#circ');
+  const NS = 'http://www.w3.org/2000/svg';
+  function el(tag, attrs, txt){
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (txt !== undefined) e.textContent = txt;
+    svg.appendChild(e);
+    return e;
+  }
+  function pt(grados, r){
+    const a = grados * Math.PI / 180;
+    return [cx + r * Math.cos(a), cy - r * Math.sin(a)];
+  }
+  // corona
+  el('circle', {cx:cx, cy:cy, r:R, fill:'#fff', stroke:'#b7c0c9', 'stroke-width':1});
+  el('circle', {cx:cx, cy:cy, r:R*0.62, fill:'none', stroke:'#e3e8ec', 'stroke-width':1});
+  // marcas cada 10 grados
+  for (let g = 0; g < 360; g += 10){
+    const largo = (g % 90 === 0) ? 14 : (g % 30 === 0 ? 9 : 5);
+    const p1 = pt(g, R), p2 = pt(g, R - largo);
+    el('line', {x1:p1[0], y1:p1[1], x2:p2[0], y2:p2[1],
+      stroke: (g % 90 === 0) ? '#16324f' : '#b7c0c9', 'stroke-width': (g % 90 === 0) ? 1.6 : 1});
+  }
+  ['0°','90°','180°','270°'].forEach(function(t, i){
+    const p = pt(i * 90, R + 13);
+    el('text', {x:p[0], y:p[1] + 4, 'text-anchor':'middle', 'font-size':11, fill:'#5b6875'}, t);
+  });
+  const sector = el('path', {d:'', fill:'#16324f', opacity:'0.10'});
+  const brazo = el('line', {x1:cx, y1:cy, x2:cx + R, y2:cy, stroke:'#16324f', 'stroke-width':2.5});
+  const arco = el('path', {d:'', fill:'none', stroke:'#16324f', 'stroke-width':2.5});
+  const punto = el('circle', {cx:cx + R, cy:cy, r:4.5, fill:'#16324f'});
+  el('circle', {cx:cx, cy:cy, r:3, fill:'#5b6875'});
+
+  function dibuja(g){
+    const p = pt(g, R);
+    brazo.setAttribute('x2', p[0]); brazo.setAttribute('y2', p[1]);
+    punto.setAttribute('cx', p[0]); punto.setAttribute('cy', p[1]);
+    const grande = g > 180 ? 1 : 0;
+    arco.setAttribute('d', 'M ' + (cx + R) + ' ' + cy +
+      ' A ' + R + ' ' + R + ' 0 ' + grande + ' 0 ' + p[0] + ' ' + p[1]);
+    sector.setAttribute('d', 'M ' + cx + ' ' + cy + ' L ' + (cx + R) + ' ' + cy +
+      ' A ' + R + ' ' + R + ' 0 ' + grande + ' 0 ' + p[0] + ' ' + p[1] + ' Z');
+  }
+  function actualiza(){
+    const g = parseFloat($('#giro').value);
+    dibuja(g);
+    $('#giroV').textContent = fmt(g, 1) + '°';
+    $('#rSexa').textContent = txtSexa(g, 1);
+    $('#rDec').textContent = fmt(g, 3) + '°';
+    $('#rCent').textContent = txtCentes(g * 10 / 9, 1);
+    $('#rRad').textContent = fmt(g * Math.PI / 180, 4) + ' rad';
+    const ex = aPi(g * Math.PI / 180);
+    $('#rPi').textContent = ex ? (ex + ' rad') : '—';
+  }
+  $('#giro').addEventListener('input', actualiza);
+  actualiza();
+})();
+</script>
+
+<h2>6. Cómo se escribe y cómo se lee</h2>
+<p>Tres convenciones que conviene fijar desde el principio, porque se pierden puntos por ellas:</p>
+<ul>
+  <li><strong>Los minutos y los segundos siempre llevan dos cifras.</strong> Se escribe 37° 05′ 09″, no 37° 5′ 9″. Si no
+  hay minutos, se escriben igualmente: 37° 00′ 30″.</li>
+  <li><strong>Los órdenes no pasan de su base.</strong> No existe 37° 70′ 00″: setenta minutos son un grado y diez
+  minutos, es decir 38° 10′. Un ángulo con minutos de 60 o más está mal escrito, aunque el valor sea el mismo.</li>
+  <li><strong>Para operar, primero se pasa a decimal.</strong> No se multiplica «37° 30′ por 2» repartiendo a ojo;
+  se pasa a 37,5°, se opera, y si el resultado debe presentarse en forma compleja se vuelve a repartir al final.</li>
+</ul>
+
+<h2>7. El error que hay que matar hoy: 24° 36′ no es 24,36°</h2>
+<p>Este es el error número uno de toda la ficha de conversiones, y no es un error de cálculo sino de lectura:</p>
+<div class="formula">24° 36′ 18″   ≠   24,3618°
+24° 36′ 18″   =   24 + 36/60 + 18/3600   =   24,605°</div>
+<p>Los 36 minutos no son 36 centésimas de grado, son 36 <em>sesentavas</em> partes de grado. Pegar las cifras detrás
+de la coma es como leer «dos horas y media» como «2,30 horas»: parece lo mismo y no lo es. Cada vez que aparezca un
+ángulo en forma compleja, la pregunta mental debe ser siempre la misma: <em>¿en cuántas partes está partido el grado?</em>
+Si está partido en 60, se divide entre 60; si en 100, entre 100.</p>
+
+<div class="note">
+<p><strong>Comprobación de sentido.</strong> Al pasar de 24° 36′ a decimal el resultado tiene que quedar <em>entre</em>
+24 y 25, y más cerca de la mitad que del principio: 24,605°. Si te sale 24,06 o 246, algo se ha movido de sitio.
+Este control de una línea detecta la mayoría de los errores antes de que lleguen al papel.</p>
+</div>
+
+<h2>Resumen de la lámina</h2>
+<table>
+  <tr><th style="width:26%">Sistema</th><th>Una vuelta</th><th>Subdivisiones</th><th>Dónde aparece</th></tr>
+  <tr><td>Sexagesimal</td><td class="num">360°</td><td class="num">1° = 60′ = 3 600″</td><td>Enunciados, planos, rumbos</td></tr>
+  <tr><td>Centesimal</td><td class="num">400 g</td><td class="num">1 g = 100 m = 10 000 s</td><td>Estaciones totales, gonios</td></tr>
+  <tr><td>Radial</td><td class="num">2π rad</td><td class="num">—</td><td>Cálculo, trigonometría, programas</td></tr>
+</table>
+<p>Con esto ya se puede pasar a la lección 2, que es la que convierte de verdad: el reparto por 60 y su vuelta atrás.
+Conviene tener clara la diferencia entre forma compleja y forma decimal antes de empezar, porque la lección 2 es
+exactamente el puente entre las dos.</p>
+</main>
+<nav class="pager"><a href="index.html">&larr; Índice</a><span class="sp"></span><a href="index.html">Índice</a><span class="sp"></span><a href="02_sexagesimal_a_decimal.html">De forma compleja a decimal, y vuelta &rarr;</a></nav>
+</div>
+<script>refrescaSliders();</script>
+</body>
+</html>

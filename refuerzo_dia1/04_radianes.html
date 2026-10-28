@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Radianes: el ángulo medido en radios</title>
+<style>
+:root{
+  --ink:#1b2530; --navy:#16324f; --navy2:#2c5a84; --line:#d3d9df; --bg:#f7f8f9;
+  --soft:#edf1f4; --ok:#1f6b3a; --bad:#8f2222; --warnc:#7a5a00;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:19px/1.62 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+.wrap{max-width:980px;margin:0 auto;padding:26px 26px 90px}
+header.top{border-bottom:2px solid var(--navy);padding-bottom:12px;margin-bottom:26px}
+.kicker{font-size:13.5px;letter-spacing:.14em;text-transform:uppercase;color:#5b6875;font-weight:600}
+h1{font-size:31px;line-height:1.22;margin:.22em 0 .28em;color:var(--navy);font-weight:660;letter-spacing:-.01em}
+.sub{font-size:19px;color:#3c4a58;margin:0}
+h2{font-size:22.5px;margin:2.1em 0 .45em;color:var(--navy);font-weight:650;
+   border-left:4px solid var(--navy);padding-left:11px;line-height:1.3}
+h2:first-of-type{margin-top:1.2em}
+h3{font-size:19.5px;margin:1.5em 0 .3em;font-weight:650;color:#22303d}
+h4{font-size:17px;margin:1.2em 0 .3em;font-weight:650;color:#22303d}
+p{margin:.62em 0}
+.lead{font-size:20px;color:#2c3a48}
+ul,ol{padding-left:1.4em;margin:.55em 0}
+li{margin:.3em 0}
+li>ul,li>ol{margin:.3em 0}
+a{color:var(--navy2)}
+strong{font-weight:660}
+.num{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.formula{
+  font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:17px;line-height:1.7;
+  background:var(--soft);border-left:3px solid var(--navy);padding:11px 15px;margin:1em 0;
+  overflow-x:auto;white-space:pre-wrap;
+}
+.formula em{font-style:normal;color:var(--navy);font-weight:600}
+.demo{background:#fff;border:1px solid var(--line);padding:16px 16px 18px;margin:1.3em 0}
+.demo .tat{font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:#5b6875;
+  font-weight:650;margin:0 0 12px}
+.ctrl{display:grid;grid-template-columns:165px 1fr 135px;gap:12px;align-items:center;margin:.55em 0}
+.ctrl label{font-size:17px}
+.ctrl .val{text-align:right;font-family:ui-monospace,monospace;font-size:18px;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:#16324f;height:22px}
+input[type=number],input[type=text],select{
+  font:inherit;font-size:18px;padding:6px 9px;border:1px solid #b7c0c9;background:#fff;
+  color:var(--ink);border-radius:0;width:100%
+}
+input:focus,select:focus,button:focus{outline:2px solid var(--navy2);outline-offset:1px}
+input.ok{border-color:var(--ok);background:#f1f7f3}
+input.bad{border-color:var(--bad);background:#fdf3f3}
+button{
+  font:inherit;font-size:16px;padding:7px 15px;border:1px solid var(--navy);border-radius:0;
+  background:var(--navy);color:#fff;cursor:pointer
+}
+button:hover{background:#1d4368}
+button.ghost{background:#fff;color:var(--navy)}
+button.ghost:hover{background:var(--soft)}
+.botones{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:9px;margin:12px 0 0}
+.readout div{background:var(--soft);padding:8px 11px}
+.readout b{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  color:#5b6875;font-weight:650;margin-bottom:2px}
+.readout span{font-family:ui-monospace,monospace;font-size:18px;font-variant-numeric:tabular-nums}
+.note{background:#fbfaf4;border-left:3px solid #b08a2e;padding:11px 15px;margin:1.1em 0}
+.warn{background:#fcf4f4;border-left:3px solid var(--bad);padding:11px 15px;margin:1.1em 0}
+.good{background:#f1f7f3;border-left:3px solid var(--ok);padding:11px 15px;margin:1.1em 0}
+.feedback{margin-top:11px;font-size:17.5px;line-height:1.55}
+.feedback.good::before{content:"";}
+.fb-good{color:var(--ok)}
+.fb-bad{color:var(--bad)}
+.fb-neutral{color:#3c4a58}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:17px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--soft);font-weight:650;font-size:16px}
+td.num,th.num{font-family:ui-monospace,monospace;font-variant-numeric:tabular-nums}
+nav.strip{display:flex;gap:15px;align-items:center;flex-wrap:wrap;font-size:15.5px;
+  border-bottom:1px solid var(--line);padding:0 0 10px;margin:-4px 0 24px;color:#5b6875}
+nav.strip a{color:var(--navy2);text-decoration:none;border-bottom:1px solid #c5d3e0}
+nav.strip a:hover{border-bottom-color:var(--navy2)}
+nav.strip .act{color:#5b6875;font-weight:650}
+nav.strip .sep{color:#ccd4db}
+nav.pager{display:flex;justify-content:space-between;gap:14px;margin-top:54px;padding-top:16px;
+  border-top:1px solid var(--line);font-size:16px}
+nav.pager a{color:var(--navy);text-decoration:none;border-bottom:1px solid #a9bdd0;padding-bottom:1px}
+nav.pager a:hover{border-bottom-color:var(--navy)}
+nav.pager .sp{flex:1}
+svg{display:block;max-width:100%;height:auto;font-family:ui-monospace,monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.tiny{font-size:15.5px;color:#5b6875;line-height:1.5}
+.pasos{counter-reset:p;list-style:none;padding-left:0}
+.pasos>li{counter-increment:p;position:relative;padding-left:42px;margin:.85em 0}
+.pasos>li::before{
+  content:counter(p);position:absolute;left:0;top:.05em;width:28px;height:28px;border:1.5px solid var(--navy);
+  color:var(--navy);font-size:15px;font-weight:700;text-align:center;line-height:25px;
+  font-family:ui-monospace,monospace
+}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin:1.2em 0}
+.card{background:#fff;border:1px solid var(--line);padding:14px 16px;display:block;
+  text-decoration:none;color:var(--ink)}
+.card:hover{border-color:var(--navy);background:#fbfcfd}
+.card .n{font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:#5b6875;font-weight:650}
+.card .t{font-size:19px;color:var(--navy);font-weight:650;margin:.15em 0 .25em;line-height:1.28;min-height:2.56em}
+.card .d{font-size:16px;color:#46545f;line-height:1.45}
+.tag{display:inline-block;font-size:13px;border:1px solid var(--line);background:var(--soft);
+  padding:1px 7px;margin:4px 4px 0 0;color:#46545f}
+kbd{font-family:ui-monospace,monospace;font-size:15px;border:1px solid #b7c0c9;border-bottom-width:2px;
+  padding:1px 5px;background:#fff}
+.checkline{display:flex;gap:10px;align-items:baseline;margin:.4em 0}
+.checkline input[type=checkbox]{width:18px;height:18px;accent-color:#16324f;flex:none}
+@media (max-width:740px){
+  body{font-size:18px}
+  .wrap{padding:18px 16px 70px}
+  h1{font-size:26px} h2{font-size:20.5px}
+  .ctrl{grid-template-columns:110px 1fr 105px;gap:8px}
+  .grid2{grid-template-columns:1fr}
+}
+@media print{
+  body{background:#fff}
+  .demo{break-inside:avoid}
+  nav.pager{display:none}
+}
+</style>
+
+<script>
+/* ---------- utilidades comunes (idénticas en todas las páginas) ---------- */
+const $  = (s, r) => (r||document).querySelector(s);
+const $$ = (s, r) => Array.from((r||document).querySelectorAll(s));
+
+/* Lee un número escrito por el alumno: admite coma o punto decimal,
+   espacios, el símbolo de grado y el sufijo de gonios. */
+function leerNum(v){
+  if (typeof v === 'number') return v;
+  let s = String(v == null ? '' : v).trim();
+  s = s.replace(/\s+/g,'').replace(/[°º]/g,'').replace(/(rad|gon|g|m|s)$/i,'');
+  if (s === '') return NaN;
+  if (s.includes(',') && s.includes('.')) s = s.replace(/\./g,'').replace(',', '.');
+  else if (s.includes(',')) s = s.replace(',', '.');
+  return parseFloat(s);
+}
+/* Formato español: coma decimal, cifras fijas. */
+function fmt(x, d){
+  d = (d === undefined) ? 2 : d;
+  if (!isFinite(x)) return '—';
+  return x.toFixed(d).replace('.', ',');
+}
+/* Sexagesimal: {g,m,s} a partir de grados decimales */
+function aSexa(x){
+  let neg = x < 0; x = Math.abs(x);
+  let g = Math.floor(x + 1e-12);
+  let mm = (x - g) * 60;
+  let m = Math.floor(mm + 1e-9);
+  let s = (mm - m) * 60;
+  if (s >= 59.9995){ s = 0; m += 1; }
+  if (m >= 60){ m -= 60; g += 1; }
+  return {g:(neg?-g:g), m:m, s:s};
+}
+/* Centesimal: {g,m,s} */
+function aCentes(x){
+  let neg = x < 0; x = Math.abs(x);
+  let g = Math.floor(x + 1e-12);
+  let mm = (x - g) * 100;
+  let m = Math.floor(mm + 1e-9);
+  let s = (mm - m) * 100;
+  if (s >= 99.995){ s = 0; m += 1; }
+  if (m >= 100){ m -= 100; g += 1; }
+  return {g:(neg?-g:g), m:m, s:s};
+}
+function txtSexa(x, ds){
+  ds = (ds === undefined) ? 1 : ds;
+  const f = Math.pow(10, ds);
+  let total = Math.round(Math.abs(x) * 3600 * f);
+  const g = Math.floor(total / (3600 * f));
+  let rem = total - g * 3600 * f;
+  const m = Math.floor(rem / (60 * f));
+  rem = rem - m * 60 * f;
+  const si = String(Math.floor(rem / f)).padStart(2, '0');
+  const dec = ds > 0 ? ',' + String(rem % f).padStart(ds, '0') : '';
+  return (x < 0 ? '−' : '') + g + '° ' + String(m).padStart(2, '0') + '\u2032 ' + si + dec + '\u2033';
+}
+function txtCentes(x, ds){
+  ds = (ds === undefined) ? 1 : ds;
+  const f = Math.pow(10, ds);
+  let total = Math.round(Math.abs(x) * 10000 * f);
+  const g = Math.floor(total / (10000 * f));
+  let rem = total - g * 10000 * f;
+  const m = Math.floor(rem / (100 * f));
+  rem = rem - m * 100 * f;
+  const si = String(Math.floor(rem / f)).padStart(2, '0');
+  const dec = ds > 0 ? ',' + String(rem % f).padStart(ds, '0') : '';
+  return (x < 0 ? '−' : '') + g + 'g ' + String(m).padStart(2, '0') + 'm ' + si + dec + 's';
+}
+/* Retorno de estado en un campo: ok / mal */
+function marcar(el, estado){
+  el.classList.remove('ok','bad');
+  if (estado === 1) el.classList.add('ok');
+  else if (estado === 0) el.classList.add('bad');
+}
+function fb(el, tipo, texto){
+  el.className = 'feedback ' + (tipo === 1 ? 'fb-good' : tipo === 0 ? 'fb-bad' : 'fb-neutral');
+  el.innerHTML = texto;
+  return tipo;
+}
+/* Formatea un ángulo en radianes como múltiplo exacto de π si el denominador es pequeño */
+function aPi(x){
+  const r = x / Math.PI;
+  for (let q = 1; q <= 24; q++){
+    const p = r * q;
+    if (Math.abs(p - Math.round(p)) < 1e-9){
+      const n = Math.round(p);
+      if (q === 1) return (n === 1 ? 'π' : n + 'π');
+      if (n === 1) return 'π/' + q;
+      return n + 'π/' + q;
+    }
+  }
+  return null;
+}
+/* Sincroniza el relleno visual de los sliders (solo estética) */
+function refrescaSliders(root){
+  $$('input[type=range]', root || document).forEach(function(r){
+    const p = (r.value - r.min) / (r.max - r.min) * 100;
+    r.style.background = 'linear-gradient(90deg,#16324f ' + p + '%,#cfd7de ' + p + '%)';
+    r.style.height = '6px';
+    r.style.borderRadius = '0';
+    r.style.appearance = 'none';
+    r.style.webkitAppearance = 'none';
+  });
+}
+</script>
+<style>
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:16px;height:16px;background:#16324f;border:2px solid #fff;
+  box-shadow:0 0 0 1px #16324f;cursor:pointer
+}
+input[type=range]::-moz-range-thumb{
+  width:14px;height:14px;background:#16324f;border:2px solid #fff;box-shadow:0 0 0 1px #16324f;cursor:pointer
+}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<header class="top"><div class="kicker">Día 1 · Peldaño 3-4</div><h1>Radianes: el ángulo medido en radios</h1><p class="sub">Por qué 180° son π radianes y cómo se vuelve de ahí a grados</p></header><nav class="strip"><a href="index.html">Índice</a><span class="sep">·</span><span class="act">Lección 4</span><span class="sep">·</span><a href="gen_01_conversiones.html">Generador A &rarr;</a></nav>
+<main>
+<p class="lead">El radián no es una unidad rara que haya inventado un matemático aburrido: es el ángulo que se mide con el
+propio radio. Si tomas el radio de un círculo y lo curvas siguiendo la circunferencia, el ángulo que abarca ese trozo
+de curva es exactamente un radián. De esa única decisión salen todas las demás: el <span class="num">2π</span> de la
+vuelta completa, el <span class="num">π</span> del semicírculo, el modo RAD de la calculadora y el
+<span class="num">0,017453</span> que aparece en todos los programas. Entender de dónde sale cada uno de esos números
+evita tener que memorizarlos.</p>
+
+<h2>1. Un ángulo que se mide con el propio radio</h2>
+<p>Los otros dos sistemas parten la vuelta en un número elegido a mano: 360 partes o 400 partes. El radián no parte
+nada; <strong>compara</strong>. Toma un arco de circunferencia con centro en el vértice del ángulo y pregunta cuántas
+veces cabe el radio en ese arco. El cociente es el ángulo medido en radianes, y no depende del radio que hayas
+elegido dibujar: si duplicas el radio, el arco también se duplica y el cociente sigue igual.</p>
+<div class="formula">θ (rad)  =  longitud del arco / radio  =  s / r</div>
+<p>Como es una longitud dividida entre otra longitud, el resultado no tiene unidad física: son metros entre metros,
+y se van. Por eso el radián es un número puro y por eso no tiene subdivisiones: no hay «minutos radiales» ni
+«segundos radiales», y en la práctica ni siquiera hace falta escribir «rad» al lado (aunque en clase y en los
+exámenes conviene escribirlo, porque desambigua).</p>
+<p>Veámoslo con medidas de campo. Una estación total está clavada en el centro de una era circular y el radio hasta
+la primera estaca mide <span class="num">40 m</span>. Se mide sobre el terreno un arco de <span class="num">3 m</span>
+entre dos estacas. El ángulo que las separa visto desde el centro es:</p>
+<div class="formula">θ = 3 / 40 = <em>0,075 rad</em></div>
+<p>Y al revés: si el ángulo fuera de un radián, el arco mediría lo mismo que el radio, 40 m. Ese es el sentido de la
+definición, y es la razón de que el sistema se llame <em>radial</em>.</p>
+
+<h2>2. De dónde sale el 2π</h2>
+<p>Ahora la pregunta obligada: ¿cuántos radianes tiene una vuelta completa? La respuesta es aplicar la definición a
+la circunferencia entera. La longitud de una circunferencia de radio <span class="num">r</span> es
+<span class="num">2πr</span>. Dividiendo entre el radio:</p>
+<div class="formula">θ(vuelta) = 2πr / r = <em>2π ≈ 6,2832 rad</em></div>
+<p>Es decir: en una vuelta caben <span class="num">6</span> radios completos y un pico de
+<span class="num">0,2832</span> de radio. Ni siete ni seis y cuarto: seis y algo más de un cuarto. Ese «algo más» es
+la cuarta parte de un cuarto de vuelta, y es justo lo que hace que el sistema no sea cómodo para el trabajo de campo
+y sea perfecto para el cálculo.</p>
+<p>Con la mitad de la vuelta el razonamiento es idéntico: el semicírculo mide <span class="num">πr</span>, así que
+caben <span class="num">π</span> radios. Y ahí está la equivalencia que se usa todo el rato:</p>
+<div class="formula">1 vuelta  = 2π rad = 360° = 400 g
+½ vuelta  =  π rad = 180° = 200 g
+¼ vuelta  = π/2 rad =  90° = 100 g</div>
+<p>Fíjate en que la igualdad con los gonios sale gratis: si media vuelta son 180° y también 200 g, entonces
+<span class="num">180° = 200 g = π rad</span>. No hay nada que deducir por separado; es la misma media vuelta escrita
+en tres idiomas.</p>
+
+<h2>3. Cuánto vale un radián, y cómo comprobarlo</h2>
+<p>De la igualdad anterior se despeja el tamaño de un radián. Si <span class="num">π rad = 180°</span>, dividiendo
+entre π:</p>
+<div class="formula">1 rad = 180 / π = <em>57,2958°</em>
+1 rad = 200 / π = <em>63,6620 g</em></div>
+<p>Ese <span class="num">57,2958°</span> hay que saberlo reconocer, no recitarlo. Sirve para dos cosas. La primera,
+detectar un resultado disparatado: un ángulo de 3 rad no son 3°, son unos 172°, casi media vuelta. Si en un problema
+de pendientes te sale un ángulo de 2 rad y el dibujo mostraba una cuesta suave, el error está en las unidades. La
+segunda, tener la escala mental: un radián es un poco más de medio cuarto de vuelta; dos radianes pasan de los 114°;
+y por debajo de <span class="num">0,2 rad</span> (11,5°) los ángulos de topografía se vuelven pequeños y delicados de
+medir.</p>
+<p>En el sentido contrario, las unidades pequeñas son diminutas en radianes:</p>
+<div class="formula">1° = π/180 = 0,017453 rad
+1 g = π/200 = 0,015708 rad</div>
+<p>Que un grado sea casi diecisiete milésimas de radián explica por qué los radianes se escriben casi siempre con
+cuatro o cinco decimales: redondear a dos decimales mueve el ángulo hasta 0,005 rad, que son 0,29°, y en un
+levantamiento eso ya es un error visible.</p>
+<table>
+  <tr><th>En radianes</th><th>En grados sexagesimales</th><th>En gonios</th><th>Nombre</th></tr>
+  <tr><td class="num">π/6 = 0,5236</td><td class="num">30°</td><td class="num">33,3333 g</td><td>Sexta parte de la media vuelta</td></tr>
+  <tr><td class="num">π/4 = 0,7854</td><td class="num">45°</td><td class="num">50 g</td><td>Diagonal del cuadrado</td></tr>
+  <tr><td class="num">π/3 = 1,0472</td><td class="num">60°</td><td class="num">66,6667 g</td><td>Ángulo del triángulo equilátero</td></tr>
+  <tr><td class="num">3π/8 = 1,1781</td><td class="num">67,5°</td><td class="num">75 g</td><td>Media entre 45° y 90°</td></tr>
+  <tr><td class="num">π/2 = 1,5708</td><td class="num">90°</td><td class="num">100 g</td><td>Cuarto de vuelta</td></tr>
+  <tr><td class="num">3π/4 = 2,3562</td><td class="num">135°</td><td class="num">150 g</td><td>Tres octavos de vuelta</td></tr>
+  <tr><td class="num">π = 3,1416</td><td class="num">180°</td><td class="num">200 g</td><td>Media vuelta</td></tr>
+  <tr><td class="num">2π = 6,2832</td><td class="num">360°</td><td class="num">400 g</td><td>Vuelta completa</td></tr>
+</table>
+
+<h2>4. Convertir en los dos sentidos</h2>
+<p>No hay que memorizar cuatro factores: hay dos, y los demás son sus inversos. El razonamiento es siempre el mismo
+—una vuelta son 2π radianes y 360°— y de ahí sale una regla de tres que se escribe en forma de fracción para poder
+simplificar antes de tocar la calculadora.</p>
+<ol class="pasos">
+  <li><p><strong>Decide el sentido y escribe la fracción, no el decimal.</strong> Pasar de grados a radianes es
+  multiplicar por <span class="num">π/180</span>; de gonios a radianes, por <span class="num">π/200</span>. En el
+  sentido contrario se multiplica por el inverso:</p>
+  <div class="formula">rad = grados · π/180        grados = rad · 180/π
+rad = gonios · π/200        gonios = rad · 200/π</div></li>
+
+  <li><p><strong>Simplifica la fracción con π dentro.</strong> Antes de multiplicar nada, cancela el número que
+  acompaña a π. Es el paso que casi todo el mundo se salta y el que da el valor exacto que piden algunos
+  enunciados.</p>
+  <div class="formula">135° → 135·π/180 → divido entre 45 → 3π/4</div></li>
+
+  <li><p><strong>Solo al final, pasa a decimal.</strong> Multiplicando la fracción por 3,14159265. Es en este paso
+  donde se redondea, y nunca antes.</p>
+  <div class="formula">3π/4 = 3 · 3,14159265 / 4 = <em>2,35619 rad</em></div></li>
+
+  <li><p><strong>Comprueba con la escala.</strong> El resultado tiene que caer donde toca: 0,5 rad es algo menos de
+  30°, 1,5 rad algo menos de 90°, 3 rad algo menos de 180°. Si el número no cae en el tramo esperado, has usado el
+  factor 200 donde iba el 180 (o al revés).</p></li>
+</ol>
+<p>Un ejemplo más, con un ángulo que no sale exacto, para ver la diferencia: <span class="num">37° 30′</span> son
+37,5° en forma decimal, y</p>
+<div class="formula">37,5 · π/180 = 0,20833π → 0,6545 rad</div>
+<p>Aquí no hay fracción bonita de π porque 37,5 no es múltiplo cómodo de 180, así que se deja el decimal. Saber
+distinguir cuándo el exacto existe y cuándo no es parte del oficio: los ángulos que salen de repartos de la vuelta
+(30°, 45°, 60°, 90°, 135°…) tienen fracción exacta; los medidos en campo, casi nunca.</p>
+
+<h2>5. Demostración 1 · el arco desenrollado</h2>
+<p>Esta es la demostración que conviene mirar despacio, porque es la definición funcionando. A la izquierda hay un
+círculo; a la derecha, una recta de la misma longitud que la circunferencia, como si hubiéramos cortado el círculo
+por un punto y lo hubiéramos estirado. Las marcas de la recta están puestas cada un radio, y por eso se ve lo que
+cuesta creer: caben <span class="num">6</span> radios completos, y sobra un trocito de
+<span class="num">0,2832</span> de radio. Los seis más el trocito son <span class="num">2π</span>.</p>
+<p>Mueve el deslizador despacio y observa dos lecturas a la vez: el trozo de arco que se ha pintado en el círculo y
+el trozo de recta que se ha pintado en rojo. Los dos miden lo mismo, siempre. Cuando el deslizador marque 3,14 el
+arco rojo medirá exactamente media circunferencia y los grados dirán 180.</p>
+
+<div class="demo">
+<p class="tat">Demostración 1 · Cuántos radios caben en el arco</p>
+<svg id="arcoSvg" viewBox="0 0 620 400" width="620" height="400" role="img"
+     aria-label="Círculo con un arco que se desenrolla sobre una recta graduada en radios"></svg>
+<div class="ctrl">
+  <label for="th">Ángulo</label>
+  <input id="th" type="range" min="0" max="6.2832" step="0.001" value="1.5708">
+  <span class="val" id="thV">1,5708 rad</span>
+</div>
+<div class="botones" id="saltos"></div>
+<div class="readout">
+  <div><b>Radianes</b><span id="oRad">—</span></div>
+  <div><b>Grados</b><span id="oDeg">—</span></div>
+  <div><b>Gonios</b><span id="oGon">—</span></div>
+  <div><b>Arco, en radios</b><span id="oRr">—</span></div>
+  <div><b>Fracción de vuelta</b><span id="oVuel">—</span></div>
+  <div><b>Exacto</b><span id="oEx">—</span></div>
+</div>
+<p class="tiny">La columna «arco, en radios» y la de radianes dicen siempre lo mismo, y no es casualidad: el ángulo
+en radianes <em>es</em> el número de radios que caben en su arco. Esa coincidencia es toda la definición.</p>
+</div>
+
+<script>
+(function(){
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = $('#arcoSvg');
+  const cx = 150, cy = 125, R = 72, x0 = 90, yL = 336;
+  const TAU = 2 * Math.PI;
+
+  function el(tag, attrs, txt){
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (txt !== undefined) e.textContent = txt;
+    svg.appendChild(e);
+    return e;
+  }
+
+  /* --- partes fijas --- */
+  el('circle', {cx:cx, cy:cy, r:R, fill:'#fff', stroke:'#b7c0c9', 'stroke-width':1});
+  el('circle', {cx:cx, cy:cy, r:3, fill:'#5b6875'});
+  el('text', {x:cx, y:cy + R + 30, 'text-anchor':'middle', 'font-size':13, fill:'#5b6875'}, 'círculo de radio r');
+  el('line', {x1:x0 - 10, y1:yL, x2:x0 + TAU * R + 10, y2:yL, stroke:'#c3cbd2', 'stroke-width':1});
+  el('text', {x:x0, y:yL - 62, 'font-size':13, fill:'#5b6875'}, 'la circunferencia, estirada sobre una recta');
+  for (let k = 0; k <= 6; k++){
+    const x = x0 + k * R;
+    el('line', {x1:x, y1:yL - 7, x2:x, y2:yL + 7, stroke:'#8d99a4', 'stroke-width':1.2});
+    if (k < 6){
+      el('text', {x:x + R / 2, y:yL + 24, 'text-anchor':'middle', 'font-size':13, fill:'#5b6875'}, 'r');
+    }
+  }
+  const xFin = x0 + TAU * R;
+  el('line', {x1:xFin, y1:yL - 12, x2:xFin, y2:yL + 12, stroke:'#16324f', 'stroke-width':1.6});
+  el('text', {x:xFin, y:yL + 40, 'text-anchor':'middle', 'font-size':13, fill:'#16324f'}, '2π = 6,2832 r');
+
+  /* --- partes que se mueven --- */
+  const sector = el('path', {d:'', fill:'#8f2222', opacity:'0.07'});
+  const segmento = el('line', {x1:x0, y1:yL, x2:x0, y2:yL, stroke:'#8f2222', 'stroke-width':5});
+  const arco = el('path', {d:'', fill:'none', stroke:'#8f2222', 'stroke-width':2.6});
+  const radio = el('line', {x1:cx, y1:cy, x2:cx + R, y2:cy, stroke:'#16324f', 'stroke-width':2});
+  const puntoC = el('circle', {cx:cx + R, cy:cy, r:4.5, fill:'#8f2222'});
+  const puntoL = el('circle', {cx:x0, cy:yL, r:5.5, fill:'#8f2222'});
+  const marca = el('text', {x:x0, y:yL - 14, 'text-anchor':'middle', 'font-size':13, fill:'#8f2222'});
+
+  let theta = Math.PI / 2;
+
+  function dibuja(){
+    const px = cx + R * Math.cos(theta), py = cy - R * Math.sin(theta);
+    radio.setAttribute('x2', px); radio.setAttribute('y2', py);
+    puntoC.setAttribute('cx', px); puntoC.setAttribute('cy', py);
+    const grande = theta > Math.PI ? 1 : 0;
+    const d = 'M ' + (cx + R) + ' ' + cy + ' A ' + R + ' ' + R + ' 0 ' + grande + ' 0 ' + px + ' ' + py;
+    arco.setAttribute('d', d);
+    sector.setAttribute('d', 'M ' + cx + ' ' + cy + ' L ' + (cx + R) + ' ' + cy + ' ' + d.replace('M ' + (cx + R) + ' ' + cy, '') + ' Z');
+    const xm = x0 + theta * R;
+    segmento.setAttribute('x2', xm);
+    puntoL.setAttribute('cx', xm);
+    marca.setAttribute('x', xm);
+    marca.setAttribute('text-anchor', xm > 500 ? 'end' : 'middle');
+    marca.textContent = 'arco = ' + fmt(theta, 3) + ' r';
+  }
+
+  function actualiza(){
+    dibuja();
+    $('#thV').textContent = fmt(theta, 4) + ' rad';
+    $('#oRad').textContent  = fmt(theta, 4) + ' rad';
+    $('#oDeg').textContent  = fmt(theta * 180 / Math.PI, 2) + '°';
+    $('#oGon').textContent  = fmt(theta * 200 / Math.PI, 2) + ' g';
+    $('#oRr').textContent   = fmt(theta, 4) + ' radios';
+    $('#oVuel').textContent = fmt(theta / TAU * 100, 1) + ' %';
+    const ex = aPi(theta);
+    $('#oEx').textContent   = ex ? (ex + ' rad') : 'no es fracción de π';
+  }
+
+  $('#th').addEventListener('input', function(){
+    theta = parseFloat(this.value);
+    actualiza();
+  });
+
+  /* botones con los valores exactos */
+  const NOT = [[0,1,'0'], [1,6,'π/6'], [1,4,'π/4'], [1,3,'π/3'], [3,8,'3π/8'],
+               [1,2,'π/2'], [3,4,'3π/4'], [1,1,'π'], [2,1,'2π']];
+  NOT.forEach(function(n){
+    const b = document.createElement('button');
+    b.className = 'ghost';
+    b.textContent = n[2];
+    b.addEventListener('click', function(){
+      theta = n[0] * Math.PI / n[1];
+      $('#th').value = theta.toFixed(3);
+      actualiza();
+    });
+    $('#saltos').appendChild(b);
+  });
+
+  actualiza();
+})();
+</script>
+
+<h2>6. Demostración 2 · el conversor, con el valor exacto</h2>
+<p>Escribe en cualquiera de las tres casillas y las otras dos se actualizan solas. En la de radianes admite también
+la fracción escrita con π, tal como se escribe a mano: prueba con <span class="num">3π/4</span>,
+<span class="num">π/6</span> o <span class="num">2π</span>. A la derecha del campo de radianes aparece la fracción
+exacta que corresponde al ángulo, que es lo que hay que entregar cuando el enunciado pide el valor exacto y no el
+decimal.</p>
+
+<div class="demo">
+<p class="tat">Demostración 2 · Radianes, grados y gonios a la vez</p>
+<div class="ctrl">
+  <label for="cRad">Radianes</label>
+  <input id="cRad" type="text" value="3π/4">
+  <span class="val" id="cRadEx">—</span>
+</div>
+<div class="ctrl">
+  <label for="cDeg">Grados</label>
+  <input id="cDeg" type="text" value="135">
+  <span class="val">° sexagesimales</span>
+</div>
+<div class="ctrl">
+  <label for="cGon">Gonios</label>
+  <input id="cGon" type="text" value="150">
+  <span class="val">g centesimales</span>
+</div>
+<div class="botones" id="saltos2"></div>
+<div class="feedback" id="cFb"></div>
+<p class="tiny">Los botones de abajo cargan los ángulos notables. Fíjate en que 50 g y 45° son el mismo ángulo, y en
+que al pasar de gonios a radianes el divisor es 200 y no 180: ese cambio de divisor es el error que más se cuela en
+los exámenes.</p>
+</div>
+
+<script>
+(function(){
+  function parseRad(v){
+    let s = String(v == null ? '' : v).trim().replace(/\s+/g, '').replace(/,/g, '.');
+    if (s === '') return NaN;
+    s = s.replace(/π/g, 'pi').replace(/PI/g, 'pi');
+    if (s.indexOf('pi') === -1) return leerNum(s);
+    const m = s.match(/^(-?\d*(?:\.\d+)?)pi(?:\/(\d+(?:\.\d+)?))?$/);
+    if (!m) return NaN;
+    const c = (m[1] === '' || m[1] === '-') ? (m[1] === '-' ? -1 : 1) : parseFloat(m[1]);
+    const den = m[2] ? parseFloat(m[2]) : 1;
+    if (!isFinite(c) || !isFinite(den) || den === 0) return NaN;
+    return c * Math.PI / den;
+  }
+
+  const iRad = $('#cRad'), iDeg = $('#cDeg'), iGon = $('#cGon'), fbC = $('#cFb');
+
+  /* quita los ceros que sobran al final de un número ya formateado con coma */
+  function limpiaCeros(s){
+    if (s.indexOf(',') === -1) return s;
+    return s.replace(/(,\d*?)0+$/, '$1').replace(/,$/, '');
+  }
+  function pinta(rad, origen){
+    const ex = aPi(rad);
+    $('#cRadEx').textContent = ex ? (ex + ' rad') : 'sin fracción exacta';
+    if (origen !== 'rad') iRad.value = limpiaCeros(fmt(rad, 5));
+    if (origen !== 'deg') iDeg.value = limpiaCeros(fmt(rad * 180 / Math.PI, 4));
+    if (origen !== 'gon') iGon.value = limpiaCeros(fmt(rad * 200 / Math.PI, 4));
+    fb(fbC, null, '');
+  }
+
+  iRad.addEventListener('input', function(){
+    const r = parseRad(this.value);
+    if (!isFinite(r)){
+      fb(fbC, 0, 'No se entiende ese número. Admite decimales con coma y fracciones con π, como 3π/4 o π/6.');
+      return;
+    }
+    pinta(r, 'rad');
+  });
+  iDeg.addEventListener('input', function(){
+    const g = leerNum(this.value);
+    if (!isFinite(g) || this.value.trim() === ''){ fb(fbC, 0, 'Escribe un número de grados.'); return; }
+    pinta(g * Math.PI / 180, 'deg');
+  });
+  iGon.addEventListener('input', function(){
+    const g = leerNum(this.value);
+    if (!isFinite(g) || this.value.trim() === ''){ fb(fbC, 0, 'Escribe un número de gonios.'); return; }
+    pinta(g * Math.PI / 200, 'gon');
+  });
+
+  const NOT = [[1,6,'π/6 · 30°'], [1,4,'π/4 · 45°'], [1,3,'π/3 · 60°'], [3,8,'3π/8 · 75 g'],
+               [1,2,'π/2 · 100 g'], [3,4,'3π/4 · 135°'], [1,1,'π · 180°'], [2,1,'2π · 360°']];
+  NOT.forEach(function(n){
+    const b = document.createElement('button');
+    b.className = 'ghost';
+    b.textContent = n[2];
+    b.addEventListener('click', function(){
+      pinta(n[0] * Math.PI / n[1], 'btn');
+    });
+    $('#saltos2').appendChild(b);
+  });
+
+  pinta(3 * Math.PI / 4, 'btn');
+})();
+</script>
+
+<h2>7. Los cuatro ejercicios de la ficha</h2>
+<p>Estos son los que hay que saber hacer sin dudar. Fíjate en que tres van de grados o gonios a radianes y uno al
+revés, y en que todos se resuelven igual: fracción, simplificación, decimal.</p>
+
+<h3>C06 · Pasar 135° a radianes</h3>
+<ol class="pasos">
+  <li><p>Multiplico por el factor de los grados sexagesimales:</p>
+  <div class="formula">135 · π/180</div></li>
+  <li><p>Simplifico la fracción 135/180 dividiendo entre 45:</p>
+  <div class="formula">135/180 = 3/4  ⇒  <em>3π/4</em></div></li>
+  <li><p>Paso a decimal para tener el número que se opera:</p>
+  <div class="formula">3π/4 = 3 · 3,14159265 / 4 = <em>2,35619 rad</em></div></li>
+  <li><p>Compruebo: 135° está entre 90° (1,57 rad) y 180° (3,14 rad), y 2,36 cae justo en medio. Correcto.</p></li>
+</ol>
+
+<h3>C07 · Pasar π/6 radianes a grados</h3>
+<ol class="pasos">
+  <li><p>Ahora el factor va al revés, porque quiero salir del radián:</p>
+  <div class="formula">(π/6) · 180/π</div></li>
+  <li><p>El π del numerador y el del denominador se cancelan, que es justo lo que buscábamos:</p>
+  <div class="formula">180/6 = <em>30°</em></div></li>
+  <li><p>Si además lo pidieran en gonios, el mismo camino con 200:</p>
+  <div class="formula">(π/6) · 200/π = 200/6 = 33,3333 g</div></li>
+</ol>
+<p>Este es el ejercicio que demuestra por qué el radián es cómodo en el cálculo: el π desaparece sin calculadora y
+el resultado sale entero. Si al hacerlo has necesitado multiplicar 0,5236 por 57,2958, has llegado al mismo sitio por
+el camino largo y con dos redondeos de más.</p>
+
+<h3>C08 · Pasar 75 g a radianes</h3>
+<ol class="pasos">
+  <li><p>El factor de los gonios lleva 200 en el denominador, no 180:</p>
+  <div class="formula">75 · π/200</div></li>
+  <li><p>Simplifico 75/200 dividiendo entre 25:</p>
+  <div class="formula">75/200 = 3/8  ⇒  <em>3π/8</em></div></li>
+  <li><p>Decimal:</p>
+  <div class="formula">3π/8 = 3 · 3,14159265 / 8 = <em>1,17810 rad</em></div></li>
+  <li><p>Compruebo por el otro sistema: 75 g son 67,5° (multiplicando por 9/10), y 67,5° en radianes dan
+  <span class="num">1,17810</span>. Los dos caminos coinciden, que es la mejor prueba de que el divisor era 200.</p></li>
+</ol>
+
+<h3>C09 · Pasar π/4 radianes a gonios</h3>
+<ol class="pasos">
+  <li><p>Factor con 200, porque el destino son gonios:</p>
+  <div class="formula">(π/4) · 200/π</div></li>
+  <li><p>Se cancela el π y sale exacto:</p>
+  <div class="formula">200/4 = <em>50 g</em></div></li>
+  <li><p>Y como control, en grados: 50 g · 9/10 = 45°, que es el ángulo que ya conocíamos de la tabla.</p></li>
+</ol>
+<div class="note">
+<p><strong>Lo que estos cuatro ejercicios enseñan de verdad.</strong> El π no es un número que haya que calcular:
+es una etiqueta que se queda en la expresión hasta el último momento. Mientras se simplifica, se trabaja con
+fracciones y el π se cancela o se arrastra; solo al final se convierte en 3,14159265. Quien empieza calculando
+0,5236 pierde la posibilidad de simplificar y, con ella, el valor exacto.</p>
+</div>
+
+<h2>8. Por qué el cálculo y las máquinas usan radianes</h2>
+<p>Si los gonios son tan cómodos para el campo, ¿por qué todo el cálculo está en radianes? Porque el radián es la
+única unidad en la que las fórmulas del arco y del área salen sin constantes de corrección. La longitud de un arco es
+<span class="num">s = r · θ</span>, y esa fórmula solo es cierta si θ va en radianes: con 90° habría que escribir
+<span class="num">r · 90 · π/180</span>, arrastrando el factor toda la cuenta.</p>
+<div class="formula">s = r · θ          (θ en radianes)
+A = ½ · r² · θ     (área del sector, θ en radianes)</div>
+<p>Pasa lo mismo con las derivadas, que son la herramienta con la que se calculan pendientes, velocidades y
+correcciones: la derivada del seno es el coseno <em>solo</em> si el ángulo va en radianes. En grados aparecería un
+factor π/180 multiplicando cada derivada, y todas las fórmulas de física y de ingeniería llevarían un engorro
+permanente. Por eso la trigonometría analítica se define en radianes y los demás sistemas se consideran
+«de lectura».</p>
+<p>De ahí el <strong>modo RAD</strong> de la calculadora. Una calculadora científica no adivina en qué unidades le
+hablas: la tecla <kbd>sin</kbd> tiene un interruptor DEG/RAD/GRAD y aplica el que esté puesto. Si está en RAD y le
+pides el seno de 30, no te da 0,5: te da el seno de 30 radianes, que es <span class="num">−0,9880</span>, un número
+sin ningún sentido en topografía. Lo mismo con la tangente de 45: en RAD da <span class="num">1,6198</span> en vez
+de 1. Y en los lenguajes de programación pasa igual: <span class="num">Math.sin(x)</span> espera radianes siempre, y
+convertir es responsabilidad de quien escribe el programa. Esa es la razón de que el radián aparezca en el temario
+aunque el campo se mida en gonios: en cuanto hay una fórmula con arcos, senos o derivadas, hay radianes debajo.</p>
+
+<h2>9. Los tres errores típicos</h2>
+<ol>
+  <li><p><strong>Dejar la calculadora en RAD cuando el dato está en grados.</strong> Es el error caro, porque no
+  avisa: el resultado sale, es un número, y es falso. El síntoma es inconfundible si uno lo busca: el resultado no
+  tiene nada que ver con lo que el dibujo muestra (un seno negativo donde esperabas uno positivo, una tangente de
+  1,62 donde esperabas 1). La rutina que lo evita: antes de la primera tecla trigonométrica, mirar la pantalla y
+  comprobar que pone DEG (o GRAD, si trabajas en gonios). Y si el ejercicio mezcla unidades —un ángulo en gonios y
+  una fórmula en radianes— pasar todo a la misma unidad <em>antes</em> de empezar.</p></li>
+
+  <li><p><strong>Confundir 1 rad con 1°.</strong> Un radián son 57,2958°, casi sesenta veces más. El error se
+  detecta enseguida con la escala: si un ángulo de «2 rad» te sale como si fuera una cuesta suave, o si al convertir
+  30° obtienes 30 rad, el factor 57 está perdido en algún sitio. Regla de bolsillo para no olvidarla: una vuelta son
+  algo más de 6 radianes, así que cualquier ángulo en radianes que pase de 6,3 ha dado más de una vuelta
+  completa.</p></li>
+
+  <li><p><strong>Entregar 0,5236 cuando el enunciado pide el valor exacto.</strong> El decimal no es un error de
+  cálculo —0,5236 es π/6 redondeado—, pero deja de ser la respuesta si se ha pedido la fracción: π/6 dice cosas que
+  0,5236 no dice, como que el ángulo es la sexta parte de una media vuelta. Cuando el enunciado dice «expresa en
+  función de π» o «valor exacto», la respuesta es una fracción con π; el decimal va detrás, entre paréntesis, y solo
+  como ayuda.</p></li>
+</ol>
+<div class="warn">
+<p><strong>Un cuarto error, más sutil: redondear dos veces.</strong> Pasar 135° a decimal (2,36) y luego usar ese
+2,36 para convertir a gonios arrastra un error de dos centésimas de gonio. Los redondeos se hacen una sola vez, al
+final, y siempre después de haber operado con el valor completo.</p>
+</div>
+
+<h2>10. Cómo se escribe en el examen</h2>
+<p>Cuatro líneas, y la tercera es la que demuestra que sabes lo que estás haciendo. Con ellas el corrector ve el
+criterio aunque el decimal final baile en la última cifra:</p>
+<div class="formula">1)  Dato:  135°
+2)  Factor:  135 · π/180
+3)  Simplifico:  135/180 = 3/4  ⇒  3π/4 rad
+4)  Decimal:  3π/4 = 2,35619 rad   (comprobación: entre 1,57 y 3,14)</div>
+<p>Si el enunciado pide el resultado en gonios o en grados y el dato venía en radianes, se escribe igual, cambiando
+el factor por <span class="num">200/π</span> o <span class="num">180/π</span>. Y si el dato es una medida de campo
+con minutos y segundos, primero se pasa a decimal (lección 2) y solo después a radianes: nunca se intenta convertir
+37° 30′ a radianes de una vez.</p>
+
+<h2>Resumen de la lámina</h2>
+<table>
+  <tr><th>Idea</th><th>Expresión</th><th>Para qué sirve</th></tr>
+  <tr><td>Definición</td><td class="num">θ = s / r</td><td>Un radián es un arco igual al radio; no tiene unidades</td></tr>
+  <tr><td>La vuelta</td><td class="num">2π ≈ 6,2832 rad</td><td>Caben 6 radios y 0,2832 más</td></tr>
+  <tr><td>La media vuelta</td><td class="num">π rad = 180° = 200 g</td><td>La equivalencia que une los tres sistemas</td></tr>
+  <tr><td>Tamaño de la unidad</td><td class="num">1 rad = 57,2958°</td><td>Detectar resultados disparatados</td></tr>
+  <tr><td>Los dos factores</td><td class="num">π/180 y π/200</td><td>Convertir a radianes desde cada sistema</td></tr>
+</table>
+<p>El radián queda cerrado cuando uno mira un ángulo de 1,57 rad y piensa «un cuarto de vuelta» sin hacer la cuenta.
+Para llegar ahí, el <a href="gen_01_conversiones.html">generador de conversiones</a> tiene un nivel que encadena
+grados, gonios y radianes con números nuevos cada vez; conviene hacer diez seguidos, alternando los dos sentidos, y
+comprobar con la escala antes de mirar la corrección. La lección siguiente, <em>Seno, coseno y tangente</em>, usa
+este sistema en todas sus fórmulas: es el motivo por el que el radián se estudia aquí y no después.</p>
+</main>
+<nav class="pager"><a href="03_centesimal.html">&larr; Grados centesimales y el cruce 9/10</a><span class="sp"></span><a href="index.html">Índice</a><span class="sp"></span><a href="05_razones_trigonometricas.html">Seno, coseno y tangente &rarr;</a></nav>
+</div>
+<script>refrescaSliders();</script>
+</body>
+</html>

@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Seno, coseno y tangente</title>
+<style>
+:root{
+  --ink:#1b2530; --navy:#16324f; --navy2:#2c5a84; --line:#d3d9df; --bg:#f7f8f9;
+  --soft:#edf1f4; --ok:#1f6b3a; --bad:#8f2222; --warnc:#7a5a00;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:19px/1.62 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+.wrap{max-width:980px;margin:0 auto;padding:26px 26px 90px}
+header.top{border-bottom:2px solid var(--navy);padding-bottom:12px;margin-bottom:26px}
+.kicker{font-size:13.5px;letter-spacing:.14em;text-transform:uppercase;color:#5b6875;font-weight:600}
+h1{font-size:31px;line-height:1.22;margin:.22em 0 .28em;color:var(--navy);font-weight:660;letter-spacing:-.01em}
+.sub{font-size:19px;color:#3c4a58;margin:0}
+h2{font-size:22.5px;margin:2.1em 0 .45em;color:var(--navy);font-weight:650;
+   border-left:4px solid var(--navy);padding-left:11px;line-height:1.3}
+h2:first-of-type{margin-top:1.2em}
+h3{font-size:19.5px;margin:1.5em 0 .3em;font-weight:650;color:#22303d}
+h4{font-size:17px;margin:1.2em 0 .3em;font-weight:650;color:#22303d}
+p{margin:.62em 0}
+.lead{font-size:20px;color:#2c3a48}
+ul,ol{padding-left:1.4em;margin:.55em 0}
+li{margin:.3em 0}
+li>ul,li>ol{margin:.3em 0}
+a{color:var(--navy2)}
+strong{font-weight:660}
+.num{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.formula{
+  font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:17px;line-height:1.7;
+  background:var(--soft);border-left:3px solid var(--navy);padding:11px 15px;margin:1em 0;
+  overflow-x:auto;white-space:pre-wrap;
+}
+.formula em{font-style:normal;color:var(--navy);font-weight:600}
+.demo{background:#fff;border:1px solid var(--line);padding:16px 16px 18px;margin:1.3em 0}
+.demo .tat{font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:#5b6875;
+  font-weight:650;margin:0 0 12px}
+.ctrl{display:grid;grid-template-columns:165px 1fr 135px;gap:12px;align-items:center;margin:.55em 0}
+.ctrl label{font-size:17px}
+.ctrl .val{text-align:right;font-family:ui-monospace,monospace;font-size:18px;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:#16324f;height:22px}
+input[type=number],input[type=text],select{
+  font:inherit;font-size:18px;padding:6px 9px;border:1px solid #b7c0c9;background:#fff;
+  color:var(--ink);border-radius:0;width:100%
+}
+input:focus,select:focus,button:focus{outline:2px solid var(--navy2);outline-offset:1px}
+input.ok{border-color:var(--ok);background:#f1f7f3}
+input.bad{border-color:var(--bad);background:#fdf3f3}
+button{
+  font:inherit;font-size:16px;padding:7px 15px;border:1px solid var(--navy);border-radius:0;
+  background:var(--navy);color:#fff;cursor:pointer
+}
+button:hover{background:#1d4368}
+button.ghost{background:#fff;color:var(--navy)}
+button.ghost:hover{background:var(--soft)}
+.botones{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:9px;margin:12px 0 0}
+.readout div{background:var(--soft);padding:8px 11px}
+.readout b{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  color:#5b6875;font-weight:650;margin-bottom:2px}
+.readout span{font-family:ui-monospace,monospace;font-size:18px;font-variant-numeric:tabular-nums}
+.note{background:#fbfaf4;border-left:3px solid #b08a2e;padding:11px 15px;margin:1.1em 0}
+.warn{background:#fcf4f4;border-left:3px solid var(--bad);padding:11px 15px;margin:1.1em 0}
+.good{background:#f1f7f3;border-left:3px solid var(--ok);padding:11px 15px;margin:1.1em 0}
+.feedback{margin-top:11px;font-size:17.5px;line-height:1.55}
+.feedback.good::before{content:"";}
+.fb-good{color:var(--ok)}
+.fb-bad{color:var(--bad)}
+.fb-neutral{color:#3c4a58}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:17px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--soft);font-weight:650;font-size:16px}
+td.num,th.num{font-family:ui-monospace,monospace;font-variant-numeric:tabular-nums}
+nav.strip{display:flex;gap:15px;align-items:center;flex-wrap:wrap;font-size:15.5px;
+  border-bottom:1px solid var(--line);padding:0 0 10px;margin:-4px 0 24px;color:#5b6875}
+nav.strip a{color:var(--navy2);text-decoration:none;border-bottom:1px solid #c5d3e0}
+nav.strip a:hover{border-bottom-color:var(--navy2)}
+nav.strip .act{color:#5b6875;font-weight:650}
+nav.strip .sep{color:#ccd4db}
+nav.pager{display:flex;justify-content:space-between;gap:14px;margin-top:54px;padding-top:16px;
+  border-top:1px solid var(--line);font-size:16px}
+nav.pager a{color:var(--navy);text-decoration:none;border-bottom:1px solid #a9bdd0;padding-bottom:1px}
+nav.pager a:hover{border-bottom-color:var(--navy)}
+nav.pager .sp{flex:1}
+svg{display:block;max-width:100%;height:auto;font-family:ui-monospace,monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.tiny{font-size:15.5px;color:#5b6875;line-height:1.5}
+.pasos{counter-reset:p;list-style:none;padding-left:0}
+.pasos>li{counter-increment:p;position:relative;padding-left:42px;margin:.85em 0}
+.pasos>li::before{
+  content:counter(p);position:absolute;left:0;top:.05em;width:28px;height:28px;border:1.5px solid var(--navy);
+  color:var(--navy);font-size:15px;font-weight:700;text-align:center;line-height:25px;
+  font-family:ui-monospace,monospace
+}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin:1.2em 0}
+.card{background:#fff;border:1px solid var(--line);padding:14px 16px;display:block;
+  text-decoration:none;color:var(--ink)}
+.card:hover{border-color:var(--navy);background:#fbfcfd}
+.card .n{font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:#5b6875;font-weight:650}
+.card .t{font-size:19px;color:var(--navy);font-weight:650;margin:.15em 0 .25em;line-height:1.28;min-height:2.56em}
+.card .d{font-size:16px;color:#46545f;line-height:1.45}
+.tag{display:inline-block;font-size:13px;border:1px solid var(--line);background:var(--soft);
+  padding:1px 7px;margin:4px 4px 0 0;color:#46545f}
+kbd{font-family:ui-monospace,monospace;font-size:15px;border:1px solid #b7c0c9;border-bottom-width:2px;
+  padding:1px 5px;background:#fff}
+.checkline{display:flex;gap:10px;align-items:baseline;margin:.4em 0}
+.checkline input[type=checkbox]{width:18px;height:18px;accent-color:#16324f;flex:none}
+@media (max-width:740px){
+  body{font-size:18px}
+  .wrap{padding:18px 16px 70px}
+  h1{font-size:26px} h2{font-size:20.5px}
+  .ctrl{grid-template-columns:110px 1fr 105px;gap:8px}
+  .grid2{grid-template-columns:1fr}
+}
+@media print{
+  body{background:#fff}
+  .demo{break-inside:avoid}
+  nav.pager{display:none}
+}
+</style>
+
+<script>
+/* ---------- utilidades comunes (idénticas en todas las páginas) ---------- */
+const $  = (s, r) => (r||document).querySelector(s);
+const $$ = (s, r) => Array.from((r||document).querySelectorAll(s));
+
+/* Lee un número escrito por el alumno: admite coma o punto decimal,
+   espacios, el símbolo de grado y el sufijo de gonios. */
+function leerNum(v){
+  if (typeof v === 'number') return v;
+  let s = String(v == null ? '' : v).trim();
+  s = s.replace(/\s+/g,'').replace(/[°º]/g,'').replace(/(rad|gon|g|m|s)$/i,'');
+  if (s === '') return NaN;
+  if (s.includes(',') && s.includes('.')) s = s.replace(/\./g,'').replace(',', '.');
+  else if (s.includes(',')) s = s.replace(',', '.');
+  return parseFloat(s);
+}
+/* Formato español: coma decimal, cifras fijas. */
+function fmt(x, d){
+  d = (d === undefined) ? 2 : d;
+  if (!isFinite(x)) return '—';
+  return x.toFixed(d).replace('.', ',');
+}
+/* Sexagesimal: {g,m,s} a partir de grados decimales */
+function aSexa(x){
+  let neg = x < 0; x = Math.abs(x);
+  let g = Math.floor(x + 1e-12);
+  let mm = (x - g) * 60;
+  let m = Math.floor(mm + 1e-9);
+  let s = (mm - m) * 60;
+  if (s >= 59.9995){ s = 0; m += 1; }
+  if (m >= 60){ m -= 60; g += 1; }
+  return {g:(neg?-g:g), m:m, s:s};
+}
+/* Centesimal: {g,m,s} */
+function aCentes(x){
+  let neg = x < 0; x = Math.abs(x);
+  let g = Math.floor(x + 1e-12);
+  let mm = (x - g) * 100;
+  let m = Math.floor(mm + 1e-9);
+  let s = (mm - m) * 100;
+  if (s >= 99.995){ s = 0; m += 1; }
+  if (m >= 100){ m -= 100; g += 1; }
+  return {g:(neg?-g:g), m:m, s:s};
+}
+function txtSexa(x, ds){
+  ds = (ds === undefined) ? 1 : ds;
+  const f = Math.pow(10, ds);
+  let total = Math.round(Math.abs(x) * 3600 * f);
+  const g = Math.floor(total / (3600 * f));
+  let rem = total - g * 3600 * f;
+  const m = Math.floor(rem / (60 * f));
+  rem = rem - m * 60 * f;
+  const si = String(Math.floor(rem / f)).padStart(2, '0');
+  const dec = ds > 0 ? ',' + String(rem % f).padStart(ds, '0') : '';
+  return (x < 0 ? '−' : '') + g + '° ' + String(m).padStart(2, '0') + '\u2032 ' + si + dec + '\u2033';
+}
+function txtCentes(x, ds){
+  ds = (ds === undefined) ? 1 : ds;
+  const f = Math.pow(10, ds);
+  let total = Math.round(Math.abs(x) * 10000 * f);
+  const g = Math.floor(total / (10000 * f));
+  let rem = total - g * 10000 * f;
+  const m = Math.floor(rem / (100 * f));
+  rem = rem - m * 100 * f;
+  const si = String(Math.floor(rem / f)).padStart(2, '0');
+  const dec = ds > 0 ? ',' + String(rem % f).padStart(ds, '0') : '';
+  return (x < 0 ? '−' : '') + g + 'g ' + String(m).padStart(2, '0') + 'm ' + si + dec + 's';
+}
+/* Retorno de estado en un campo: ok / mal */
+function marcar(el, estado){
+  el.classList.remove('ok','bad');
+  if (estado === 1) el.classList.add('ok');
+  else if (estado === 0) el.classList.add('bad');
+}
+function fb(el, tipo, texto){
+  el.className = 'feedback ' + (tipo === 1 ? 'fb-good' : tipo === 0 ? 'fb-bad' : 'fb-neutral');
+  el.innerHTML = texto;
+  return tipo;
+}
+/* Formatea un ángulo en radianes como múltiplo exacto de π si el denominador es pequeño */
+function aPi(x){
+  const r = x / Math.PI;
+  for (let q = 1; q <= 24; q++){
+    const p = r * q;
+    if (Math.abs(p - Math.round(p)) < 1e-9){
+      const n = Math.round(p);
+      if (q === 1) return (n === 1 ? 'π' : n + 'π');
+      if (n === 1) return 'π/' + q;
+      return n + 'π/' + q;
+    }
+  }
+  return null;
+}
+/* Sincroniza el relleno visual de los sliders (solo estética) */
+function refrescaSliders(root){
+  $$('input[type=range]', root || document).forEach(function(r){
+    const p = (r.value - r.min) / (r.max - r.min) * 100;
+    r.style.background = 'linear-gradient(90deg,#16324f ' + p + '%,#cfd7de ' + p + '%)';
+    r.style.height = '6px';
+    r.style.borderRadius = '0';
+    r.style.appearance = 'none';
+    r.style.webkitAppearance = 'none';
+  });
+}
+</script>
+<style>
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:16px;height:16px;background:#16324f;border:2px solid #fff;
+  box-shadow:0 0 0 1px #16324f;cursor:pointer
+}
+input[type=range]::-moz-range-thumb{
+  width:14px;height:14px;background:#16324f;border:2px solid #fff;box-shadow:0 0 0 1px #16324f;cursor:pointer
+}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<header class="top"><div class="kicker">Día 1 · Peldaño 5</div><h1>Seno, coseno y tangente</h1><p class="sub">Las tres razones, sus inversas y por qué no dependen del tamaño del triángulo</p></header><nav class="strip"><a href="index.html">Índice</a><span class="sep">·</span><span class="act">Lección 5</span></nav>
+<main>
+<p class="lead">Un ángulo no se puede medir con una cinta, pero sus efectos sí. Si desde un punto conoces la distancia al pie
+de un poste y la distancia horizontal hasta él, tienes dos lados de un triángulo rectángulo y con ellos tres cocientes
+que dependen <em>solo</em> del ángulo: el seno, el coseno y la tangente. Esas tres razones son la herramienta con la
+que se pasa de lo que se mide en el campo a lo que se calcula en la libreta, y en el sentido contrario la que permite
+obtener un ángulo a partir de dos lados.</p>
+
+<h2>1. Los tres lados y sus nombres</h2>
+<p>Todo lo que viene después se apoya en un triángulo rectángulo, es decir, con un ángulo de 90°. Sus tres lados
+tienen nombre, y el nombre no depende del dibujo sino de <strong>desde qué ángulo estás mirando</strong>:</p>
+<ul>
+  <li>La <strong>hipotenusa</strong> es el lado mayor y el único que no toca el ángulo recto. Es la misma para los
+  dos ángulos agudos del triángulo: no cambia de nombre.</li>
+  <li>El <strong>cateto opuesto</strong> es el lado que queda enfrente del ángulo que estás usando. Si cambias de
+  ángulo, cambia de lado.</li>
+  <li>El <strong>cateto contiguo</strong> (también llamado adyacente) es el que forma el ángulo junto con la
+  hipotenusa, sin ser la hipotenusa.</li>
+</ul>
+<p>La consecuencia práctica es que los lados no se bautizan para siempre: en un mismo triángulo, un cateto es el
+opuesto si miras desde un ángulo agudo y el contiguo si miras desde el otro. Por eso, antes de escribir una sola
+fórmula, hay que señalar con el dedo el ángulo de referencia y preguntar: <em>¿qué lado tengo enfrente?</em> Casi
+todos los errores de esta lección nacen de saltarse esa pregunta.</p>
+<div class="note">
+<p>Dos comprobaciones que nunca fallan y que conviene hacer sobre el croquis: la hipotenusa es siempre el lado más
+largo (así que ningún cateto puede medir más que ella), y el ángulo recto está siempre entre los dos catetos, nunca
+entre un cateto y la hipotenusa.</p>
+</div>
+
+<h2>2. Las tres definiciones</h2>
+<p>Con los tres lados nombrados, el seno, el coseno y la tangente son simplemente tres cocientes entre ellos. No hay
+nada más detrás: son proporciones, y por eso no llevan unidad.</p>
+<div class="formula">sen α = cateto opuesto  / hipotenusa
+cos α = cateto contiguo / hipotenusa
+tan α = cateto opuesto  / cateto contiguo</div>
+<p>Cada una tiene su papel en topografía, y conviene saber cuál se usa en cada momento antes de memorizar nada.</p>
+<p>El <strong>seno</strong> relaciona lo que sube con lo que se recorre en diagonal. Es la razón que aparece cuando se
+mide una distancia inclinada con cinta o con distanciómetro y se quiere saber cuánto de esa distancia es desnivel. El
+<strong>coseno</strong> relaciona lo que se avanza en horizontal con esa misma diagonal: es el que reduce la distancia
+medida en el terreno a distancia proyectada sobre el plano, operación que hay que hacer en casi todos los
+levantamientos. Y la <strong>tangente</strong> relaciona lo que sube con lo que se avanza en horizontal, que es
+exactamente la definición de pendiente: por eso las pendientes de los caminos forestales se dan en porcentaje, que no
+es más que la tangente multiplicada por 100.</p>
+<div class="formula">pendiente (%) = tan α · 100</div>
+<p>Existen tres razones más —cosecante, secante y cotangente— que son las inversas de estas, pero en este módulo no
+se usan y no hace falta tocarlas.</p>
+
+<h2>3. Por qué las razones no dependen del tamaño</h2>
+<p>Esta es la idea que sostiene todo lo demás, y la más difícil de creer la primera vez. Si dibujas un triángulo
+rectángulo con un ángulo de 37° y lados de 6, 8 y 10 metros, y luego dibujas otro con el mismo ángulo pero lados de 9,
+12 y 15 metros, los dos son semejantes: tienen los mismos ángulos y los lados en la misma proporción. Al calcular el
+seno del primero y del segundo:</p>
+<div class="formula">triángulo pequeño:   6 / 10 = 0,6
+triángulo grande:    9 / 15 = 0,6
+
+y sí, el ángulo es el mismo:  arcsen 0,6 = 36,87°</div>
+<p>El cociente no cambia aunque el triángulo crezca, porque crece todo a la vez. Ese es el motivo por el que una
+calculadora puede darte el seno de un ángulo sin saber nada del triángulo: la razón es una propiedad del ángulo, no
+del dibujo. Y es también el motivo por el que la trigonometría sirve en el campo: puedes medir el ángulo de una torre
+con un teodolito a 500 m sin acercarte, y el seno de ese ángulo será el mismo que el de un triángulo de papel.</p>
+<p>De ahí una consecuencia de sentido común que conviene tener presente: <strong>el seno y el coseno de un ángulo
+agudo están siempre entre 0 y 1</strong>, porque son un cateto dividido por la hipotenusa y la hipotenusa es el lado
+mayor. La tangente, en cambio, no tiene tope: es cateto entre cateto, y cuando el contiguo se acerca a cero el
+cociente se dispara. Un resultado con seno mayor que 1 es siempre un error, no una rareza.</p>
+
+<h2>4. De la razón al ángulo: las funciones inversas</h2>
+<p>Las tres fórmulas anteriores van del ángulo a la razón. En topografía hace falta el camino contrario con la misma
+frecuencia: conoces dos lados, quieres el ángulo. Para eso están las funciones inversas, que en la calculadora
+aparecen como <span class="num">sen⁻¹</span>, <span class="num">cos⁻¹</span> y <span class="num">tan⁻¹</span>, y que
+se leen <em>arcoseno</em>, <em>arcocoseno</em> y <em>arcotangente</em>.</p>
+<ol class="pasos">
+  <li><p><strong>Calcula el cociente y no lo redondees.</strong> Si el opuesto mide 8 m y la hipotenusa 20 m, el seno
+  vale 0,40 exacto. Ese número es la entrada de la función inversa.</p>
+  <div class="formula">sen α = 8 / 20 = 0,40</div></li>
+
+  <li><p><strong>Invoca la inversa con la tecla de cambio.</strong> En casi todas las calculadoras científicas la
+  tecla <kbd>sin</kbd> esconde la inversa: se pulsa primero <kbd>SHIFT</kbd> (en algunas marcas
+  <kbd>2nd</kbd> o <kbd>INV</kbd>) y después <kbd>sin</kbd>. En pantalla tiene que aparecer
+  <span class="num">sen⁻¹</span> antes de escribir el número; si sigue apareciendo <span class="num">sen</span>,
+  estás calculando el seno del número, no el arco.</p></li>
+
+  <li><p><strong>Comprueba el modo angular.</strong> El resultado sale en la unidad en la que esté la calculadora:
+  DEG te da grados, GRAD gonios, RAD radianes. Después lo veremos con detalle, pero aquí ya es obligatorio mirarlo,
+  porque una inversa mal de unidad devuelve un ángulo con pinta perfectamente normal.</p></li>
+
+  <li><p><strong>Redondea y comprueba cerrando el círculo.</strong> Con 0,40 sale α = 23,58°. La comprobación es
+  volver atrás: sen 23,58° tiene que dar 0,40. Si da otra cosa, el modo angular no era el que creías.</p>
+  <div class="formula">arcsen 0,40 = 23,58° = 26,20 g</div></li>
+</ol>
+<p>Una advertencia que ahorra disgustos: <span class="num">sen⁻¹</span> no significa 1/sen. El superíndice −1 aquí
+quiere decir «la función que deshace», no «uno partido por». La inversa multiplicativa del seno es la cosecante y no
+tiene nada que ver.</p>
+<div class="warn">
+<p><strong>El rango de las inversas.</strong> La calculadora devuelve siempre el mismo ángulo, y por eso hay que
+saber cuál: el arcoseno y la arcotangente dan valores entre −90° y 90°, y el arcocoseno, entre 0° y 180°. En un
+triángulo rectángulo da igual, porque los ángulos agudos están en ese margen; pero cuando en la lección 9 se calcule
+un azimut a partir de coordenadas habrá que corregir el cuadrante, porque el arcotangente no distingue el este del
+oeste.</p>
+</div>
+
+<h2>5. Demostración 1 · el ángulo manda</h2>
+<p>El triángulo de la demostración está dibujado a escala real: la hipotenusa mide 10 m y se dibuja siempre con la
+misma longitud en pantalla, de modo que lo que cambia al mover el deslizador es la forma del triángulo, no su tamaño.
+Pasa despacio por tres posiciones y mira las lecturas: con el ángulo en 0 el cateto opuesto se queda en nada; hacia
+45° los dos catetos se igualan y la tangente vale 1; y cerca de 89° el cateto opuesto se come casi toda la hipotenusa,
+el contiguo queda en un hilo y la tangente se dispara.</p>
+
+<div class="demo">
+<p class="tat">Demostración 1 · Un triángulo de hipotenusa 10 m, con el ángulo moviéndose</p>
+<svg id="tri1" viewBox="0 0 620 400" width="620" height="400" role="img"
+     aria-label="Triángulo rectángulo a escala con el ángulo y los tres lados etiquetados"></svg>
+<div class="ctrl">
+  <label for="ang">Ángulo α</label>
+  <input id="ang" type="range" min="1" max="89" step="0.5" value="37">
+  <span class="val" id="angV">37,0°</span>
+</div>
+<div class="readout">
+  <div><b>Hipotenusa</b><span id="lHip">10,00 m</span></div>
+  <div><b>Cateto opuesto</b><span id="lOp">—</span></div>
+  <div><b>Cateto contiguo</b><span id="lCo">—</span></div>
+  <div><b>sen α</b><span id="rSen">—</span></div>
+  <div><b>cos α</b><span id="rCos">—</span></div>
+  <div><b>tan α</b><span id="rTan">—</span></div>
+</div>
+<p class="tiny">Comprueba en cualquier posición que opuesto dividido entre hipotenusa da exactamente la casilla del
+seno, y contiguo entre hipotenusa la del coseno. La calculadora no hace nada distinto de lo que se ve aquí.</p>
+</div>
+
+<script>
+(function(){
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = $('#tri1');
+  const Ax = 95, Ay = 330, PXM = 26;   /* 26 px por metro: la hipotenusa de 10 m mide 260 px */
+
+  function el(tag, attrs, txt){
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (txt !== undefined) e.textContent = txt;
+    svg.appendChild(e);
+    return e;
+  }
+
+  function dibuja(deg){
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    const a = deg * Math.PI / 180;
+    const s = Math.sin(a), c = Math.cos(a);
+    const Bx = Ax + 10 * c * PXM, By = Ay;
+    const Cx = Bx, Cy = Ay - 10 * s * PXM;
+
+    /* triángulo */
+    el('polygon', {points: Ax + ',' + Ay + ' ' + Bx + ',' + By + ' ' + Cx + ',' + Cy,
+      fill:'#16324f', 'fill-opacity':'0.06', stroke:'#16324f', 'stroke-width':2});
+
+    /* marca del ángulo recto en B */
+    const lado = 16;
+    el('polyline', {points: (Bx - lado) + ',' + By + ' ' + (Bx - lado) + ',' + (By - lado) + ' ' + Bx + ',' + (By - lado),
+      fill:'none', stroke:'#5b6875', 'stroke-width':1.2});
+
+    /* arco del ángulo en A */
+    const r = 58;
+    el('path', {d:'M ' + (Ax + r) + ' ' + Ay + ' A ' + r + ' ' + r + ' 0 0 1 ' +
+      (Ax + r * c) + ' ' + (Ay - r * s), fill:'none', stroke:'#8f2222', 'stroke-width':2});
+    const am = a / 2;
+    el('text', {x:Ax + (r + 20) * Math.cos(am), y:Ay - (r + 20) * Math.sin(am) + 5,
+      'text-anchor':'middle', 'font-size':14, fill:'#8f2222', 'font-weight':'600'},
+      fmt(deg, 1) + '°');
+
+    /* etiquetas de los lados */
+    el('text', {x:(Ax + Bx) / 2, y:Ay + 26, 'text-anchor':'middle', 'font-size':13, fill:'#16324f'},
+      'contiguo = ' + fmt(10 * c, 2) + ' m');
+    el('text', {x:Bx + 10, y:(By + Cy) / 2 + 4, 'font-size':13, fill:'#16324f'},
+      'opuesto = ' + fmt(10 * s, 2) + ' m');
+    const mx = (Ax + Cx) / 2, my = (Ay + Cy) / 2;
+    el('text', {x:mx - 14 * s, y:my - 14 * c + 4, 'text-anchor':'middle', 'font-size':13, fill:'#5b6875',
+      transform:'rotate(' + (-deg) + ' ' + (mx - 14 * s) + ' ' + (my - 14 * c) + ')'}, 'hipotenusa = 10 m');
+  }
+
+  function actualiza(){
+    const g = parseFloat($('#ang').value);
+    const a = g * Math.PI / 180;
+    dibuja(g);
+    $('#angV').textContent  = fmt(g, 1) + '°';
+    $('#lOp').textContent   = fmt(10 * Math.sin(a), 2) + ' m';
+    $('#lCo').textContent   = fmt(10 * Math.cos(a), 2) + ' m';
+    $('#rSen').textContent  = fmt(Math.sin(a), 4);
+    $('#rCos').textContent  = fmt(Math.cos(a), 4);
+    $('#rTan').textContent  = fmt(Math.tan(a), 4);
+  }
+  $('#ang').addEventListener('input', actualiza);
+  actualiza();
+})();
+</script>
+
+<h2>6. Demostración 2 · escalar el triángulo no cambia las razones</h2>
+<p>Aquí está la prueba de la sección 3, con el deslizador en la mano. Hay dos triángulos con el mismo ángulo: el
+punteado es el de escala 1 y el oscuro es el que has escalado. Al mover la escala, los tres lados se multiplican por
+el mismo número —fíjate en las longitudes, todas crecen a la vez— y las tres razones se quedan clavadas. Al mover el
+ángulo, en cambio, cambian las tres razones y también las longitudes, pero de forma desproporcionada.</p>
+
+<div class="demo">
+<p class="tat">Demostración 2 · La misma forma a tres tamaños</p>
+<svg id="tri2" viewBox="0 0 620 400" width="620" height="400" role="img"
+     aria-label="Dos triángulos semejantes superpuestos, uno de referencia y otro escalado"></svg>
+<div class="ctrl">
+  <label for="ang2">Ángulo α</label>
+  <input id="ang2" type="range" min="5" max="80" step="1" value="40">
+  <span class="val" id="ang2V">40°</span>
+</div>
+<div class="ctrl">
+  <label for="esc">Escala</label>
+  <input id="esc" type="range" min="0.5" max="3" step="0.1" value="1">
+  <span class="val" id="escV">×1,0</span>
+</div>
+<div class="readout">
+  <div><b>Hipotenusa</b><span id="eHip">—</span></div>
+  <div><b>Opuesto</b><span id="eOp">—</span></div>
+  <div><b>Contiguo</b><span id="eCo">—</span></div>
+  <div><b>op / hip</b><span id="eSen">—</span></div>
+  <div><b>cont / hip</b><span id="eCos">—</span></div>
+  <div><b>op / cont</b><span id="eTan">—</span></div>
+</div>
+<div class="feedback" id="eFb"></div>
+<p class="tiny">El triángulo punteado es siempre el de hipotenusa 10 m. Los tres cocientes de la derecha son idénticos
+para los dos triángulos: compruébalo moviendo solo la escala, sin tocar el ángulo.</p>
+</div>
+
+<script>
+(function(){
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = $('#tri2');
+  const Ax = 110, Ay = 340;
+  const PXM = 260 / 30;   /* a escala 3 la hipotenusa de 30 m ocupa 260 px */
+
+  function el(tag, attrs, txt){
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (txt !== undefined) e.textContent = txt;
+    svg.appendChild(e);
+    return e;
+  }
+
+  function tri(deg, escala, color, ancho, trazo){
+    const a = deg * Math.PI / 180;
+    const hip = 10 * escala;
+    const Bx = Ax + hip * Math.cos(a) * PXM, By = Ay;
+    const Cx = Bx, Cy = Ay - hip * Math.sin(a) * PXM;
+    el('polygon', {points: Ax + ',' + Ay + ' ' + Bx + ',' + By + ' ' + Cx + ',' + Cy,
+      fill: color, 'fill-opacity': trazo ? '0.06' : '0', stroke: color, 'stroke-width': ancho,
+      'stroke-dasharray': trazo ? '5 4' : 'none'});
+    return {Bx:Bx, Cx:Cx, Cy:Cy, hip:hip};
+  }
+
+  function dibuja(deg, esc){
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    tri(deg, 1, '#b7c0c9', 1.4, true);
+    const t = tri(deg, esc, '#16324f', 2, false);
+    const a = deg * Math.PI / 180;
+
+    el('line', {x1:40, y1:Ay, x2:595, y2:Ay, stroke:'#c3cbd2', 'stroke-width':1});
+    el('circle', {cx:Ax, cy:Ay, r:4, fill:'#16324f'});
+    const r = 52;
+    el('path', {d:'M ' + (Ax + r) + ' ' + Ay + ' A ' + r + ' ' + r + ' 0 0 1 ' +
+      (Ax + r * Math.cos(a)) + ' ' + (Ay - r * Math.sin(a)), fill:'none', stroke:'#8f2222', 'stroke-width':2});
+    el('text', {x:Ax + (r + 20) * Math.cos(a / 2), y:Ay - (r + 20) * Math.sin(a / 2) + 5,
+      'text-anchor':'middle', 'font-size':14, fill:'#8f2222', 'font-weight':'600'}, fmt(deg, 0) + '°');
+
+    el('text', {x:t.Bx + 10, y:(Ay + t.Cy) / 2 + 4, 'font-size':13, fill:'#16324f'},
+      fmt(t.hip * Math.sin(a), 2) + ' m');
+    el('text', {x:(Ax + t.Bx) / 2, y:Ay + 24, 'text-anchor':'middle', 'font-size':13, fill:'#16324f'},
+      fmt(t.hip * Math.cos(a), 2) + ' m');
+    el('text', {x:70, y:34, 'font-size':13, fill:'#5b6875'}, 'hipotenusa escalada: ' + fmt(t.hip, 2) + ' m');
+    el('text', {x:70, y:54, 'font-size':13, fill:'#8d99a4'}, 'hipotenusa de referencia: 10,00 m');
+  }
+
+  function actualiza(){
+    const g = parseFloat($('#ang2').value);
+    const e = parseFloat($('#esc').value);
+    const a = g * Math.PI / 180;
+    dibuja(g, e);
+    $('#ang2V').textContent = fmt(g, 0) + '°';
+    $('#escV').textContent  = '×' + fmt(e, 1);
+    $('#eHip').textContent  = fmt(10 * e, 2) + ' m';
+    $('#eOp').textContent   = fmt(10 * e * Math.sin(a), 2) + ' m';
+    $('#eCo').textContent   = fmt(10 * e * Math.cos(a), 2) + ' m';
+    $('#eSen').textContent  = fmt(Math.sin(a), 4);
+    $('#eCos').textContent  = fmt(Math.cos(a), 4);
+    $('#eTan').textContent  = fmt(Math.tan(a), 4);
+    fb($('#eFb'), null, 'Los tres cocientes valen lo mismo con la escala en ×0,5 que en ×3: ' +
+      'solo dependen del ángulo de ' + fmt(g, 0) + '°.');
+  }
+  ['ang2','esc'].forEach(function(id){ $('#' + id).addEventListener('input', actualiza); });
+  actualiza();
+})();
+</script>
+
+<h2>7. Demostración 3 · de la razón al ángulo</h2>
+<p>Es la operación que se hace en la libreta cuando ya se han medido los lados. Elige qué razón conoces, escribe su
+valor y comprueba el mecanismo de la inversa. Si eliges seno e introduces 0,5, tiene que salir 30° exactos; si
+introduces 0,6 saldrá 36,87°, que es el ángulo del triángulo 6-8-10 de la sección anterior.</p>
+
+<div class="demo">
+<p class="tat">Demostración 3 · Arcoseno, arcocoseno y arcotangente</p>
+<div class="ctrl">
+  <label for="tipo">Razón conocida</label>
+  <select id="tipo">
+    <option value="sen">seno = opuesto / hipotenusa</option>
+    <option value="cos">coseno = contiguo / hipotenusa</option>
+    <option value="tan">tangente = opuesto / contiguo</option>
+  </select>
+  <span class="val">elige</span>
+</div>
+<div class="ctrl">
+  <label for="val">Valor</label>
+  <input id="val" type="text" value="0,6">
+  <span class="val">sin unidad</span>
+</div>
+<div class="readout">
+  <div><b>Ángulo (grados)</b><span id="tDeg">—</span></div>
+  <div><b>Ángulo (gonios)</b><span id="tGon">—</span></div>
+  <div><b>Ángulo (radianes)</b><span id="tRad">—</span></div>
+  <div><b>Tecla de la calculadora</b><span id="tTecla">—</span></div>
+</div>
+<div class="feedback" id="tFb"></div>
+</div>
+
+<script>
+(function(){
+  const NOM = {sen:'arcoseno (SHIFT + sin)', cos:'arcocoseno (SHIFT + cos)', tan:'arcotangente (SHIFT + tan)'};
+  function actualiza(){
+    const tipo = $('#tipo').value;
+    const v = leerNum($('#val').value);
+    $('#tTecla').textContent = NOM[tipo];
+    if (!isFinite(v)){
+      fb($('#tFb'), 0, 'Escribe un número, con coma o con punto decimal.');
+      $('#tDeg').textContent = $('#tGon').textContent = $('#tRad').textContent = '—';
+      return;
+    }
+    if (tipo !== 'tan' && (v < -1 || v > 1)){
+      fb($('#tFb'), 0, 'Un seno o un coseno no puede valer ' + fmt(v, 3) + ': su valor está siempre entre −1 y 1. ' +
+        'Si el cociente ha salido mayor, el lado que has puesto en el numerador no es un cateto o el denominador ' +
+        'no es la hipotenusa.');
+      $('#tDeg').textContent = $('#tGon').textContent = $('#tRad').textContent = '—';
+      return;
+    }
+    let rad;
+    if (tipo === 'sen') rad = Math.asin(v);
+    else if (tipo === 'cos') rad = Math.acos(v);
+    else rad = Math.atan(v);
+    $('#tDeg').textContent = fmt(rad * 180 / Math.PI, 2) + '°';
+    $('#tGon').textContent = fmt(rad * 200 / Math.PI, 2) + ' g';
+    $('#tRad').textContent = fmt(rad, 5) + ' rad';
+    fb($('#tFb'), 1, 'Comprobación: el ' + (tipo === 'sen' ? 'seno' : tipo === 'cos' ? 'coseno' : 'tangente') +
+      ' de ' + fmt(rad * 180 / Math.PI, 2) + '° vuelve a dar ' + fmt(v, 3) + '.');
+  }
+  $('#tipo').addEventListener('change', actualiza);
+  $('#val').addEventListener('input', actualiza);
+  actualiza();
+})();
+</script>
+
+<h2>8. Los valores notables, deducidos y no memorizados</h2>
+<p>Los senos y cosenos de 30°, 45° y 60° aparecen en todos los exámenes, y se pueden deducir en dos líneas con dos
+figuras que ya conoces. Merece la pena hacerlo una vez, porque así uno se acuerda aunque se olvide la tabla.</p>
+
+<h3>45°, desde el cuadrado</h3>
+<p>Toma un cuadrado de lado 1 y traza su diagonal. Se forman dos triángulos rectángulos isósceles: los dos catetos
+valen 1 y la hipotenusa es la diagonal, que por Pitágoras mide
+<span class="num">√(1² + 1²) = √2 = 1,4142</span>. El ángulo agudo de ese triángulo es 45°, porque el cuadrado tiene
+los cuatro ángulos de 90° y la diagonal los parte por la mitad.</p>
+<div class="formula">sen 45° = 1 / √2 = 0,7071
+cos 45° = 1 / √2 = 0,7071
+tan 45° = 1 / 1 = 1</div>
+<p>Que el seno y el coseno sean iguales tiene toda la lógica: en un triángulo isósceles los dos catetos miden lo
+mismo, así que los dos ángulos agudos son iguales y valen 45° cada uno. Y que la tangente valga exactamente 1 es la
+razón de que 45° sea la pendiente del 100 %.</p>
+
+<h3>30° y 60°, desde el triángulo equilátero</h3>
+<p>Toma un triángulo equilátero de lado 2 y pártelo por la mitad con una altura. El lado de 2 se convierte en dos
+trozos de 1, y el ángulo de arriba, que era de 60°, se parte en dos de 30°. El triángulo rectángulo que queda tiene
+hipotenusa 2, cateto pequeño 1 y cateto grande la altura, que por Pitágoras mide
+<span class="num">√(2² − 1²) = √3 = 1,7321</span>.</p>
+<div class="formula">sen 30° = 1 / 2 = 0,5            sen 60° = √3/2 = 0,8660
+cos 30° = √3/2 = 0,8660       cos 60° = 1 / 2 = 0,5
+tan 30° = 1/√3 = 0,5774       tan 60° = √3 = 1,7321</div>
+<p>Fíjate en el patrón: los valores de 30° y 60° están intercambiados entre seno y coseno. No es casualidad, es que
+son ángulos complementarios (suman 90°) y en el mismo triángulo el cateto opuesto de uno es el contiguo del otro.</p>
+<table>
+  <tr><th>Ángulo</th><th>seno</th><th>coseno</th><th>tangente</th><th>De dónde sale</th></tr>
+  <tr><td class="num">30°</td><td class="num">0,5000</td><td class="num">0,8660</td><td class="num">0,5774</td><td>Medio triángulo equilátero</td></tr>
+  <tr><td class="num">45°</td><td class="num">0,7071</td><td class="num">0,7071</td><td class="num">1,0000</td><td>Diagonal del cuadrado</td></tr>
+  <tr><td class="num">60°</td><td class="num">0,8660</td><td class="num">0,5000</td><td class="num">1,7321</td><td>Medio triángulo equilátero</td></tr>
+</table>
+<p>Comprobación que vale para cualquier ángulo y que detecta casi todos los errores de tabla: la suma de los
+cuadrados del seno y del coseno es siempre 1. Con 30°: <span class="num">0,5² + 0,8660² = 0,25 + 0,75 = 1</span>. Si
+en un examen te sale 2,5, has confundido una razón o has mezclado un cateto con la hipotenusa.</p>
+
+<h2>9. Los límites: lo que las razones nunca hacen</h2>
+<p>El seno y el coseno viven encerrados entre −1 y 1, y en un triángulo rectángulo entre 0 y 1. Cuando el ángulo
+crece hacia 90°, el cateto opuesto crece hasta igualar la hipotenusa y el seno llega a 1; el cateto contiguo se
+encoge hasta desaparecer y el coseno llega a 0. La tangente no se porta así:</p>
+<div class="formula">tan 30° = 0,5774
+tan 45° = 1,0000
+tan 60° = 1,7321
+tan 80° = 5,6713
+tan 89° = 57,2900</div>
+<p>Cada vez que el ángulo se acerca a 90°, la tangente se multiplica. En 90° exacto el cateto contiguo vale cero y la
+tangente sería una división entre cero: <strong>la tangente de 90° no existe</strong>. La calculadora devuelve un
+error o un número enorme por redondeo, y eso no es un fallo de la máquina. En el campo, esto se traduce en un aviso
+práctico: cuando el ángulo medido es de 88° o 89° (una pared casi vertical vista desde muy cerca), cualquier pequeño
+error en el ángulo produce un error gigantesco en el resultado, porque la curva de la tangente es casi vertical en
+esa zona. Ahí hay que cambiar de método, no afinar la puntería.</p>
+<div class="good">
+<p><strong>Los tres controles de sentido que hay que hacer siempre.</strong> Primero, un seno o un coseno mayor que 1
+es imposible: algo se ha invertido. Segundo, el cateto opuesto nunca puede ser mayor que la hipotenusa, luego el
+cociente que se le parece tiene que ser menor que 1. Tercero, si el ángulo que esperabas era agudo y la calculadora
+devuelve un número negativo, el modo angular o el signo de un lado están mal.</p>
+</div>
+
+<h2>10. Los errores típicos</h2>
+<ol>
+  <li><p><strong>Usar el seno donde iba el coseno.</strong> Es el más frecuente y el más difícil de detectar, porque
+  el número que sale no es absurdo: es un número entre 0 y 1, como el correcto, solo que de otro ángulo. Se produce
+  por no señalar el ángulo de referencia en el croquis y dar por hecho que el lado «de abajo» es siempre el opuesto.
+  El síntoma que lo delata: el resultado no cuadra con el dibujo a escala. Si el ángulo de la figura es pequeño y tú
+  has obtenido un cateto casi tan largo como la hipotenusa, has cruzado seno y coseno. La costumbre que lo evita:
+  escribir en el croquis, junto a cada lado, «op» o «cont» <em>antes</em> de tocar la calculadora.</p></li>
+
+  <li><p><strong>No comprobar el modo de la calculadora.</strong> La tecla <kbd>sin</kbd> no sabe en qué unidades
+  estás pensando. Si la máquina está en RAD y le pides el seno de 30, te da −0,9880; si está en GRAD y le pides el
+  seno de 30, te da 0,4540, que es el seno de 27°, porque 30 gonios son 27°. Los dos resultados son números
+  plausibles y los dos son falsos. El hábito que lo resuelve cuesta dos segundos: antes de la primera tecla
+  trigonométrica, mirar qué pone la pantalla; y después de la primera, hacer la comprobación de cerrar el
+  círculo.</p></li>
+
+  <li><p><strong>Confundir la inversa con el inverso.</strong> Pulsar <kbd>sin</kbd> cuando había que pulsar
+  <kbd>SHIFT</kbd>+<kbd>sin</kbd> da el seno de un número en vez del ángulo. El resultado suele ser un número
+  pequeño y sin unidades, que se detecta porque no puede ser un ángulo: nadie mide 0,6 grados en una visual a un
+  poste.</p></li>
+
+  <li><p><strong>Elegir mal la hipotenusa.</strong> La hipotenusa es siempre el lado más largo y el único que no toca
+  el ángulo recto; en un croquis a mano es fácil confundirla con el lado inclinado que no lo es.</p></li>
+</ol>
+
+<h2>11. Cómo se escribe en el examen</h2>
+<p>El corrector busca tres cosas: que identifiques los lados, que escribas la razón antes de calcular y que compruebes.
+Cinco líneas bastan:</p>
+<div class="formula">1)  Datos:  ángulo α = __°   hipotenusa = __ m
+2)  Lados respecto de α:  opuesto = __   contiguo = __
+3)  Razón:  sen α = opuesto / hipotenusa = __
+4)  Resultado:  opuesto = hipotenusa · sen α = __ m
+5)  Compruebo:  contiguo² + opuesto² = hipotenusa²  ✓</div>
+<p>Si lo que se pide es el ángulo, la línea 3 se cambia por la inversa y se escribe tal cual:
+<span class="num">α = arctan (opuesto / contiguo) = __°</span>, con el modo de la calculadora declarado al lado si el
+enunciado mezcla unidades.</p>
+
+<h2>Resumen de la lámina</h2>
+<table>
+  <tr><th>Razón</th><th>Definición</th><th>Cuándo se usa en topografía</th></tr>
+  <tr><td>seno</td><td class="num">opuesto / hipotenusa</td><td>Repartir una distancia inclinada en desnivel</td></tr>
+  <tr><td>coseno</td><td class="num">contiguo / hipotenusa</td><td>Reducir la distancia medida al plano horizontal</td></tr>
+  <tr><td>tangente</td><td class="num">opuesto / contiguo</td><td>Pendientes, ángulos de elevación, alturas</td></tr>
+  <tr><td>arcoseno</td><td class="num">SHIFT + sin</td><td>Obtener el ángulo conociendo opuesto e hipotenusa</td></tr>
+  <tr><td>arcotangente</td><td class="num">SHIFT + tan</td><td>Obtener el ángulo conociendo los dos catetos</td></tr>
+</table>
+<p>Con las tres razones y sus inversas ya se puede resolver la mitad de la ficha: todo lo que tenga un solo triángulo
+rectángulo y una sola incógnita. El <span>generador del triángulo rectángulo</span>
+plantea ejercicios de sombra, dron, colina y antena con números nuevos, y el
+<span>generador de ángulo y pendiente</span> trabaja justo el camino inverso, de dos
+lados al ángulo y al porcentaje de pendiente. Cuando los dos salgan sin dudar, la lección 6 —el triángulo rectángulo
+en el campo— se lee en diez minutos, porque solo añade los ángulos de elevación y depresión a lo que ya está
+aquí.</p>
+</main>
+<nav class="pager"><a href="04_radianes.html">&larr; Radianes: el ángulo medido en radios</a><span class="sp"></span><a href="index.html">Índice</a><span class="sp"></span><a href="gen_01_conversiones.html">Generador · Conversiones de ángulos &rarr;</a></nav>
+</div>
+<script>refrescaSliders();</script>
+</body>
+</html>
