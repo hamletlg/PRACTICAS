@@ -244,14 +244,14 @@ input[type=range]::-moz-range-thumb{
 </head>
 <body>
 <div class="wrap">
-<header class="top"><div class="kicker">Día 2 · Peldaño 8</div><h1>Triángulos no rectángulos</h1><p class="sub">Ley del coseno y ley del seno, con el problema 2 resuelto paso a paso</p></header><nav class="strip"><a href="index.html">Índice</a><span class="sep">·</span><span class="act">Lección 8</span><span class="sep">·</span><a href="gen_05_ley_coseno.html">Generador B4 &rarr;</a></nav>
+<header class="top"><div class="kicker">Día 2 · Peldaño 8</div><h1>Triángulos no rectángulos</h1><p class="sub">Ley del coseno y ley del seno, con un caso completo resuelto paso a paso</p></header><nav class="strip"><a href="index.html">Índice</a><span class="sep">·</span><span class="act">Lección 8</span><span class="sep">·</span><a href="gen_05_ley_coseno.html">Generador B4 &rarr;</a></nav>
 <main>
 <p class="lead">El teorema de Pitágoras es una herramienta magnífica y muy estrecha: solo funciona si el triángulo tiene
 un ángulo recto. En el campo, la mayoría de los triángulos no lo tienen, porque no hay ninguna pared ni ninguna
-vertical que lo imponga. El problema 2 de la ficha es el caso típico: desde una estación se visan dos puntos y se
-mide el ángulo entre las dos visuales, que resulta ser de 50°. Con eso y dos distancias hay que calcular la
+vertical que lo imponga. El caso 2 de esta lámina es el tipo: desde una estación se visan dos puntos y se
+mide el ángulo entre las dos visuales, que resulta ser de 64°. Con eso y dos distancias hay que calcular la
 distancia entre esos dos puntos, y ahí Pitágoras no sirve. Esta lámina presenta las dos leyes que sí sirven, y las
-aplica al problema entero.</p>
+aplica al caso entero.</p>
 
 <h2>1. Cuándo se acaba el ángulo recto</h2>
 <p>En la lección anterior el ángulo recto lo construía el propio campo: la vertical del poste contra la horizontal
@@ -259,10 +259,10 @@ del suelo. Aquí no hay nada que lo construya. Si dos visuales salen de la misma
 distintos, el ángulo entre ellas es el que es —50°, 73°, 118°— y no hay forma de elegirlo. Tampoco se puede
 «arreglar» bajando una perpendicular desde un vértice al lado opuesto, porque para eso habría que ir hasta el
 punto lejano, que es justo el que no se puede pisar.</p>
-<p>Conviene ver el tamaño del error que se comete al ignorar esto. En el problema 2, los lados conocidos son 40 m y
-60 m y el ángulo entre ellos es de 50°. Si se aplicara Pitágoras a ciegas saldría
-<span class="num">√(40² + 60²) = 72,11 m</span>. El lado verdadero mide 45,98 m. La diferencia es de más de
-26 metros, un 57 % de error, y el número de Pitágoras no tiene nada de absurdo a primera vista: es exactamente el
+<p>Conviene ver el tamaño del error que se comete al ignorar esto. En el caso 2, los lados conocidos son 52 m y
+71 m y el ángulo entre ellos es de 64°. Si se aplicara Pitágoras a ciegas saldría
+<span class="num">√(52² + 71²) = 88,01 m</span>. El lado verdadero mide 67,14 m. La diferencia es de casi
+21 metros, un 31 % de más, y el número de Pitágoras no tiene nada de absurdo a primera vista: es exactamente el
 tipo de resultado que se entrega en un examen sin sospechar nada.</p>
 <p>La razón geométrica es sencilla: cuanto más cerrado es el ángulo entre los dos lados, más cerca están sus
 extremos. Con 50° los dos puntos están bastante juntos. Con 90° estarían a la máxima distancia posible para esos
@@ -291,22 +291,22 @@ coseno, y el coseno tiene el signo justo para cada caso:</p>
   <tr><td class="num">más de 90°</td><td class="num">negativo</td>
       <td>Restar un negativo es sumar: el lado sale <em>mayor</em> que el de Pitágoras, porque el triángulo se abre.</td></tr>
 </table>
-<p>Con los dos lados de la ficha (<span class="num">b = 60</span>, <span class="num">c = 40</span>) se ve el
-efecto con números. A 50° el corrector vale <span class="num">2 · 60 · 40 · 0,6428 = 3 085,38</span> y el lado
-resulta 45,98 m. A 90° el corrector vale 0 y el lado es 72,11 m. A 120° el corrector vale
-<span class="num">−2 400</span> y el lado sube a <span class="num">87,18 m</span>. Y en los dos extremos
+<p>Con los dos lados del caso 2 (<span class="num">b = 71</span>, <span class="num">c = 52</span>) se ve el
+efecto con números. A 64° el corrector vale <span class="num">2 · 71 · 52 · 0,4384 = 3 236,93</span> y el lado
+resulta 67,14 m. A 90° el corrector vale 0 y el lado es 88,01 m. A 120° el corrector vale
+<span class="num">−3 692</span> y el lado sube a <span class="num">106,94 m</span>. Y en los dos extremos
 degenerados la fórmula sigue siendo coherente, lo cual es una comprobación excelente de que se ha entendido: con
-Â = 0° el corrector vale <span class="num">+4 800</span> y el lado sale 20 m, que es exactamente la diferencia
-entre los dos lados; con Â = 180° vale <span class="num">−4 800</span> y sale 100 m, la suma de los dos. El
+Â = 0° el corrector vale <span class="num">+7 384</span> y el lado sale 19 m, que es exactamente la diferencia
+entre los dos lados; con Â = 180° vale <span class="num">−7 384</span> y sale 123 m, la suma de los dos. El
 triángulo se ha aplastado hasta ser una línea, y la fórmula lo admite sin protestar.</p>
 <div class="note">
 <p><strong>Comprobación de sentido.</strong> El lado que se calcula con la ley del coseno tiene que quedar siempre
-entre la diferencia y la suma de los otros dos, y nunca por debajo de cero. Si sale 0, 20 o 100 exactos, el ángulo
+entre la diferencia y la suma de los otros dos, y nunca por debajo de cero. Si sale 0, 19 o 123 exactos, el ángulo
 comprendido es 180°, 0° o el triángulo está degenerado: hay un dato mal copiado.</p>
 </div>
 
 <h2>3. Demostración interactiva</h2>
-<p>Los dos lados están fijos —60 m y 40 m, los del problema 2— y lo único que se mueve es el ángulo que forman.
+<p>Los dos lados están fijos —71 m y 52 m, los del caso 2— y lo único que se mueve es el ángulo que forman.
 Fíjate en tres cosas mientras arrastras. Primera: el lado desconocido crece con el ángulo hasta 90° y luego sigue
 creciendo, pero el término corrector cambia de signo al pasar por el recto. Segunda: en el punto exacto de 90° el
 corrector vale cero, y el valor del lado coincide con el de Pitágoras, que aparece en la última casilla para poder
@@ -316,8 +316,8 @@ compararlos. Tercera: el lado nunca sale mayor que la suma de los dos ni menor q
 <p class="tat">Demostración 3 · Dos lados fijos y un ángulo que cambia</p>
 <div class="ctrl">
   <label for="tAng">Ángulo Â entre b y c</label>
-  <input id="tAng" type="range" min="20" max="150" step="1" value="50">
-  <span class="val" id="tAngV">50°</span>
+  <input id="tAng" type="range" min="20" max="150" step="1" value="64">
+  <span class="val" id="tAngV">64°</span>
 </div>
 <svg id="tri" viewBox="0 0 620 360" width="620" height="360" role="img"
      aria-label="Triángulo con dos lados fijos y el ángulo comprendido variable"></svg>
@@ -331,7 +331,7 @@ compararlos. Tercera: el lado nunca sale mayor que la suma de los dos ni menor q
 <div class="feedback" id="tEstado"></div>
 <div class="botones"><button class="ghost" id="btn90">Llevar Â a 90°</button></div>
 <p class="tiny">Con Â por encima de 90° el origen del triángulo se abre hacia la izquierda y el dibujo se reescala
-para que quepa: no es que los lados cambien, es que la figura ocupa más. Los lados b y c miden siempre 60 y 40
+para que quepa: no es que los lados cambien, es que la figura ocupa más. Los lados b y c miden siempre 71 y 52
 metros.</p>
 </div>
 
@@ -340,7 +340,7 @@ metros.</p>
   const NS = 'http://www.w3.org/2000/svg';
   const svg = $('#tri');
   const RAD = Math.PI / 180;
-  const b = 60, c = 40;
+  const b = 71, c = 52;
 
   function limpia(){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
   function el(tag, attrs, txt){
@@ -459,56 +459,56 @@ se despeja un ángulo con la ley del seno, la calculadora devuelve siempre el va
 el ángulo podía ser obtuso. Dos criterios resuelven el caso: la suma de los tres ángulos tiene que dar exactamente
 180°, y <strong>el lado mayor es siempre opuesto al ángulo mayor</strong>. Si el ángulo que sale agudo es mayor que
 otro conocido y su lado es menor, está mal: hay que tomar el suplementario,
-<span class="num">180° − arcsen x</span>. En el problema 2 esto pasa de verdad, como se ve abajo.</p>
+<span class="num">180° − arcsen x</span>. En el caso 2 esto pasa de verdad, como se ve abajo.</p>
 </div>
 
-<h2>5. El problema 2 de la ficha, resuelto entero</h2>
-<p>«Desde una estación se visan dos puntos, P y Q. La distancia al punto P es de 40 m, la distancia al punto Q es
-de 60 m y el ángulo entre las dos visuales es de 50°. Calcula la distancia entre P y Q y los dos ángulos del
+<h2>5. Un caso completo, resuelto entero</h2>
+<p>«Desde una estación se visan dos vértices, P y Q. La distancia al vértice P es de 52 m, la distancia al vértice Q
+es de 71 m y el ángulo entre las dos visuales es de 64°. Calcula la distancia entre P y Q y los dos ángulos del
 triángulo». La figura es un triángulo con un vértice en la estación, que llamaremos O. Los lados son
-<span class="num">b = 60</span> (visual a Q) y <span class="num">c = 40</span> (visual a P), con el ángulo
-<span class="num">Ô = 50°</span> comprendido entre ellos. Lo que se busca es el lado <span class="num">a</span>,
+<span class="num">b = 71</span> (visual a Q) y <span class="num">c = 52</span> (visual a P), con el ángulo
+<span class="num">Ô = 64°</span> comprendido entre ellos. Lo que se busca es el lado <span class="num">a</span>,
 el que une P con Q.</p>
 <ol class="pasos">
   <li><p><strong>Elegir la ley.</strong> Se conocen dos lados y el ángulo <em>entre</em> ellos, y no se conoce
   ningún lado con su ángulo opuesto. Ese es el caso de la ley del coseno, sin discusión posible.</p></li>
 
-  <li><p><strong>Sustituir el cuadrado del lado.</strong> Con b = 60, c = 40 y cos 50° = 0,6428:</p>
-  <div class="formula">a² = 40² + 60² − 2 · 40 · 60 · cos 50°
-a² = 1 600 + 3 600 − 4 800 · 0,6428
-a² = 5 200 − 3 085,38 = 2 114,62</div></li>
+  <li><p><strong>Sustituir el cuadrado del lado.</strong> Con b = 71, c = 52 y cos 64° = 0,4384:</p>
+  <div class="formula">a² = 52² + 71² − 2 · 52 · 71 · cos 64°
+a² = 2 704 + 5 041 − 7 384 · 0,4384
+a² = 7 745 − 3 236,93 = 4 508,07</div></li>
 
   <li><p><strong>Sacar la raíz.</strong> Aquí se comete el error más tonto de todo el ejercicio: quedarse con el
   cuadrado.</p>
-  <div class="formula">a = √2 114,62 = <em>45,98 m</em></div></li>
+  <div class="formula">a = √4 508,07 = <em>67,14 m</em></div></li>
 
   <li><p><strong>El primer ángulo, por la ley del seno.</strong> Ya hay un par completo: el lado
-  <span class="num">a = 45,98</span> con su ángulo opuesto <span class="num">Ô = 50°</span>. Con el lado de 40 m,
+  <span class="num">a = 67,14</span> con su ángulo opuesto <span class="num">Ô = 64°</span>. Con el lado de 52 m,
   que es el opuesto al ángulo en P:</p>
-  <div class="formula">sen P̂ / 40 = sen 50° / 45,98
-sen P̂ = 40 · 0,7660 / 45,98 = 30,64 / 45,98 = 0,6663
-P̂ = arcsen 0,6663 = <em>41,79°</em></div></li>
+  <div class="formula">sen P̂ / 52 = sen 64° / 67,14
+sen P̂ = 52 · 0,8988 / 67,14 = 46,74 / 67,14 = 0,6961
+P̂ = arcsen 0,6961 = <em>44,11°</em></div></li>
 
   <li><p><strong>El segundo ángulo, por suma.</strong> No hace falta volver a la ley del seno, y además es mejor no
   hacerlo: así el cierre a 180° actúa como comprobación independiente.</p>
-  <div class="formula">Q̂ = 180° − 50° − 41,79° = <em>88,21°</em></div></li>
+  <div class="formula">Q̂ = 180° − 64° − 44,11° = <em>71,89°</em></div></li>
 
   <li><p><strong>Comprobar que suma 180°.</strong></p>
-  <div class="formula">50,00° + 41,79° + 88,21° = 180,00°  ✓</div></li>
+  <div class="formula">64,00° + 44,11° + 71,89° = 180,00°  ✓</div></li>
 
-  <li><p><strong>Comprobar el ángulo mayor con su lado mayor.</strong> El lado de 60 m es el opuesto al ángulo en
-  Q, que ha salido el mayor, 88,21°. Se comprueba por la ley del seno:</p>
-  <div class="formula">sen Q̂ = 60 · sen 50° / 45,98 = 45,96 / 45,98 = 0,9995
-arcsen 0,9995 = 88,21°  ✓     (el otro valor posible, 91,79°, daría una suma de 183,58°: imposible)</div></li>
+  <li><p><strong>Comprobar el ángulo mayor con su lado mayor.</strong> El lado de 71 m es el opuesto al ángulo en
+  Q, que ha salido el mayor, 71,89°. Se comprueba por la ley del seno:</p>
+  <div class="formula">sen Q̂ = 71 · sen 64° / 67,14 = 63,81 / 67,14 = 0,9504
+arcsen 0,9504 = 71,89°  ✓     (el otro valor posible, 108,11°, daría una suma de 216,11°: imposible)</div></li>
 </ol>
-<p>Aquí se ve la ambigüedad anunciada, y se ve cómo se resuelve: la calculadora devuelve 88,21° porque es el agudo,
-y en este caso el agudo es el correcto. Pero el mismo número 0,9995 podría haber correspondido a 91,79°, y solo la
-suma de los tres ángulos y la comprobación con el lado mayor deciden cuál es. Un ejercicio en el que la estación
+<p>Aquí se ve la ambigüedad anunciada, y se ve cómo se resuelve: la calculadora devuelve 71,89° porque es el agudo,
+y en este caso el agudo es el correcto. Pero el mismo número 0,9504 podría haber correspondido a 108,11°, y solo la
+suma de los tres ángulos y la comprobación con el lado mayor deciden cuál es. Una disposición en la que la estación
 esté dentro del triángulo de los otros dos puntos da exactamente esa situación.</p>
 <div class="note">
-<p><strong>Por qué el resultado es razonable.</strong> Los dos lados miden 40 y 60 y el ángulo entre ellos es la
-mitad de un recto: los extremos tienen que estar más cerca de lo que estarían a 90° (72,11 m) y más lejos de lo que
-estarían a 0° (20 m). Los 45,98 m caen donde deben. Cuando el resultado no cae entre esos dos topes, el fallo está
+<p><strong>Por qué el resultado es razonable.</strong> Los dos lados miden 52 y 71 y el ángulo entre ellos es algo
+más de un sexto de vuelta: los extremos tienen que estar más cerca de lo que estarían a 90° (88,01 m) y más lejos de
+lo que estarían a 0° (19 m). Los 67,14 m caen donde deben. Cuando el resultado no cae entre esos dos topes, el fallo está
 en el ángulo: o no es el comprendido, o está en gonios.</p>
 </div>
 

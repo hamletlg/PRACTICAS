@@ -40,8 +40,8 @@ CÓMO SE TRABAJA
 1. Lámina 6 y generador B1 en la misma sesión. Lo importante no es acertar el número,
    sino dibujar el croquis antes de operar. Sin croquis, el fallo es de planteamiento.
 
-2. Lámina 7 y generador B3 son el núcleo del módulo: los tres problemas de altura
-   inaccesible de la ficha son este mismo problema con otros números. No pases a la
+2. Lámina 7 y generador B3 son el núcleo del módulo: los tres casos de altura
+   inaccesible son este mismo problema con otros números. No pases a la
    lámina 8 sin resolver cinco del B3 sin mirar la fórmula.
 
 3. Lámina 8 y generador B4 cierran la trigonometría de triángulos. Después, el generador

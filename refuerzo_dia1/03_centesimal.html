@@ -249,7 +249,7 @@ input[type=range]::-moz-range-thumb{
 <p class="lead">El sistema centesimal existe por una razón muy poco romántica: hace que las cuentas de la libreta de campo se
 puedan hacer de cabeza. La vuelta se parte en 400 grados centesimales y cada uno se subdivide en 100 y en 100, todo
 en base diez. El precio que se paga por esa comodidad es que hay que saber pasar de un sistema al otro, y ahí está el
-cruce 9/10, que es la parte de la ficha que más errores acumula.</p>
+cruce 9/10, que es la parte del bloque que más errores acumula.</p>
 
 <h2>1. La vuelta partida en 400 partes</h2>
 <p>En el sistema centesimal la vuelta completa son <span class="num">400 g</span>. A esa unidad se la llama
@@ -265,7 +265,7 @@ la que ha arruinado la primera clase de topografía de mucha gente.</p>
 <div class="warn">
 <p><strong>La trampa de las letras.</strong> Esa <span class="num">m</span> no es un metro, y esa
 <span class="num">s</span> no es un segundo de tiempo. Son minutos y segundos <em>centesimales</em>, y son
-fracciones de ángulo. Un ángulo de «42 g 35 m 60 s» no mide 42 metros: mide 42,3560 gonios, que son unos 38,12
+fracciones de ángulo. Un ángulo de «63 g 47 m 25 s» no mide 63 metros: mide 63,4725 gonios, que son unos 57,13
 grados. Cuando veas una <em>g</em> acompañando al número, todo lo que va detrás es ángulo, por mucho que la letra
 siguiente sea la misma que usas para medir una parcela.</p>
 </div>
@@ -273,8 +273,8 @@ siguiente sea la misma que usas para medir una parcela.</p>
 <h2>2. Por qué la topografía adoptó la base 100</h2>
 <p>La razón no es científica, es de taller. Imagina una libreta con doscientas visuales anotadas a mano, cada una con
 su ángulo de limbo, y una tarde para reducirlas. Con gonios, cada ángulo ya está en forma decimal sin hacer nada:</p>
-<div class="formula">42 g 35 m 60 s   →   42,3560 g        (basta con correr la coma)
-42° 35′ 60″      →   42 + 35/60 + 60/3 600 = 42,6°   (hay que dividir dos veces)</div>
+<div class="formula">63 g 47 m 25 s   →   63,4725 g        (basta con correr la coma)
+54° 27′ 54″      →   54 + 27/60 + 54/3 600 = 54,465°   (hay que dividir dos veces)</div>
 <p>En base 100, sumar una columna de ángulos es sumar decimales alineando la coma; hacer la media de dos lecturas es
 dividir entre 2 sin acarreos; y comprobar una visual repetida es restar dos números y ver si la diferencia es pequeña.
 Con base 60 hay que hacer dos acarreos por suma y tres por división, y en una libreta de doscientas filas eso son
@@ -299,15 +299,15 @@ instrumento, no la unidad.</p>
   <li><p>Cada minuto se parte en otras 100, así que un segundo centesimal es una diezmilésima parte del gonio:</p>
   <div class="formula">1 m = 100 s   ⇒   1 s = 1/10 000 g = 0,0001 g</div></li>
 
-  <li><p>Con eso, el reparto de 42 g 35 m 60 s sale sin calculadora, moviendo la coma dos veces:</p>
-  <div class="formula">42 g 35 m 60 s  =  42 + 35/100 + 60/10 000
-                  =  42 + 0,35 + 0,006
-                  =  <em>42,3560 g</em></div></li>
+  <li><p>Con eso, el reparto de 63 g 47 m 25 s sale sin calculadora, moviendo la coma dos veces:</p>
+  <div class="formula">63 g 47 m 25 s  =  63 + 47/100 + 25/10 000
+                  =  63 + 0,47 + 0,0025
+                  =  <em>63,4725 g</em></div></li>
 </ol>
 <p>Fíjate en que el resultado tiene cuatro decimales y no dos: los dos primeros son los minutos y los dos últimos, los
 segundos. En centesimal, la forma compleja y la decimal son la misma cadena de cifras con la coma puesta en otro
-sitio. Esa es toda la gracia del sistema y también su única trampa, porque invita a escribir 42,35 y olvidarse los
-sesenta segundos, que valen 0,006.</p>
+sitio. Esa es toda la gracia del sistema y también su única trampa, porque invita a escribir 63,47 y olvidarse los
+veinticinco segundos, que valen 0,0025.</p>
 <p>Para volver, el reparto es el mismo de la lección anterior con la base cambiada: la parte entera son los gonios, el
 resto se multiplica por 100 para sacar minutos, y lo que sobre se vuelve a multiplicar por 100 para sacar segundos.</p>
 
@@ -367,14 +367,14 @@ diferencia es el factor 9/10 visto como dibujo. Los dos números de la derecha s
   <div>
     <div class="ctrl">
       <label for="giroS">Giro</label>
-      <input id="giroS" type="range" min="0" max="360" step="0.1" value="72.3">
-      <span class="val" id="giroSV">72,3°</span>
+      <input id="giroS" type="range" min="0" max="360" step="0.1" value="46.5">
+      <span class="val" id="giroSV">46,5°</span>
     </div>
     <div class="readout">
-      <div><b>Sexagesimal</b><span id="sSexa">72° 18′ 00″</span></div>
-      <div><b>Decimal (°)</b><span id="sDeg">72,3000°</span></div>
-      <div><b>Centesimal</b><span id="sCent">80 g 33 m 33,3 s</span></div>
-      <div><b>Decimal (g)</b><span id="sGon">80,3333 g</span></div>
+      <div><b>Sexagesimal</b><span id="sSexa">46° 30′ 00″</span></div>
+      <div><b>Decimal (°)</b><span id="sDeg">46,5°</span></div>
+      <div><b>Centesimal</b><span id="sCent">51 g 66 m 66,7 s</span></div>
+      <div><b>Decimal (g)</b><span id="sGon">51,6667 g</span></div>
       <div><b>Gonios por grado</b><span id="sFac">1,1111</span></div>
     </div>
     <p class="tiny" style="margin-top:12px">Con el mismo deslizador se ve la propiedad que hay que retener: el número
@@ -477,12 +477,12 @@ decimales tienen que estar en la proporción 9/10, y el de gonios siempre mayor.
     <p class="tiny" style="margin-top:0">Sexagesimal</p>
     <div class="ctrl">
       <label for="xG">Grados</label>
-      <input id="xG" type="text" inputmode="numeric" value="72" aria-label="Grados sexagesimales">
+      <input id="xG" type="text" inputmode="numeric" value="46" aria-label="Grados sexagesimales">
       <span class="val">°</span>
     </div>
     <div class="ctrl">
       <label for="xM">Minutos</label>
-      <input id="xM" type="text" inputmode="numeric" value="18" aria-label="Minutos sexagesimales">
+      <input id="xM" type="text" inputmode="numeric" value="30" aria-label="Minutos sexagesimales">
       <span class="val">′</span>
     </div>
     <div class="ctrl">
@@ -495,32 +495,32 @@ decimales tienen que estar en la proporción 9/10, y el de gonios siempre mayor.
     <p class="tiny" style="margin-top:0">Centesimal</p>
     <div class="ctrl">
       <label for="yG">Gonios</label>
-      <input id="yG" type="text" inputmode="numeric" value="80" aria-label="Gonios">
+      <input id="yG" type="text" inputmode="numeric" value="51" aria-label="Gonios">
       <span class="val">g</span>
     </div>
     <div class="ctrl">
       <label for="yM">Minutos</label>
-      <input id="yM" type="text" inputmode="numeric" value="33" aria-label="Minutos centesimales">
+      <input id="yM" type="text" inputmode="numeric" value="66" aria-label="Minutos centesimales">
       <span class="val">m</span>
     </div>
     <div class="ctrl">
       <label for="yS">Segundos</label>
-      <input id="yS" type="text" inputmode="decimal" value="33,3" aria-label="Segundos centesimales">
+      <input id="yS" type="text" inputmode="decimal" value="66,67" aria-label="Segundos centesimales">
       <span class="val">s</span>
     </div>
   </div>
 </div>
 <div class="readout">
-  <div><b>Decimal (°)</b><span id="cDeg">72,3000</span></div>
-  <div><b>Decimal (g)</b><span id="cGon">80,3333</span></div>
+  <div><b>Decimal (°)</b><span id="cDeg">46,5</span></div>
+  <div><b>Decimal (g)</b><span id="cGon">51,6667</span></div>
   <div><b>Cociente g/°</b><span id="cRatio">1,1111</span></div>
-  <div><b>En radianes</b><span id="cRad">1,2619</span></div>
+  <div><b>En radianes</b><span id="cRad">0,8116</span></div>
 </div>
 <div class="feedback" id="fbCruce"></div>
 <div class="botones">
-  <button class="ghost" id="bC04">Cargar C04 · 72° 18′</button>
-  <button class="ghost" id="bC05">Cargar C05 · 85 g 25 m 40 s</button>
-  <button class="ghost" id="bC03">Cargar C03 · 42 g 35 m 60 s</button>
+  <button class="ghost" id="bC04">Cargar Ej. 4 · 46° 30′</button>
+  <button class="ghost" id="bC05">Cargar Ej. 5 · 78 g 47 m</button>
+  <button class="ghost" id="bC03">Cargar Ej. 3 · 63 g 47 m 25 s</button>
 </div>
 </div>
 
@@ -605,15 +605,15 @@ decimales tienen que estar en la proporción 9/10, y el de gonios siempre mayor.
   yS.addEventListener('input', desdeCentes);
 
   $('#bC04').addEventListener('click', function(){
-    xG.value = '72'; xM.value = '18'; xS.value = '00';
+    xG.value = '46'; xM.value = '30'; xS.value = '00';
     desdeSexa();
   });
   $('#bC05').addEventListener('click', function(){
-    yG.value = '85'; yM.value = '25'; yS.value = '40';
+    yG.value = '78'; yM.value = '47'; yS.value = '00';
     desdeCentes();
   });
   $('#bC03').addEventListener('click', function(){
-    yG.value = '42'; yM.value = '35'; yS.value = '60';
+    yG.value = '63'; yM.value = '47'; yS.value = '25';
     desdeCentes();
   });
 
@@ -621,62 +621,63 @@ decimales tienen que estar en la proporción 9/10, y el de gonios siempre mayor.
 })();
 </script>
 
-<h2>7. Los tres ejercicios de la ficha, resueltos</h2>
+<h2>7. Tres cruces resueltos paso a paso</h2>
 
-<h3>C03 · Pasar 42 g 35 m 60 s a forma decimal</h3>
-<p>Es el ejercicio que fija el reparto en base 100. Datos: <span class="num">G = 42</span>,
-<span class="num">M = 35</span>, <span class="num">S = 60</span>.</p>
+<h3>Ejemplo 3 · Pasar 63 g 47 m 25 s a forma decimal</h3>
+<p>Es el ejercicio que fija el reparto en base 100. Datos: <span class="num">G = 63</span>,
+<span class="num">M = 47</span>, <span class="num">S = 25</span>.</p>
 <ol class="pasos">
   <li><p>Reparto cada orden sobre su base:</p>
-  <div class="formula">35/100    = 0,35
-60/10 000 = 0,0060</div></li>
+  <div class="formula">47/100    = 0,47
+25/10 000 = 0,0025</div></li>
   <li><p>Sumo con los grados enteros:</p>
-  <div class="formula">dec = 42 + 0,35 + 0,0060 = <em>42,3560 g</em></div></li>
-  <li><p>Compruebo el sentido: el resultado cae entre 42 y 43 gonios, y a 0,356 del principio. Y si lo paso a
-  grados, 42,3560 × 0,9 = 38,1204°, es decir 38° 07′ 13,4″. Un ángulo algo mayor que la mitad de un recto: razonable
-  para un gonio de 42 y pico.</p></li>
+  <div class="formula">dec = 63 + 0,47 + 0,0025 = <em>63,4725 g</em></div></li>
+  <li><p>Compruebo el sentido: el resultado cae entre 63 y 64 gonios, y a 0,4725 del principio. Y si lo paso a
+  grados, 63,4725 × 0,9 = 57,1253°, es decir 57° 07′ 30,9″. Un ángulo algo mayor que la mitad de un recto: razonable
+  para un gonio de 63 y pico.</p></li>
 </ol>
-<p class="tiny">Fíjate en un detalle que despista: sesenta segundos centesimales son 0,0060 gonios, no un minuto. En
-este sistema nadie llega a 60 como tope, pero el valor 60 es perfectamente legal como cifra, porque el límite está en
-100.</p>
+<p class="tiny">Fíjate en el detalle que despista: veinticinco segundos centesimales son 0,25 minutos centesimales,
+o sea 0,0025 gonios. En este sistema nadie llega a 60 como tope, así que una cifra de 25 en el tercer orden es
+pequeña, no está «casi al límite» como lo estaría en base 60.</p>
 
-<h3>C04 · Pasar 72° 18′ a las dos formas complejas</h3>
+<h3>Ejemplo 4 · Pasar 46° 30′ a las dos formas complejas</h3>
 <p>Este es el ejercicio completo del cruce y conviene hacerlo en dos tramos separados: primero a decimal, después al
-otro sistema. Datos: <span class="num">72° 18′ 00″</span>.</p>
+otro sistema. Datos: <span class="num">46° 30′ 00″</span>.</p>
 <ol class="pasos">
   <li><p>A forma decimal sexagesimal, como en la lección anterior:</p>
-  <div class="formula">dec = 72 + 18/60 + 0/3 600 = 72 + 0,3 = <em>72,3°</em></div></li>
+  <div class="formula">dec = 46 + 30/60 + 0/3 600 = 46 + 0,5 = <em>46,5°</em></div></li>
   <li><p>Cruzo al sistema centesimal multiplicando por 10/9. El número tiene que crecer:</p>
-  <div class="formula">72,3 × 10/9 = 723/9 = <em>80,3333 g</em></div></li>
+  <div class="formula">46,5 × 10/9 = 465/9 = <em>51,6667 g</em></div></li>
   <li><p>Reparto la parte decimal en base 100 para escribir la forma compleja:</p>
-  <div class="formula">0,3333 × 100 = 33,33   →  33 m  y sobran 0,33
-0,33   × 100 = 33,3    →  33,3 s</div></li>
+  <div class="formula">0,666667 × 100 = 66,6667   →  66 m  y sobran 0,6667
+0,6667   × 100 = 66,67     →  66,67 s</div></li>
   <li><p>Resultado y comprobación de vuelta:</p>
-  <div class="formula">72° 18′ = 72,3° = 80,3333 g = <em>80 g 33 m 33,3 s</em>
-80,3333 × 9/10 = 72,2999… ≈ 72,3°  ✓</div></li>
+  <div class="formula">46° 30′ = 46,5° = 51,6667 g = <em>51 g 66 m 66,67 s</em>
+51,6667 × 9/10 = 46,5000… ≈ 46,5°  ✓</div></li>
 </ol>
 <div class="note">
-<p>El 80 g 33 m 33,3 s es un número con pinta de error y no lo es: es el resultado de que 72° no sea divisible de forma
-exacta por 9. Los tercios de la vuelta, que en sexagesimal caían redondos, en centesimal salen periódicos. Si en un
-examen obtienes 33 m 33 s, no lo «arregles» a 34: la comprobación de vuelta confirma que es correcto.</p>
+<p>El 51 g 66 m 66,67 s tiene pinta de error y no lo es: los 66 minutos centesimales son legales, porque el tope de
+este sistema es 100, y por eso la forma compleja no se parece a «un grado, unos minutos y unos segundos» como en base
+60. El resultado es periódico porque 465 no es divisible entre 9. Si obtienes 66,67 en el tercer orden, no lo
+«arregles» a 67: la comprobación de vuelta (66/100 + 66,67/10 000 = 0,666667) confirma que es correcto.</p>
 </div>
 
-<h3>C05 · Pasar 85 g 25 m 40 s a grados sexagesimales</h3>
+<h3>Ejemplo 5 · Pasar 78 g 47 m 00 s a grados sexagesimales</h3>
 <p>El sentido inverso, que es el que hace falta cuando el instrumento está en gonios y el enunciado pide grados. Datos:
-<span class="num">85 g 25 m 40 s</span>.</p>
+<span class="num">78 g 47 m 00 s</span>.</p>
 <ol class="pasos">
   <li><p>Primero a forma decimal centesimal, moviendo la coma dos veces:</p>
-  <div class="formula">dec = 85 + 25/100 + 40/10 000 = 85 + 0,25 + 0,0040 = <em>85,2540 g</em></div></li>
+  <div class="formula">dec = 78 + 47/100 + 0/10 000 = 78 + 0,47 + 0 = <em>78,4700 g</em></div></li>
   <li><p>Cruzo a grados multiplicando por 9/10. Ahora el número tiene que <em>disminuir</em>:</p>
-  <div class="formula">85,2540 × 0,9 = <em>76,7286°</em></div></li>
+  <div class="formula">78,4700 × 0,9 = <em>70,623°</em></div></li>
   <li><p>Reparto en base 60, con cuidado de no arrastrar el tope 100:</p>
-  <div class="formula">0,7286 × 60 = 43,716   →  43′  y sobran 0,716
-0,716  × 60 = 42,96    →  43,0″</div></li>
+  <div class="formula">0,623 × 60 = 37,38   →  37′  y sobran 0,38
+0,38  × 60 = 22,8    →  22,8″</div></li>
   <li><p>Resultado y comprobación:</p>
-  <div class="formula">85 g 25 m 40 s = 85,2540 g = <em>76,7286° = 76° 43′ 43,0″</em>
-43/60 + 43/3 600 = 0,7167 + 0,0119 = 0,7286  ✓</div></li>
+  <div class="formula">78 g 47 m 00 s = 78,4700 g = <em>70,623° = 70° 37′ 22,8″</em>
+37/60 + 22,8/3 600 = 0,6167 + 0,0063 = 0,6230  ✓</div></li>
 </ol>
-<p>El control de sentido que hay que hacer siempre en este sentido: 76 grados son menos que 85 gonios, y la diferencia
+<p>El control de sentido que hay que hacer siempre en este sentido: 70 grados son menos que 78 gonios, y la diferencia
 es de un 10 %, que es exactamente el factor. Si al pasar de gonios a grados el número te sube, has multiplicado por
 10/9 en lugar de por 9/10.</p>
 
@@ -689,13 +690,13 @@ es de un 10 %, que es exactamente el factor. Si al pasar de gonios a grados el n
   desigualdad, está mal antes de comprobar nada más.</p></li>
 
   <li><p><strong>Pegar las cifras tras la coma en centesimal.</strong> Parece que en este sistema sí se puede —
-  42 g 35 m es 42,35 g — pero solo si los segundos son cero. Con 42 g 35 m 60 s, escribir 42,35 se come los sesenta
-  segundos, que valen 0,006 gonios. La costumbre de pegar cifras que viene de la base 100 falla exactamente en el
-  tercer orden, que es donde se pierden las centésimas de metro en una poligonal.</p></li>
+  63 g 47 m es 63,47 g — pero solo si los segundos son cero. Con 63 g 47 m 25 s, escribir 63,47 se come los
+  veinticinco segundos, que valen 0,0025 gonios. La costumbre de pegar cifras que viene de la base 100 falla
+  exactamente en el tercer orden, que es donde se pierden las centésimas de metro en una poligonal.</p></li>
 
-  <li><p><strong>Arrastrar el tope 100 al volver a sexagesimal.</strong> El reparto de 76,7286° se hace multiplicando
+  <li><p><strong>Arrastrar el tope 100 al volver a sexagesimal.</strong> El reparto de 70,623° se hace multiplicando
   la parte decimal por 60, no por 100. Quien viene de hacer gonios y sigue con el 100 obtiene
-  <span class="num">76° 72′ 86″</span>, un ángulo que no existe y que además vale media hora de trabajo perdida.
+  <span class="num">70° 62′ 30″</span>, un ángulo que no existe y que además vale media hora de trabajo perdida.
   El tope de cada sistema es el de su base: 60 arriba, 100 abajo, y no se mezclan.</p></li>
 </ol>
 <div class="warn">
@@ -708,17 +709,17 @@ barata de toda la asignatura.</p>
 <h2>9. Cómo se escribe en el examen</h2>
 <p>El cruce se escribe siempre en dos líneas separadas: primero la forma decimal en el sistema de partida, después el
 cambio de sistema. Mezclar las dos cosas en una sola línea es lo que produce los factores invertidos.</p>
-<div class="formula">1)  Dato:  72° 18′
-2)  dec = 72 + 18/60 = 72,3°
-3)  Paso a gonios (×10/9):  72,3 × 10/9 = 80,3333 g
-4)  Reparto:  0,3333 × 100 = 33,33 → 33 m;  0,33 × 100 = 33,3 s
-5)  Resultado:  80 g 33 m 33,3 s     Compruebo: ×9/10 = 72,3°  ✓</div>
+<div class="formula">1)  Dato:  46° 30′
+2)  dec = 46 + 30/60 = 46,5°
+3)  Paso a gonios (×10/9):  46,5 × 10/9 = 51,6667 g
+4)  Reparto:  0,666667 × 100 = 66,6667 → 66 m;  0,6667 × 100 = 66,67 s
+5)  Resultado:  51 g 66 m 66,67 s     Compruebo: ×9/10 = 46,5°  ✓</div>
 <p>Y en el sentido contrario, con el mismo orden pero el factor al revés:</p>
-<div class="formula">1)  Dato:  85 g 25 m 40 s
-2)  dec = 85 + 0,25 + 0,0040 = 85,2540 g
-3)  Paso a grados (×9/10):  85,2540 × 0,9 = 76,7286°
-4)  Reparto en base 60:  0,7286 × 60 = 43,716 → 43′;  0,716 × 60 = 42,96 → 43,0″
-5)  Resultado:  76° 43′ 43,0″     Compruebo: 43/60 + 43/3 600 = 0,7286  ✓</div>
+<div class="formula">1)  Dato:  78 g 47 m 00 s
+2)  dec = 78 + 0,47 + 0 = 78,4700 g
+3)  Paso a grados (×9/10):  78,4700 × 0,9 = 70,623°
+4)  Reparto en base 60:  0,623 × 60 = 37,38 → 37′;  0,38 × 60 = 22,8 → 22,8″
+5)  Resultado:  70° 37′ 22,8″     Compruebo: 37/60 + 22,8/3 600 = 0,6230  ✓</div>
 
 <p>Con estas dos plantillas y la regla de que el número de gonios siempre es mayor, el cruce deja de dar miedo. El
 <a href="gen_01_conversiones.html">generador de conversiones</a> tiene un nivel dedicado justo a esto, con el factor

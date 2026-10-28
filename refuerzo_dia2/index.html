@@ -112,14 +112,6 @@ kbd{font-family:ui-monospace,monospace;font-size:15px;border:1px solid #b7c0c9;b
   padding:1px 5px;background:#fff}
 .checkline{display:flex;gap:10px;align-items:baseline;margin:.4em 0}
 .checkline input[type=checkbox]{width:18px;height:18px;accent-color:#16324f;flex:none}
-.dlbar{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;
-  background:#fff;border:1px solid var(--line);border-left:4px solid var(--navy);padding:12px 15px;margin:0 0 26px}
-.dlbar .txt{font-size:16px;color:#46545f;line-height:1.45}
-.dlbar .txt b{color:var(--navy);font-weight:650}
-.dlbar a.btn{display:inline-block;text-decoration:none;font-size:16px;padding:8px 15px;
-  border:1px solid var(--navy);background:#fff;color:var(--navy);white-space:nowrap}
-.dlbar a.btn:hover{background:var(--soft)}
-@media print{.dlbar{display:none}}
 @media (max-width:740px){
   body{font-size:18px}
   .wrap{padding:18px 16px 70px}
@@ -253,10 +245,6 @@ input[type=range]::-moz-range-thumb{
 <body>
 <div class="wrap">
 <header class="top"><div class="kicker">Bloque 2 de 2</div><h1>Topografía agraria — refuerzo · Día 2</h1><p class="sub">Trigonometría aplicada: triángulo rectángulo, dos posiciones, ley del coseno y coordenadas</p></header>
-<div class="dlbar">
-  <div class="txt"><b>Este bloque completo, en un solo archivo.</b><br>Descárgalo en tu equipo para trabajar sin conexión.</div>
-  <a class="btn" href="../descargas/refuerzo_dia2.zip" download="refuerzo_dia2.zip">Descargar el bloque (.zip)</a>
-</div>
 <main>
 <p class="lead">Este es el material del <strong>segundo día</strong> de refuerzo del módulo de Topografía Agraria. Contiene
 cinco láminas y siete generadores de ejercicios. Cada lámina explica <strong>un solo paso</strong>, con una demostración
@@ -273,12 +261,12 @@ son cortas, y luego retoma esta carpeta por donde lo dejaste.</p>
   <a class="card" href="06_triangulo_rectangulo.html">
     <div class="n">Paso 6</div>
     <div class="t">El triángulo rectángulo en el campo</div>
-    <div class="d">Elevación, depresión, sombras y pendientes: el patrón que resuelve media ficha.</div>
+    <div class="d">Elevación, depresión, sombras y pendientes: el patrón que resuelve la mitad de los ejercicios.</div>
   </a>
   <a class="card" href="07_dos_posiciones.html">
     <div class="n">Paso 7 · Núcleo</div>
     <div class="t">Dos posiciones: la altura inaccesible</div>
-    <div class="d">La fórmula de los problemas 5, 7 y 10 de la ficha, demostrada término a término y con comprobación cruzada.</div>
+    <div class="d">La fórmula de las dos visuales, demostrada término a término y con comprobación cruzada.</div>
   </a>
   <a class="card" href="08_ley_del_coseno.html">
     <div class="n">Paso 8</div>
@@ -288,7 +276,7 @@ son cortas, y luego retoma esta carpeta por donde lo dejaste.</p>
   <a class="card" href="09_de_gonios_a_coordenadas.html">
     <div class="n">Paso 9 · El eslabón que falta</div>
     <div class="t">De gonios a coordenadas</div>
-    <div class="d">La estación devuelve gonios; de ahí salen ΔX y ΔY. Lo que las dos fichas del curso no conectan.</div>
+    <div class="d">La estación devuelve gonios; de ahí salen ΔX y ΔY. Lo que ningún bloque anterior conecta.</div>
   </a>
   <a class="card" href="10_calculadora_y_errores.html">
     <div class="n">Paso 10 · Transversal</div>
@@ -326,7 +314,7 @@ punto decimal.</p>
   <a class="card" href="gen_07_enunciados.html">
     <div class="n">Generador B5</div>
     <div class="t">Interpretar el enunciado</div>
-    <div class="d">Los enunciados ambiguos de la ficha original: decidir la figura antes de calcular.</div>
+    <div class="d">Los enunciados ambiguos: decidir la figura antes de calcular.</div>
   </a>
   <a class="card" href="gen_06_conceptos.html">
     <div class="n">Generador C</div>
@@ -344,7 +332,7 @@ punto decimal.</p>
 <ol class="pasos">
   <li>Lámina 6 y generador B1 en la misma sesión: la lámina enseña el patrón y el generador lo repite con otros números.
       Lo importante no es acertar el número, sino dibujar el croquis antes de operar.</li>
-  <li>Lámina 7 y generador B3 son el núcleo del módulo. Los tres problemas de altura inaccesible de la ficha (5, 7 y 10)
+  <li>Lámina 7 y generador B3 son el núcleo del módulo. Los tres casos de altura inaccesible (5, 7 y 10)
       son este mismo problema. No pases a la 8 sin resolver cinco del B3 sin mirar la fórmula.</li>
   <li>Lámina 8 y generador B4 cierran la trigonometría de triángulos. Después, el generador B5 trabaja lo que ninguno de
       los anteriores: leer el enunciado y decidir qué figura es, que es donde se pierden los puntos.</li>

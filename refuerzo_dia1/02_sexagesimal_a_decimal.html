@@ -244,11 +244,11 @@ input[type=range]::-moz-range-thumb{
 </head>
 <body>
 <div class="wrap">
-<header class="top"><div class="kicker">Día 1 · Peldaño 1</div><h1>De forma compleja a decimal, y vuelta</h1><p class="sub">El paso que hay detrás de todas las conversiones de la ficha</p></header><nav class="strip"><a href="index.html">Índice</a><span class="sep">·</span><span class="act">Lección 2</span><span class="sep">·</span><a href="gen_01_conversiones.html">Generador A &rarr;</a></nav>
+<header class="top"><div class="kicker">Día 1 · Peldaño 1</div><h1>De forma compleja a decimal, y vuelta</h1><p class="sub">El paso que hay detrás de todas las conversiones de ángulos</p></header><nav class="strip"><a href="index.html">Índice</a><span class="sep">·</span><span class="act">Lección 2</span><span class="sep">·</span><a href="gen_01_conversiones.html">Generador A &rarr;</a></nav>
 <main>
 <p class="lead">Un ángulo se puede escribir de dos maneras y las dos son la misma cosa: partido en grados, minutos y segundos,
 o como un solo número con coma decimal. Pasar de una a otra es el paso que hay escondido detrás de casi todos los
-ejercicios de la primera parte de la ficha, incluidos los que además cambian de sistema. Esta lámina hace solo eso,
+ejercicios de la primera parte del bloque, incluidos los que además cambian de sistema. Esta lámina hace solo eso,
 en los dos sentidos, hasta que salga sin pensar.</p>
 
 <h2>1. Por qué el grado se parte en 60</h2>
@@ -280,7 +280,7 @@ escrita en base 10. El mismo ángulo de antes:</p>
 <div class="formula">37° 30′ 00″   =   37,5°</div>
 <p>Las dos valen exactamente lo mismo. La diferencia es de comodidad: el instrumento, cuando visás, te da la lectura
 en forma compleja porque el limbo está graduado en grados, minutos y segundos; la calculadora, en cambio, solo sabe
-operar con números decimales. Toda conversión de la ficha es el puente entre esos dos mundos.</p>
+operar con números decimales. Toda conversión es el puente entre esos dos mundos.</p>
 <div class="note">
 <p><strong>La idea que hay que retener.</strong> En forma compleja solo hay una unidad de verdad, el grado. Los
 minutos y los segundos no son unidades independientes: son <em>fracciones de grado</em> escritas de otra manera. Por
@@ -303,17 +303,17 @@ porque cada paso explica uno de los errores que aparecen después:</p>
   los segundos convertidos a grados. Se suman y ya está:</p>
   <div class="formula">dec = G + M/60 + S/3 600</div></li>
 
-  <li><p>Se opera en ese orden y se redondea solo al final. Con 24° 36′ 18″:</p>
-  <div class="formula">dec = 24 + 36/60 + 18/3 600
-    = 24 + 0,6 + 0,005
-    = 24,605°</div></li>
+  <li><p>Se opera en ese orden y se redondea solo al final. Con 37° 42′ 54″:</p>
+  <div class="formula">dec = 37 + 42/60 + 54/3 600
+    = 37 + 0,7 + 0,015
+    = 37,715°</div></li>
 </ol>
 <p>Fíjate en el tamaño de cada aportación, porque es lo que da la sensación de si un resultado es razonable. Los
 minutos mueven el resultado en centésimas de grado; los segundos, en milésimas:</p>
 <table>
   <tr><th>Parte</th><th>Cuánto vale en grados</th><th>Ejemplo</th></tr>
-  <tr><td class="num">1′</td><td class="num">0,016 667°</td><td class="num">36′ = 0,600°</td></tr>
-  <tr><td class="num">1″</td><td class="num">0,000 278°</td><td class="num">18″ = 0,005°</td></tr>
+  <tr><td class="num">1′</td><td class="num">0,016 667°</td><td class="num">42′ = 0,700°</td></tr>
+  <tr><td class="num">1″</td><td class="num">0,000 278°</td><td class="num">54″ = 0,015°</td></tr>
   <tr><td class="num">6′</td><td class="num">0,1°</td><td class="num">30′ = 0,5°</td></tr>
   <tr><td class="num">60″</td><td class="num">0,016 667°</td><td class="num">1′ = 0,016 667°</td></tr>
 </table>
@@ -322,8 +322,8 @@ décimas, quince minutos son un cuarto de grado y treinta minutos son medio grad
 limbo, y sirve para estimar el resultado antes de tocar la calculadora.</p>
 
 <h2>4. Demostración interactiva: cuánto pesa cada orden</h2>
-<p>Mueve los tres deslizadores. La primera barra enseña los minutos repartidos sobre un grado entero: si pones 36
-minutos, la barra se llena algo más de la mitad, porque 36/60 = 0,6. La segunda barra hace lo mismo con los segundos,
+<p>Mueve los tres deslizadores. La primera barra enseña los minutos repartidos sobre un grado entero: si pones 42
+minutos, la barra se llena algo más de dos tercios, porque 42/60 = 0,7. La segunda barra hace lo mismo con los segundos,
 pero sobre un minuto, que es su escala natural. La tercera acumula las dos aportaciones sobre el grado completo, y
 ahí se ve por qué un segundo casi no mueve la aguja: hacen falta sesenta para igualar a un minuto.</p>
 
@@ -331,28 +331,28 @@ ahí se ve por qué un segundo casi no mueve la aguja: hacen falta sesenta para 
 <p class="tat">Demostración 1 · El reparto del grado en sus tres órdenes</p>
 <div class="ctrl">
   <label for="dg">Grados</label>
-  <input id="dg" type="range" min="0" max="90" step="1" value="24">
-  <span class="val" id="dgV">24°</span>
+  <input id="dg" type="range" min="0" max="90" step="1" value="37">
+  <span class="val" id="dgV">37°</span>
 </div>
 <div class="ctrl">
   <label for="dm">Minutos</label>
-  <input id="dm" type="range" min="0" max="59" step="1" value="36">
-  <span class="val" id="dmV">36′</span>
+  <input id="dm" type="range" min="0" max="59" step="1" value="42">
+  <span class="val" id="dmV">42′</span>
 </div>
 <div class="ctrl">
   <label for="ds">Segundos</label>
-  <input id="ds" type="range" min="0" max="59" step="1" value="18">
-  <span class="val" id="dsV">18″</span>
+  <input id="ds" type="range" min="0" max="59" step="1" value="54">
+  <span class="val" id="dsV">54″</span>
 </div>
 <svg id="barras" viewBox="0 0 562 186" width="562" height="186" role="img"
      aria-label="Tres barras que muestran el peso de minutos y segundos dentro del grado"></svg>
 <div class="readout">
-  <div><b>Forma compleja</b><span id="oComp">24° 36′ 18″</span></div>
-  <div><b>Forma decimal</b><span id="oDec">24,605°</span></div>
-  <div><b>Aportan los minutos</b><span id="oPm">0,600°</span></div>
-  <div><b>Aportan los segundos</b><span id="oPs">0,005°</span></div>
+  <div><b>Forma compleja</b><span id="oComp">37° 42′ 54″</span></div>
+  <div><b>Forma decimal</b><span id="oDec">37,715°</span></div>
+  <div><b>Aportan los minutos</b><span id="oPm">0,700°</span></div>
+  <div><b>Aportan los segundos</b><span id="oPs">0,015°</span></div>
 </div>
-<p class="tiny">Prueba a dejar los grados en 24 y subir los segundos de 18 a 59: el decimal pasa de 24,605 a 24,616.
+<p class="tiny">Prueba a dejar los grados en 37 y subir los segundos de 54 a 59: el decimal pasa de 37,715 a 37,7164.
 Un segundo vale tan poco que en la práctica muchos trabajos se redondean al minuto; pero en un itinerario largo esos
 segundos se acumulan y hay que conservarlos.</p>
 </div>
@@ -435,28 +435,28 @@ segundos se acumulan y hay que conservarlos.</p>
 <p>Volver es repartir, y se hace con la misma lógica pero al revés: quitar la parte entera, multiplicar lo que sobra
 por 60, y repetir. Cada multiplicación «baja» un escalón.</p>
 <ol class="pasos">
-  <li><p><strong>Los grados son la parte entera</strong> del número decimal. En 57,296° hay 57 grados y sobra 0,296.</p></li>
-  <li><p><strong>Esa parte decimal se multiplica por 60</strong>, porque un grado son 60 minutos. 0,296 × 60 = 17,76.
-  La parte entera del resultado son los minutos: 17. La parte decimal, 0,76, sigue siendo una fracción de minuto.</p></li>
+  <li><p><strong>Los grados son la parte entera</strong> del número decimal. En 73,1875° hay 73 grados y sobra 0,1875.</p></li>
+  <li><p><strong>Esa parte decimal se multiplica por 60</strong>, porque un grado son 60 minutos. 0,1875 × 60 = 11,25.
+  La parte entera del resultado son los minutos: 11. La parte decimal, 0,25, sigue siendo una fracción de minuto.</p></li>
   <li><p><strong>Lo que sobra se multiplica otra vez por 60</strong>, porque un minuto son 60 segundos.
-  0,76 × 60 = 45,6. Esos son los segundos, y no hace falta seguir: 45,6 cierra el reparto.</p></li>
+  0,25 × 60 = 15. Esos son los segundos, y el reparto cierra exacto: no queda resto.</p></li>
 </ol>
-<div class="formula">57,296°
-  57°           ← parte entera
-  0,296 × 60 = 17,76   →  17′  y sobran 0,76
-  0,76  × 60 = 45,6    →  45,6″
-57° 17′ 45,6″        (y no 57° 17′ 76″, ni 57° 18′ 00″)</div>
-<p>El detalle que se pierde casi siempre está en el segundo paso: 17,76 <em>no</em> significa «17 minutos y 76
-segundos». El 17 son minutos; el 0,76 son setenta y seis centésimas de minuto, que hay que volver a multiplicar por 60
-para convertirlas en segundos. Si redondeas 17,76 a 18 y sigues, te quedas con 57° 18′ 00″, que está casi medio
-minuto fuera del valor real.</p>
+<div class="formula">73,1875°
+  73°           ← parte entera
+  0,1875 × 60 = 11,25  →  11′  y sobran 0,25
+  0,25   × 60 = 15     →  15″
+73° 11′ 15″          (y no 73° 11′ 75″, ni 73° 12′ 00″)</div>
+<p>El detalle que se pierde casi siempre está en el segundo paso: 11,25 significa once minutos y <em>veinticinco
+centésimas</em> de minuto, no once minutos y veinticinco segundos. El 11 son minutos; el 0,25 hay que volver a
+multiplicarlo por 60 para convertirlo en segundos. Si redondeas 11,25 a 11 y tiras el resto, pierdes quince segundos;
+si redondeas a 12, te pasas de medio minuto.</p>
 <div class="good">
-<p><strong>Comprobación de ida y vuelta.</strong> Suma otra vez: 17/60 = 0,283 33 y 45,6/3 600 = 0,012 67. Las dos
-juntas dan 0,296, que es justo lo que habíamos quitado. Si la suma no cuadra, el reparto está mal hecho.</p>
+<p><strong>Comprobación de ida y vuelta.</strong> Suma otra vez: 11/60 = 0,183 33 y 15/3 600 = 0,004 17. Las dos
+juntas dan 0,1875, que es justo lo que habíamos quitado. Si la suma no cuadra, el reparto está mal hecho.</p>
 </div>
 
 <h2>6. Demostración interactiva: el conversor en las dos direcciones</h2>
-<p>Escribe en cualquiera de las dos zonas y la otra se actualiza sola. Prueba en este orden: primero teclea 24,605 en
+<p>Escribe en cualquiera de las dos zonas y la otra se actualiza sola. Prueba en este orden: primero teclea 37,715 en
 la caja decimal y mira lo que aparece al lado; después cambia los segundos a 60 y observa el aviso. Es la mejor
 manera de ver que el número puede ser el mismo y la escritura estar mal de todas formas.</p>
 
@@ -465,35 +465,35 @@ manera de ver que el número puede ser el mismo y la escritura estar mal de toda
 <div class="grid2">
   <div>
     <p class="tiny" style="margin-top:0">Forma decimal (grados con coma)</p>
-    <input id="inDec" type="text" inputmode="decimal" value="24,605" aria-label="Ángulo en grados decimales">
+    <input id="inDec" type="text" inputmode="decimal" value="37,715" aria-label="Ángulo en grados decimales">
     <div class="readout">
-      <div><b>Leído como</b><span id="oLeido">24,605</span></div>
-      <div><b>En radián</b><span id="oRad">0,4294</span></div>
+      <div><b>Leído como</b><span id="oLeido">37,715</span></div>
+      <div><b>En radián</b><span id="oRad">0,65825</span></div>
     </div>
   </div>
   <div>
     <p class="tiny" style="margin-top:0">Forma compleja (grados, minutos, segundos)</p>
     <div class="ctrl">
       <label for="inG">Grados</label>
-      <input id="inG" type="text" inputmode="numeric" value="24" aria-label="Grados">
+      <input id="inG" type="text" inputmode="numeric" value="37" aria-label="Grados">
       <span class="val">°</span>
     </div>
     <div class="ctrl">
       <label for="inM">Minutos</label>
-      <input id="inM" type="text" inputmode="numeric" value="36" aria-label="Minutos">
+      <input id="inM" type="text" inputmode="numeric" value="42" aria-label="Minutos">
       <span class="val">′</span>
     </div>
     <div class="ctrl">
       <label for="inS">Segundos</label>
-      <input id="inS" type="text" inputmode="decimal" value="18" aria-label="Segundos">
+      <input id="inS" type="text" inputmode="decimal" value="54" aria-label="Segundos">
       <span class="val">″</span>
     </div>
   </div>
 </div>
 <div class="feedback" id="fbConv"></div>
 <div class="botones">
-  <button class="ghost" id="bC01">Cargar 24° 36′ 18″</button>
-  <button class="ghost" id="bAcarreo">Cargar 57,296°</button>
+  <button class="ghost" id="bC01">Cargar 37° 42′ 54″</button>
+  <button class="ghost" id="bAcarreo">Cargar 73,1875°</button>
   <button class="ghost" id="bTercea">Cargar 120° 00′ 00″</button>
 </div>
 <p class="tiny">Se admiten segundos con decimales, como 45,6, y también el punto en lugar de la coma. Un valor de
@@ -566,7 +566,7 @@ escritura.</p>
     if (d < 0){
       caja.className = 'feedback fb-neutral';
       caja.innerHTML = 'El resultado es negativo (' + fmt(d, 5) + '°). En notación angular existe como giro en ' +
-        'sentido horario, pero casi todos los ejercicios de la ficha trabajan con valores positivos.';
+        'sentido horario, pero casi todos los ejercicios de campo trabajan con valores positivos.';
       return;
     }
     caja.className = 'feedback fb-good';
@@ -580,11 +580,11 @@ escritura.</p>
   [inG, inM, inS].forEach(function(e){ e.addEventListener('input', desdeComplejo); });
 
   $('#bC01').addEventListener('click', function(){
-    inDec.value = '24,605'; inG.value = '24'; inM.value = '36'; inS.value = '18';
+    inDec.value = '37,715'; inG.value = '37'; inM.value = '42'; inS.value = '54';
     desdeComplejo();
   });
   $('#bAcarreo').addEventListener('click', function(){
-    inDec.value = '57,296'; desdeDecimal();
+    inDec.value = '73,1875'; desdeDecimal();
   });
   $('#bTercea').addEventListener('click', function(){
     inDec.value = '120'; inG.value = '120'; inM.value = '00'; inS.value = '00';
@@ -595,55 +595,55 @@ escritura.</p>
 })();
 </script>
 
-<h2>7. Los ejercicios de la ficha, resueltos</h2>
+<h2>7. Dos conversiones resueltas paso a paso</h2>
 
-<h3>C01 · Pasar 24° 36′ 18″ a forma decimal</h3>
-<p>Es el ejercicio base y conviene hacerlo entero, sin atajos, hasta que las tres sumas salgan solas. Datos:
-<span class="num">G = 24</span>, <span class="num">M = 36</span>, <span class="num">S = 18</span>.</p>
+<h3>Ejemplo 1 · Pasar 37° 42′ 54″ a forma decimal</h3>
+<p>Es la conversión base y conviene hacerla entera, sin atajos, hasta que las tres sumas salgan solas. Datos:
+<span class="num">G = 37</span>, <span class="num">M = 42</span>, <span class="num">S = 54</span>.</p>
 <ol class="pasos">
   <li><p>Aplico la fórmula con los números sustituidos:</p>
-  <div class="formula">dec = 24 + 36/60 + 18/3 600</div></li>
+  <div class="formula">dec = 37 + 42/60 + 54/3 600</div></li>
   <li><p>Resuelvo cada fracción por separado, que es lo que evita equivocarse:</p>
-  <div class="formula">36/60  = 0,6
-18/3 600 = 0,005</div></li>
+  <div class="formula">42/60  = 0,7
+54/3 600 = 0,015</div></li>
   <li><p>Sumo:</p>
-  <div class="formula">dec = 24 + 0,6 + 0,005 = <em>24,605°</em></div></li>
-  <li><p>Compruebo el sentido: el resultado cae entre 24 y 25, y a 0,605 del principio, algo más de la mitad del
-  grado. Es lo que se espera de 36 minutos, que son algo más de medio grado.</p></li>
+  <div class="formula">dec = 37 + 0,7 + 0,015 = <em>37,715°</em></div></li>
+  <li><p>Compruebo el sentido: el resultado cae entre 37 y 38, y a 0,715 del principio, bastante por encima de la
+  mitad del grado. Es lo que se espera de 42 minutos, que son algo más de dos tercios de grado.</p></li>
 </ol>
-<p>La comprobación de vuelta, que es la que de verdad confirma el resultado: 24,605 → 0,605 × 60 = 36,3 → 36′ y 0,3 ×
-60 = 18″. Se recupera exactamente el ángulo de partida.</p>
+<p>La comprobación de vuelta, que es la que de verdad confirma el resultado: 37,715 → 0,715 × 60 = 42,9 → 42′ y 0,9 ×
+60 = 54″. Se recupera exactamente el ángulo de partida.</p>
 
-<h3>C02 · Pasar 68,425° a forma compleja</h3>
-<p>Ahora al revés, y aquí es donde se ve si el reparto está entendido. Datos: <span class="num">68,425°</span>.</p>
+<h3>Ejemplo 2 · Pasar 41,6375° a forma compleja</h3>
+<p>Ahora al revés, y aquí es donde se ve si el reparto está entendido. Datos: <span class="num">41,6375°</span>.</p>
 <ol class="pasos">
-  <li><p>Los grados son la parte entera: <span class="num">68</span>. Sobra 0,425.</p></li>
+  <li><p>Los grados son la parte entera: <span class="num">41</span>. Sobra 0,6375.</p></li>
   <li><p>Multiplico la parte decimal por 60 para obtener minutos:</p>
-  <div class="formula">0,425 × 60 = 25,5     ⇒  25′  y sobran 0,5</div></li>
+  <div class="formula">0,6375 × 60 = 38,25     ⇒  38′  y sobran 0,25</div></li>
   <li><p>Multiplico lo que sobra por 60 otra vez:</p>
-  <div class="formula">0,5 × 60 = 30        ⇒  30″</div></li>
+  <div class="formula">0,25 × 60 = 15        ⇒  15″</div></li>
   <li><p>Escribo el resultado con dos cifras en los órdenes inferiores:</p>
-  <div class="formula">68,425°  =  <em>68° 25′ 30″</em></div></li>
+  <div class="formula">41,6375°  =  <em>41° 38′ 15″</em></div></li>
 </ol>
-<p>Comprobación: 25/60 = 0,416 67 y 30/3 600 = 0,008 33. La suma es 0,425, exacta. Y el control de cabeza: 25 minutos
-son menos de medio grado, así que el decimal tenía que quedar en la mitad baja de la parte fraccionaria, por debajo de
-68,5. Está en 68,425. Correcto.</p>
+<p>Comprobación: 38/60 = 0,633 33 y 15/3 600 = 0,004 17. La suma es 0,6375, exacta. Y el control de cabeza: 38 minutos
+son algo más de medio grado, así que el decimal tenía que quedar por encima de la mitad de la parte fraccionaria, es
+decir por encima de 41,5. Está en 41,6375. Correcto.</p>
 
 <h2>8. Los tres errores que se cometen siempre</h2>
 <ol>
-  <li><p><strong>Pegar las cifras detrás de la coma.</strong> Leer 24° 36′ 18″ como 24,3618° es el error número uno
-  de toda la ficha. Los 36 minutos no son 36 centésimas de grado, son 36 sesentavas partes, que son 0,6 grados.
-  La diferencia entre 24,3618 y 24,605 es de más de un sexto de grado, y en una poligonal eso son metros.
+  <li><p><strong>Pegar las cifras detrás de la coma.</strong> Leer 37° 42′ 54″ como 37,4254° es el error número uno
+  de todo el bloque. Los 42 minutos no son 42 centésimas de grado, son 42 sesentavas partes, que son 0,7 grados.
+  La diferencia entre 37,4254 y 37,715 es de casi tres décimas de grado, y en una poligonal eso son metros.
   La pregunta que hay que hacerse siempre es la misma: <em>¿en cuántas partes está partido el grado?</em> Si es en
   60, se divide entre 60; nunca se pega la cifra.</p></li>
 
-  <li><p><strong>Dejar segundos o minutos en 60.</strong> Un ángulo escrito 24° 36′ 60″ no existe, aunque su valor
-  numérico sea correcto: 60 segundos son un minuto, así que hay que escribirlo 24° 37′ 00″. El mismo acarreo que se
+  <li><p><strong>Dejar segundos o minutos en 60.</strong> Un ángulo escrito 37° 42′ 60″ no existe, aunque su valor
+  numérico sea correcto: 60 segundos son un minuto, así que hay que escribirlo 37° 43′ 00″. El mismo acarreo que se
   hace al sumar horas. El conversor de la demostración 2 lo avisa en cuanto lo tecleas; en el examen no hay aviso,
   solo corrector.</p></li>
 
-  <li><p><strong>Redondear en medio del cálculo.</strong> Si en lugar de 24,605° trabajas con 24,61° porque «con dos
-  decimales basta», al volver a forma compleja sale 24° 36′ 36″: has ganado 18 segundos de la nada. Y si eso ocurre
+  <li><p><strong>Redondear en medio del cálculo.</strong> Si en lugar de 37,715° trabajas con 37,72° porque «con dos
+  decimales basta», al volver a forma compleja sale 37° 43′ 12″: has ganado 18 segundos de la nada. Y si eso ocurre
   en cada vértice de un itinerario de veinte estaciones, el error final deja de ser despreciable. Regla: se redondea
   una sola vez, en la última línea, y nunca antes.</p></li>
 </ol>
@@ -654,15 +654,15 @@ acostumbras a pensar «esto es una fracción de grado escrita en base 60», los 
 
 <h2>9. Cómo se escribe en el examen</h2>
 <p>Cuatro líneas. Con ellas el corrector ve el método aunque un número salga mal, y el reparto queda a la vista:</p>
-<div class="formula">1)  Dato:  24° 36′ 18″      (G = 24, M = 36, S = 18)
-2)  dec = G + M/60 + S/3 600 = 24 + 0,6 + 0,005
-3)  dec = 24,605°
-4)  Compruebo: 0,605 × 60 = 36,3 → 36′ 18″  ✓</div>
+<div class="formula">1)  Dato:  37° 42′ 54″      (G = 37, M = 42, S = 54)
+2)  dec = G + M/60 + S/3 600 = 37 + 0,7 + 0,015
+3)  dec = 37,715°
+4)  Compruebo: 0,715 × 60 = 42,9 → 42′ 54″  ✓</div>
 <p>Y en el sentido contrario, cuando el dato es decimal:</p>
-<div class="formula">1)  Dato:  68,425°        →  68° y 0,425
-2)  0,425 × 60 = 25,5    →  25′ y 0,5
-3)  0,5 × 60 = 30        →  30″
-4)  Resultado:  68° 25′ 30″     Compruebo: 25/60 + 30/3 600 = 0,425  ✓</div>
+<div class="formula">1)  Dato:  41,6375°        →  41° y 0,6375
+2)  0,6375 × 60 = 38,25    →  38′ y 0,25
+3)  0,25 × 60 = 15         →  15″
+4)  Resultado:  41° 38′ 15″     Compruebo: 38/60 + 15/3 600 = 0,6375  ✓</div>
 
 <p>Con esto el peldaño está superado, y el <a href="gen_01_conversiones.html">generador de conversiones</a> tiene un
 nivel entero dedicado a este paso: números nuevos, en los dos sentidos, con la corrección al instante. Haz diez

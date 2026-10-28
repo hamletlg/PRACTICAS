@@ -486,12 +486,12 @@ decimal.</p>
 <p class="tat">Demostración 2 · Radianes, grados y gonios a la vez</p>
 <div class="ctrl">
   <label for="cRad">Radianes</label>
-  <input id="cRad" type="text" value="3π/4">
+  <input id="cRad" type="text" value="2π/3">
   <span class="val" id="cRadEx">—</span>
 </div>
 <div class="ctrl">
   <label for="cDeg">Grados</label>
-  <input id="cDeg" type="text" value="135">
+  <input id="cDeg" type="text" value="120">
   <span class="val">° sexagesimales</span>
 </div>
 <div class="ctrl">
@@ -572,59 +572,60 @@ los exámenes.</p>
 })();
 </script>
 
-<h2>7. Los cuatro ejercicios de la ficha</h2>
-<p>Estos son los que hay que saber hacer sin dudar. Fíjate en que tres van de grados o gonios a radianes y uno al
-revés, y en que todos se resuelven igual: fracción, simplificación, decimal.</p>
+<h2>7. Cuatro conversiones resueltas, una de cada tipo</h2>
+<p>Estos son los que hay que saber hacer sin dudar. Fíjate en que dos van hacia el radián y dos salen de él, y en que
+todos se resuelven igual: fracción, simplificación, decimal.</p>
 
-<h3>C06 · Pasar 135° a radianes</h3>
+<h3>Ejemplo 6 · Pasar 210° a radianes</h3>
 <ol class="pasos">
   <li><p>Multiplico por el factor de los grados sexagesimales:</p>
-  <div class="formula">135 · π/180</div></li>
-  <li><p>Simplifico la fracción 135/180 dividiendo entre 45:</p>
-  <div class="formula">135/180 = 3/4  ⇒  <em>3π/4</em></div></li>
+  <div class="formula">210 · π/180</div></li>
+  <li><p>Simplifico la fracción 210/180 dividiendo entre 30:</p>
+  <div class="formula">210/180 = 7/6  ⇒  <em>7π/6</em></div></li>
   <li><p>Paso a decimal para tener el número que se opera:</p>
-  <div class="formula">3π/4 = 3 · 3,14159265 / 4 = <em>2,35619 rad</em></div></li>
-  <li><p>Compruebo: 135° está entre 90° (1,57 rad) y 180° (3,14 rad), y 2,36 cae justo en medio. Correcto.</p></li>
+  <div class="formula">7π/6 = 7 · 3,14159265 / 6 = <em>3,66519 rad</em></div></li>
+  <li><p>Compruebo: 210° está entre 180° (3,14 rad) y 270° (4,71 rad), y 3,67 cae en la mitad baja del intervalo.
+  Correcto.</p></li>
 </ol>
 
-<h3>C07 · Pasar π/6 radianes a grados</h3>
+<h3>Ejemplo 7 · Pasar 5π/6 radianes a grados</h3>
 <ol class="pasos">
   <li><p>Ahora el factor va al revés, porque quiero salir del radián:</p>
-  <div class="formula">(π/6) · 180/π</div></li>
+  <div class="formula">(5π/6) · 180/π</div></li>
   <li><p>El π del numerador y el del denominador se cancelan, que es justo lo que buscábamos:</p>
-  <div class="formula">180/6 = <em>30°</em></div></li>
+  <div class="formula">5 · 180/6 = <em>150°</em></div></li>
   <li><p>Si además lo pidieran en gonios, el mismo camino con 200:</p>
-  <div class="formula">(π/6) · 200/π = 200/6 = 33,3333 g</div></li>
+  <div class="formula">(5π/6) · 200/π = 1 000/6 = 166,6667 g</div></li>
 </ol>
 <p>Este es el ejercicio que demuestra por qué el radián es cómodo en el cálculo: el π desaparece sin calculadora y
-el resultado sale entero. Si al hacerlo has necesitado multiplicar 0,5236 por 57,2958, has llegado al mismo sitio por
+el resultado sale entero. Si al hacerlo has necesitado multiplicar 2,6180 por 57,2958, has llegado al mismo sitio por
 el camino largo y con dos redondeos de más.</p>
 
-<h3>C08 · Pasar 75 g a radianes</h3>
+<h3>Ejemplo 8 · Pasar 45 g a radianes</h3>
 <ol class="pasos">
   <li><p>El factor de los gonios lleva 200 en el denominador, no 180:</p>
-  <div class="formula">75 · π/200</div></li>
-  <li><p>Simplifico 75/200 dividiendo entre 25:</p>
-  <div class="formula">75/200 = 3/8  ⇒  <em>3π/8</em></div></li>
+  <div class="formula">45 · π/200</div></li>
+  <li><p>Simplifico 45/200 dividiendo entre 5:</p>
+  <div class="formula">45/200 = 9/40  ⇒  <em>9π/40</em></div></li>
   <li><p>Decimal:</p>
-  <div class="formula">3π/8 = 3 · 3,14159265 / 8 = <em>1,17810 rad</em></div></li>
-  <li><p>Compruebo por el otro sistema: 75 g son 67,5° (multiplicando por 9/10), y 67,5° en radianes dan
-  <span class="num">1,17810</span>. Los dos caminos coinciden, que es la mejor prueba de que el divisor era 200.</p></li>
+  <div class="formula">9π/40 = 9 · 3,14159265 / 40 = <em>0,70686 rad</em></div></li>
+  <li><p>Compruebo por el otro sistema: 45 g son 40,5° (multiplicando por 9/10), y 40,5° en radianes dan
+  <span class="num">0,70686</span>. Los dos caminos coinciden, que es la mejor prueba de que el divisor era 200.</p></li>
 </ol>
 
-<h3>C09 · Pasar π/4 radianes a gonios</h3>
+<h3>Ejemplo 9 · Pasar 3π/10 radianes a gonios</h3>
 <ol class="pasos">
   <li><p>Factor con 200, porque el destino son gonios:</p>
-  <div class="formula">(π/4) · 200/π</div></li>
+  <div class="formula">(3π/10) · 200/π</div></li>
   <li><p>Se cancela el π y sale exacto:</p>
-  <div class="formula">200/4 = <em>50 g</em></div></li>
-  <li><p>Y como control, en grados: 50 g · 9/10 = 45°, que es el ángulo que ya conocíamos de la tabla.</p></li>
+  <div class="formula">3 · 200/10 = <em>60 g</em></div></li>
+  <li><p>Y como control, en grados: 60 g · 9/10 = 54°, que es un ángulo que ya sabemos leer en la tabla de arriba.</p></li>
 </ol>
 <div class="note">
 <p><strong>Lo que estos cuatro ejercicios enseñan de verdad.</strong> El π no es un número que haya que calcular:
 es una etiqueta que se queda en la expresión hasta el último momento. Mientras se simplifica, se trabaja con
 fracciones y el π se cancela o se arrastra; solo al final se convierte en 3,14159265. Quien empieza calculando
-0,5236 pierde la posibilidad de simplificar y, con ella, el valor exacto.</p>
+0,9425 pierde la posibilidad de simplificar y, con ella, el valor exacto.</p>
 </div>
 
 <h2>8. Por qué el cálculo y las máquinas usan radianes</h2>
@@ -662,9 +663,9 @@ aunque el campo se mida en gonios: en cuanto hay una fórmula con arcos, senos o
   algo más de 6 radianes, así que cualquier ángulo en radianes que pase de 6,3 ha dado más de una vuelta
   completa.</p></li>
 
-  <li><p><strong>Entregar 0,5236 cuando el enunciado pide el valor exacto.</strong> El decimal no es un error de
-  cálculo —0,5236 es π/6 redondeado—, pero deja de ser la respuesta si se ha pedido la fracción: π/6 dice cosas que
-  0,5236 no dice, como que el ángulo es la sexta parte de una media vuelta. Cuando el enunciado dice «expresa en
+  <li><p><strong>Entregar 0,70686 cuando el enunciado pide el valor exacto.</strong> El decimal no es un error de
+  cálculo —0,70686 es 9π/40 redondeado—, pero deja de ser la respuesta si se ha pedido la fracción: 9π/40 dice cosas
+  que 0,70686 no dice, como que el ángulo es nueve cuarentavas partes de media vuelta. Cuando el enunciado dice «expresa en
   función de π» o «valor exacto», la respuesta es una fracción con π; el decimal va detrás, entre paréntesis, y solo
   como ayuda.</p></li>
 </ol>

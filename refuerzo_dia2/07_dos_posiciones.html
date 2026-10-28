@@ -244,15 +244,15 @@ input[type=range]::-moz-range-thumb{
 </head>
 <body>
 <div class="wrap">
-<header class="top"><div class="kicker">Día 2 · Peldaño 7 · Núcleo</div><h1>Dos posiciones: la altura inaccesible</h1><p class="sub">El método que comparten los problemas 5, 7 y 10, con la demostración de la fórmula</p></header><nav class="strip"><a href="index.html">Índice</a><span class="sep">·</span><span class="act">Lección 7</span><span class="sep">·</span><a href="gen_04_dos_posiciones.html">Generador B3 &rarr;</a></nav>
+<header class="top"><div class="kicker">Día 2 · Peldaño 7 · Núcleo</div><h1>Dos posiciones: la altura inaccesible</h1><p class="sub">El método de las dos visuales, con la demostración de la fórmula</p></header><nav class="strip"><a href="index.html">Índice</a><span class="sep">·</span><span class="act">Lección 7</span><span class="sep">·</span><a href="gen_04_dos_posiciones.html">Generador B3 &rarr;</a></nav>
 <main>
-<p class="lead">Este es el peldaño que decide el módulo. Los problemas 5, 7 y 10 de la ficha —y una buena parte de los que
+<p class="lead">Este es el peldaño que decide el módulo. Los tres casos de esta lámina —y una buena parte de los que
 vendrán después— son el mismo problema con otros números: hay que medir la altura de algo a lo que no se puede
 subir ni acercar lo suficiente. La técnica se llama <strong>método de las dos posiciones</strong>, y no es una fórmula
 que haya que memorizar: es un sistema de dos ecuaciones que se resuelve igual que cualquier otro.</p>
 
 <h2>1. Por qué no basta con una sola visual</h2>
-<p>Desde un punto se mide el ángulo con el que se ve lo alto de un poste: 25°. Con ese dato y nada más, ¿cuánto
+<p>Desde un punto se mide el ángulo con el que se ve lo alto de un poste: 32°. Con ese dato y nada más, ¿cuánto
 mide el poste? La respuesta honesta es <em>no se sabe</em>. Un poste bajo muy cerca y un poste alto muy lejos se ven
 exactamente con el mismo ángulo. La tangente relaciona la altura con la distancia, pero hay dos incógnitas y una
 sola ecuación:</p>
@@ -333,17 +333,17 @@ cercano— y cómo los dos dan necesariamente el mismo número: esa es la compro
 <p class="tat">Demostración 2 · El método con números vivos</p>
 <div class="ctrl">
   <label for="al">α (lejano)</label>
-  <input id="al" type="range" min="5" max="55" step="0.5" value="25">
+  <input id="al" type="range" min="5" max="55" step="0.5" value="31">
   <span class="val" id="alV">25,0°</span>
 </div>
 <div class="ctrl">
   <label for="be">β (cercano)</label>
-  <input id="be" type="range" min="10" max="80" step="0.5" value="40">
+  <input id="be" type="range" min="10" max="80" step="0.5" value="47">
   <span class="val" id="beV">40,0°</span>
 </div>
 <div class="ctrl">
   <label for="dd">d entre puntos</label>
-  <input id="dd" type="range" min="5" max="100" step="1" value="20">
+  <input id="dd" type="range" min="5" max="100" step="1" value="24">
   <span class="val" id="ddV">20 m</span>
 </div>
 <svg id="cro" viewBox="0 0 620 380" width="620" height="380" role="img"
@@ -476,54 +476,54 @@ programa; es que esa combinación no puede darse en el campo.</p>
 })();
 </script>
 
-<h2>5. Los tres problemas de la ficha, resueltos con el método</h2>
+<h2>5. Tres casos resueltos con el método</h2>
 <p>Los tres siguen exactamente la misma rutina. Antes de mirar los números, fíjate en que lo único que cambia es
 cuál de los datos es la distancia entre puntos y cuál el ángulo: la estructura es idéntica.</p>
 
-<h3>Problema 5 · El poste visto desde dos puntos separados 20 m</h3>
-<p>«Desde un punto A se observa la parte superior de un poste con un ángulo de 25°. Al acercarse 20 m, el ángulo pasa
-a 40°». Aquí A es el punto lejano; el segundo punto está 20 m más cerca. Datos: <span class="num">α = 25°</span>,
-<span class="num">β = 40°</span>, <span class="num">d = 20 m</span>.</p>
+<h3>Caso 5 · La chimenea vista desde dos puntos separados 24 m</h3>
+<p>«Desde un punto A se visa la punta de una chimenea con un ángulo de 31°. Al acercarse 24 m, el ángulo pasa
+a 47°». Aquí A es el punto lejano; el segundo punto está 24 m más cerca. Datos: <span class="num">α = 31°</span>,
+<span class="num">β = 47°</span>, <span class="num">d = 24 m</span>.</p>
 <ol class="pasos">
   <li><p>Distancia del punto lejano al pie:</p>
-  <div class="formula">D = 20 · tan 40° / (tan 40° − tan 25°)
-  = 20 · 0,8391 / (0,8391 − 0,4663)
-  = 16,782 / 0,3728 = <em>45,02 m</em></div></li>
+  <div class="formula">D = 24 · tan 47° / (tan 47° − tan 31°)
+  = 24 · 1,0724 / (1,0724 − 0,6009)
+  = 25,737 / 0,4715 = <em>54,59 m</em></div></li>
   <li><p>Altura, desde el punto lejano:</p>
-  <div class="formula">h = 45,02 · tan 25° = 45,02 · 0,4663 = <em>20,99 m</em></div></li>
-  <li><p>Comprobación, desde el punto cercano (a 45,02 − 20 = 25,02 m del pie):</p>
-  <div class="formula">25,02 · tan 40° = 25,02 · 0,8391 = 20,99 m  ✓</div></li>
+  <div class="formula">h = 54,59 · tan 31° = 54,59 · 0,6009 = <em>32,80 m</em></div></li>
+  <li><p>Comprobación, desde el punto cercano (a 54,59 − 24 = 30,59 m del pie):</p>
+  <div class="formula">30,59 · tan 47° = 30,59 · 1,0724 = 32,80 m  ✓</div></li>
 </ol>
 
-<h3>Problema 7 · El molino, con los datos en orden inverso</h3>
-<p>«Un molino se observa desde dos puntos alineados separados 50 m. Desde el punto más lejano el ángulo es 18° y
-desde el más cercano, 27°». Este enunciado da primero el ángulo del punto lejano, igual que los demás, pero
-conviene leerlo dos veces porque el orden de las frases invita a equivocarse. Datos:
-<span class="num">α = 18°</span>, <span class="num">β = 27°</span>, <span class="num">d = 50 m</span>.</p>
+<h3>Caso 7 · El depósito, con los datos en orden inverso</h3>
+<p>«La altura de un depósito de agua se mide desde dos estaciones alineadas con su base que distan 42 m: la más
+alejada da 21° y la más próxima, 33°». Este enunciado da primero el ángulo de la estación alejada, igual que los
+demás, pero conviene leerlo dos veces porque el orden de las frases invita a equivocarse. Datos:
+<span class="num">α = 21°</span>, <span class="num">β = 33°</span>, <span class="num">d = 42 m</span>.</p>
 <ol class="pasos">
   <li><p>Distancia del lejano al pie:</p>
-  <div class="formula">D = 50 · 0,5095 / (0,5095 − 0,3249) = 25,476 / 0,1846 = <em>138,00 m</em></div></li>
+  <div class="formula">D = 42 · 0,6494 / (0,6494 − 0,3839) = 27,275 / 0,2655 = <em>102,71 m</em></div></li>
   <li><p>Altura:</p>
-  <div class="formula">h = 138,00 · tan 18° = 138,00 · 0,3249 = <em>44,84 m</em></div></li>
-  <li><p>Comprobación desde el cercano (138 − 50 = 88 m): <span class="num">88 · tan 27° = 44,84 m</span> ✓</p></li>
+  <div class="formula">h = 102,71 · tan 21° = 102,71 · 0,3839 = <em>39,43 m</em></div></li>
+  <li><p>Comprobación desde el cercano (102,71 − 42 = 60,71 m): <span class="num">60,71 · tan 33° = 39,43 m</span> ✓</p></li>
 </ol>
 <p class="tiny">Un detalle que vale la pena comentar en clase: con ángulos pequeños, un error de medio grado en la
-medida mueve la altura varios metros. Aquí los ángulos son de 18° y 27°, propios de un objeto lejano, y por eso el
+medida mueve la altura varios metros. Aquí los ángulos son de 21° y 33°, propios de un objeto lejano, y por eso el
 método se vuelve exigente con la precisión del instrumento.</p>
 
-<h3>Problema 10 · El edificio, 30 m entre posiciones</h3>
-<p>«Se mide el ángulo de elevación desde dos posiciones separadas 30 m. En la primera, 20°; en la segunda, 35°».
-Datos: <span class="num">α = 20°</span>, <span class="num">β = 35°</span>, <span class="num">d = 30 m</span>.</p>
+<h3>Caso 10 · La torre de incendios, 36 m entre posiciones</h3>
+<p>«Se mide el ángulo de elevación desde dos posiciones separadas 36 m. En la primera, 26°; en la segunda, 39°».
+Datos: <span class="num">α = 26°</span>, <span class="num">β = 39°</span>, <span class="num">d = 36 m</span>.</p>
 <ol class="pasos">
   <li><p>Distancia del lejano al pie:</p>
-  <div class="formula">D = 30 · 0,7002 / (0,7002 − 0,3640) = 21,006 / 0,3362 = <em>62,47 m</em></div></li>
+  <div class="formula">D = 36 · 0,8098 / (0,8098 − 0,4877) = 29,152 / 0,3221 = <em>90,52 m</em></div></li>
   <li><p>Altura:</p>
-  <div class="formula">h = 62,47 · tan 20° = 62,47 · 0,3640 = <em>22,74 m</em></div></li>
-  <li><p>Comprobación desde el cercano (62,47 − 30 = 32,47 m): <span class="num">32,47 · tan 35° = 22,74 m</span> ✓</p></li>
+  <div class="formula">h = 90,52 · tan 26° = 90,52 · 0,4877 = <em>44,15 m</em></div></li>
+  <li><p>Comprobación desde el cercano (90,52 − 36 = 54,52 m): <span class="num">54,52 · tan 39° = 44,15 m</span> ✓</p></li>
 </ol>
 <div class="note">
-<p>En el problema 10, si se despeja primero la distancia <em>desde el punto cercano</em> (llamémosla
-<span class="num">D′ = D − d</span>) sale 32,47 m, y la altura es igual de correcta. Lo que no se puede hacer es
+<p>En el caso 10, si se despeja primero la distancia <em>desde el punto cercano</em> (llamémosla
+<span class="num">D′ = D − d</span>) sale 54,52 m, y la altura es igual de correcta. Lo que no se puede hacer es
 mezclar las dos convenciones en el mismo cálculo. Elige una —recomiendo la del punto lejano— y escríbela en el
 croquis antes de tocar la calculadora.</p>
 </div>

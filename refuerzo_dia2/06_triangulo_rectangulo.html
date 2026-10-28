@@ -244,13 +244,12 @@ input[type=range]::-moz-range-thumb{
 </head>
 <body>
 <div class="wrap">
-<header class="top"><div class="kicker">Día 2 · Peldaño 5-6</div><h1>El triángulo rectángulo en el campo</h1><p class="sub">Elevación, depresión, sombras y pendientes: el patrón que resuelve media ficha</p></header><nav class="strip"><a href="index.html">Índice</a><span class="sep">·</span><span class="act">Lección 6</span><span class="sep">·</span><a href="gen_02_triangulo_rectangulo.html">Generador B1 &rarr;</a><span class="sep">·</span><a href="gen_03_angulo_y_pendiente.html">Generador B2 &rarr;</a><span class="sep">·</span><a href="gen_07_enunciados.html">Generador B5 &rarr;</a></nav>
+<header class="top"><div class="kicker">Día 2 · Peldaño 5-6</div><h1>El triángulo rectángulo en el campo</h1><p class="sub">Elevación, depresión, sombras y pendientes: el patrón que resuelve la mitad de los ejercicios</p></header><nav class="strip"><a href="index.html">Índice</a><span class="sep">·</span><span class="act">Lección 6</span><span class="sep">·</span><a href="gen_02_triangulo_rectangulo.html">Generador B1 &rarr;</a><span class="sep">·</span><a href="gen_03_angulo_y_pendiente.html">Generador B2 &rarr;</a><span class="sep">·</span><a href="gen_07_enunciados.html">Generador B5 &rarr;</a></nav>
 <main>
-<p class="lead">Casi todo lo que se pregunta en la primera ficha de trigonometría cabe en una sola figura: un triángulo
-rectángulo, un ángulo y dos lados. Cambian los nombres —una sombra, un dron, una colina, una cuesta— pero no la
+<p class="lead">Casi todo lo que se pregunta con una sola visual cabe en una sola figura: un triángulo
+rectángulo, un ángulo y dos lados. Cambian los nombres —una sombra, un dron, una torre, una cuesta— pero no la
 geometría del asunto. Esta lámina no añade fórmulas nuevas a las tres razones de la lección anterior: enseña el
-método con el que se decide cuál de ellas usar, y lo aplica a los cuatro ejercicios de la ficha que se resuelven
-con una sola visual.</p>
+método con el que se decide cuál de ellas usar, y lo aplica a cuatro casos que se resuelven con una sola visual.</p>
 
 <h2>1. Por qué el campo está lleno de triángulos rectángulos</h2>
 <p>En topografía las dos únicas direcciones que se pueden materializar con garantías son la vertical de la plomada
@@ -272,8 +271,8 @@ trigonométrica deja de ser un acto de inspiración y pasa a ser una consecuenci
 <ol class="pasos">
   <li><p><strong>Dibujar y etiquetar.</strong> Un croquis a mano de diez segundos, con el cuadradito del ángulo
   recto marcado en el sitio correcto. A cada lado se le pone lo que es en el campo, no una letra: «sombra de
-  36 m», «altura ?», «distancia horizontal 100 m». Y a la hipotenusa se la llama por su nombre propio, que en
-  topografía es <strong>distancia inclinada</strong> o <em>visual</em>. La mayoría de los errores de esta ficha se
+  28 m», «altura ?», «distancia horizontal 240 m». Y a la hipotenusa se la llama por su nombre propio, que en
+  topografía es <strong>distancia inclinada</strong> o <em>visual</em>. La mayoría de los errores se
   cometen antes de escribir la primera cifra, en un croquis mal dibujado.</p></li>
 
   <li><p><strong>Elegir la razón que contiene los dos datos.</strong> No la que suena mejor: la única que tiene a
@@ -340,22 +339,23 @@ horizonte. Como ese ángulo es el mismo para todos los objetos del entorno en es
 —o con deducirlo de una estaca— para calcular la altura de cualquier cosa vertical que proyecte sombra.</p>
 <div class="formula">h = s · tan α        (s = longitud de la sombra medida en el suelo, α = altura del sol)</div>
 
-<h3>Problema 1 · El poste de 36 m de sombra</h3>
-<p>«Un poste vertical proyecta una sombra de 36 m cuando la altura del sol es de 37°. Calcula su altura». Los datos
-van directos a la fórmula: la sombra es el cateto contiguo y el poste es el opuesto.</p>
+<h3>Caso 1 · La antena y su sombra</h3>
+<p>«Una antena vertical proyecta una sombra de 28 m cuando la altura del sol es de 41°. ¿Cuánto mide la antena?». Los
+datos van directos a la fórmula: la sombra es el cateto contiguo y la antena es el opuesto.</p>
 <ol class="pasos">
-  <li><p>Croquis: poste vertical, sombra en el suelo, visual desde el extremo de la sombra hasta la punta. Ángulo
-  recto en la base del poste y 37° en el extremo de la sombra.</p></li>
+  <li><p>Croquis: antena vertical, sombra en el suelo, visual desde el extremo de la sombra hasta la punta. Ángulo
+  recto en la base de la antena y 41° en el extremo de la sombra.</p></li>
   <li><p>Sustituir con la tangente del ángulo:</p>
-  <div class="formula">h = 36 · tan 37° = 36 · 0,7536 = <em>27,13 m</em></div></li>
-  <li><p>Comprobar por el camino inverso: <span class="num">27,13 / 36 = 0,7536</span>, y
-  <span class="num">arctan 0,7536 = 37,0°</span>. Cuadra.</p></li>
+  <div class="formula">h = 28 · tan 41° = 28 · 0,8693 = <em>24,34 m</em></div></li>
+  <li><p>Comprobar por el camino inverso: <span class="num">24,34 / 28 = 0,8693</span>, y
+  <span class="num">arctan 0,8693 = 41,0°</span>. Cuadra.</p></li>
 </ol>
 <p>Hay un atajo que evita medir el ángulo y que se usa mucho en el campo: clavar una estaca vertical de altura
-conocida y medir su sombra al mismo tiempo. Con una estaca de <span class="num">1,50 m</span> que proyecta
-<span class="num">1,99 m</span>, la tangente vale <span class="num">1,50 / 1,99 = 0,7536</span>, es decir el mismo
-37° del enunciado y el mismo resultado de 27,13 m. La proporción entre altura y sombra es idéntica para el poste y
-para la estaca, y con eso ya no hace falta clinómetro.</p>
+conocida y medir su sombra al mismo tiempo. Con una estaca de <span class="num">1,70 m</span> que proyecta
+<span class="num">1,96 m</span>, la tangente vale <span class="num">1,70 / 1,96 = 0,8673</span>, es decir 40,9°, que es
+el mismo ángulo dentro del redondeo; aplicada a la sombra de 28 m da <span class="num">24,28 m</span>, seis
+centímetros por debajo del resultado anterior. La proporción entre altura y sombra es idéntica para la antena y para
+la estaca, y con eso ya no hace falta clinómetro.</p>
 <div class="warn">
 <p><strong>Cuándo no vale.</strong> La sombra tiene que medirse sobre terreno horizontal: en pendiente, la sombra
 real es más corta que la que se ve y la altura sale baja. El objeto tiene que ser vertical y terminar en punta o
@@ -372,17 +372,17 @@ primera es la que da el clinómetro y la que se usa al calcular.</p>
 <div class="formula">pendiente (%) = 100 · desnivel / distancia horizontal
 ángulo       = arctan ( desnivel / distancia horizontal )</div>
 
-<h3>Problema 4 · 15 m de desnivel en 100 m</h3>
-<p>«Un camino sube 15 m a lo largo de 100 m horizontales. Expresa su pendiente en grados y en porcentaje». El dato
-es un cociente, así que las dos respuestas salen del mismo número:</p>
+<h3>Caso 4 · 18 m de desnivel en 240 m</h3>
+<p>«Un cortafuegos sube 18 m a lo largo de 240 m medidos en horizontal. Expresa su pendiente en grados y en
+porcentaje». El dato es un cociente, así que las dos respuestas salen del mismo número:</p>
 <ol class="pasos">
   <li><p>Cociente de pendiente:</p>
-  <div class="formula">15 / 100 = 0,15</div></li>
+  <div class="formula">18 / 240 = 0,075</div></li>
   <li><p>En porcentaje, multiplicando por 100:</p>
-  <div class="formula">0,15 · 100 = <em>15 %</em></div></li>
+  <div class="formula">0,075 · 100 = <em>7,5 %</em></div></li>
   <li><p>En grados, con el arco tangente (en la calculadora, la tecla de tangente inversa, con el aparato en
   grados):</p>
-  <div class="formula">arctan 0,15 = <em>8,53°</em></div></li>
+  <div class="formula">arctan 0,075 = <em>4,29°</em></div></li>
 </ol>
 <p>Las dos cifras son la misma cuesta. La tabla siguiente da el puente para los valores que aparecen en los
 enunciados y en las señales:</p>
@@ -616,45 +616,45 @@ superficie plana. Con desnivel y distancia iguales, el ángulo es 45° y la pend
 })();
 </script>
 
-<h2>7. Dos problemas de depresión de la ficha</h2>
+<h2>7. Dos casos de depresión</h2>
 <p>Los dos se resuelven con el mismo patrón, y ninguno necesita una fórmula nueva. Fíjate en que en los dos el dato
 es la altura y lo que se busca es la distancia horizontal: es el caso de la tangente, con la particularidad de que
 ahora la altura está arriba y el observador también.</p>
 
-<h3>Problema 8 · El dron a 120 m</h3>
-<p>«Un dron se mantiene a 120 m de altura sobre el terreno y visa un punto del suelo con un ángulo de depresión de
-55°. ¿A qué distancia horizontal del punto se encuentra?».</p>
+<h3>Caso 8 · El dron a 95 m</h3>
+<p>«Un dron se mantiene a 95 m de altura sobre el terreno y visa un punto del suelo con un ángulo de depresión de
+62°. ¿A qué distancia horizontal del punto se encuentra?».</p>
 <ol class="pasos">
-  <li><p>Croquis: la horizontal que pasa por el dron, la visual que baja hasta el punto, y la vertical de 120 m
-  hasta el suelo. El ángulo de 55° va en el dron, entre su horizontal y la visual; el rectángulo se cierra abajo
+  <li><p>Croquis: la horizontal que pasa por el dron, la visual que baja hasta el punto, y la vertical de 95 m
+  hasta el suelo. El ángulo de 62° va en el dron, entre su horizontal y la visual; el rectángulo se cierra abajo
   con la vertical, que es perpendicular a la horizontal del suelo.</p></li>
-  <li><p>La distancia horizontal es el cateto contiguo al ángulo y los 120 m son el opuesto, así que se usa la
+  <li><p>La distancia horizontal es el cateto contiguo al ángulo y los 95 m son el opuesto, así que se usa la
   tangente y se despeja el contiguo:</p>
-  <div class="formula">tan 55° = 120 / D     →     D = 120 / tan 55° = 120 / 1,4281 = <em>84,02 m</em></div></li>
-  <li><p>Comprobar: <span class="num">84,02 · 1,4281 = 119,99 m</span>, que son los 120 m de altura con el
+  <div class="formula">tan 62° = 95 / D     →     D = 95 / tan 62° = 95 / 1,8807 = <em>50,51 m</em></div></li>
+  <li><p>Comprobar: <span class="num">50,51 · 1,8807 = 95,00 m</span>, que son los 95 m de altura con el
   redondeo. Y la distancia inclinada, si el dron midiera la visual en lugar de la horizontal, sería
-  <span class="num">120 / sen 55° = 146,49 m</span>, más larga que la horizontal como tiene que ser.</p></li>
+  <span class="num">95 / sen 62° = 107,59 m</span>, más larga que la horizontal como tiene que ser.</p></li>
 </ol>
 
-<h3>Problema 9 · La colina de 80 m</h3>
-<p>«Desde lo alto de una colina de 80 m sobre la llanura se visa un punto de la base con un ángulo de depresión de
-15°. Calcula la distancia horizontal desde la vertical de la cumbre hasta ese punto».</p>
+<h3>Caso 9 · La torre de 65 m</h3>
+<p>«Desde una torre de vigilancia de 65 m sobre la llanura se visa una señal de linde con un ángulo de depresión de
+22°. ¿A qué distancia horizontal de la vertical de la torre está la señal?».</p>
 <ol class="pasos">
   <li><p>La geometría es idéntica a la del dron: altura conocida, depresión conocida, distancia horizontal
   buscada.</p>
-  <div class="formula">D = 80 / tan 15° = 80 / 0,2679 = <em>298,56 m</em></div></li>
-  <li><p>Comprobar: <span class="num">298,56 · 0,2679 = 79,98 m</span> ≈ 80 m. La visual correspondiente mide
-  <span class="num">80 / sen 15° = 309,10 m</span>.</p></li>
-  <li><p>Control de sentido: casi 300 m de distancia para 80 m de altura es un ángulo muy tendido, y por eso el
-  resultado es tan sensible. Con 15°, medio grado de error en la medida mueve la distancia unos
-  <span class="num">10 m</span>. En ángulos pequeños, el mismo instrumento da precisiones muy distintas.</p></li>
+  <div class="formula">D = 65 / tan 22° = 65 / 0,4040 = <em>160,90 m</em></div></li>
+  <li><p>Comprobar: <span class="num">160,90 · 0,4040 = 65,00 m</span> ≈ 65 m. La visual correspondiente mide
+  <span class="num">65 / sen 22° = 173,53 m</span>.</p></li>
+  <li><p>Control de sentido: 161 m de distancia para 65 m de altura es un ángulo muy tendido, y por eso el
+  resultado es tan sensible. Con 22°, medio grado de error en la medida mueve la distancia unos
+  <span class="num">4 m</span>. En ángulos pequeños, el mismo instrumento da precisiones muy distintas.</p></li>
 </ol>
 <div class="note">
 <p><strong>La altura del instrumento.</strong> En los dos casos anteriores el ángulo se mide desde la horizontal de
 la estación, y esa horizontal está a la altura del eje del anteojo, no en el suelo: entre 1,40 y 1,60 m en un
 trípode normal. Cuando el objeto está por encima de la estación, esa altura se <em>suma</em> al desnivel calculado;
-cuando el objeto está por debajo y se mide con estación, se resta de la cota de la estación. En los problemas de
-esta ficha el dato se da ya referido a la punta del objeto, pero en el campo real hay que anotar la altura del
+cuando el objeto está por debajo y se mide con estación, se resta de la cota de la estación. En estos enunciados el
+dato se da ya referido a la punta del objeto, pero en el campo real hay que anotar la altura del
 instrumento en la libreta antes de calcular nada. La lección 7 lo vuelve a mencionar en su contexto.</p>
 </div>
 
@@ -674,9 +674,9 @@ instrumento en la libreta antes de calcular nada. La lección 7 lo vuelve a menc
   separadas por un factor de dos y media, las dos con aspecto de estar bien.</p></li>
 
   <li><p><strong>Usar la tangente cuando el dato es la distancia inclinada.</strong> La tangente relaciona los dos
-  catetos, nunca la hipotenusa con un cateto. Si el distanciómetro da 146,49 m en el problema del dron, eso es la
+  catetos, nunca la hipotenusa con un cateto. Si el distanciómetro da 107,59 m en el caso del dron, eso es la
   visual, y la distancia horizontal se obtiene con el coseno
-  (<span class="num">146,49 · cos 55° = 84,02 m</span>), no con la tangente. Mezclar cateto e hipotenusa da
+  (<span class="num">107,59 · cos 62° = 50,51 m</span>), no con la tangente. Mezclar cateto e hipotenusa da
   resultados del mismo orden de magnitud que el correcto, y por eso no se detecta a ojo.</p></li>
 
   <li><p><strong>Confundir el porcentaje con los grados.</strong> Una pendiente del 15 % no es de 15°: son 8,53°.

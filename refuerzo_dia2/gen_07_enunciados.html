@@ -244,16 +244,15 @@ input[type=range]::-moz-range-thumb{
 </head>
 <body>
 <div class="wrap">
-<header class="top"><div class="kicker">Día 2 · Generador B5</div><h1>Generador · Interpretar el enunciado</h1><p class="sub">Los enunciados ambiguos de la ficha: decidir la figura antes de calcular</p></header><nav class="strip"><a href="index.html">Índice</a><span class="sep">·</span><span class="act">Generador B5</span><span class="sep">·</span><a href="06_triangulo_rectangulo.html">Lección 6 &rarr;</a><span class="sep">·</span><a href="07_dos_posiciones.html">Lección 7 &rarr;</a></nav>
+<header class="top"><div class="kicker">Día 2 · Generador B5</div><h1>Generador · Interpretar el enunciado</h1><p class="sub">Los enunciados ambiguos: decidir la figura antes de calcular</p></header><nav class="strip"><a href="index.html">Índice</a><span class="sep">·</span><span class="act">Generador B5</span><span class="sep">·</span><a href="06_triangulo_rectangulo.html">Lección 6 &rarr;</a><span class="sep">·</span><a href="07_dos_posiciones.html">Lección 7 &rarr;</a></nav>
 <main>
-<p class="lead">Los diez problemas de la ficha tienen un defecto común que no está en la trigonometría: el enunciado no dice con
-precisión qué es cada dato. «El lado de la base mide 50 m» admite dos lecturas y dan resultados distintos. «Tras
-desplazarse 25 m» no aclara en qué sentido, y solo una de las dos es geométricamente posible. «El ángulo de
-inclinación respecto al terreno» nombra un ángulo que en realidad se mide respecto a la horizontal. El cálculo es lo
+<p class="lead">Los diez casos de este generador tienen un defecto común que no está en la trigonometría: el enunciado no dice con
+precisión qué es cada dato. «El lado mayor mide 65 m» admite dos lecturas y dan resultados distintos. «Tras
+desplazarse 18 m» no aclara en qué sentido, y solo una de las dos es geométricamente posible. «La inclinación
+respecto al terreno» nombra un ángulo que en realidad se mide respecto a la horizontal. El cálculo es lo
 fácil; decidir la figura es lo que determina si el número final vale o no vale.</p>
 
-<p>Este generador no inventa ejercicios al azar: recorre diez casos curados, sacados de esa ficha más uno del mismo
-tipo, y en cada uno separa el trabajo en dos pasos. Primero se elige qué figura o qué lectura del dato es la correcta
+<p>Este generador no inventa ejercicios al azar: recorre diez casos curados, y en cada uno separa el trabajo en dos pasos. Primero se elige qué figura o qué lectura del dato es la correcta
 y se explica por qué las otras no lo son. Después se calcula. El orden importa: si el primer paso está torcido, el
 segundo produce un número perfectamente presentable y completamente falso, que es exactamente lo que ocurre en el
 examen.</p>
@@ -451,366 +450,337 @@ examen.</p>
 
   /* ---------- los diez casos curados ---------- */
   const CASOS = [
-  {titulo: 'La parcela: ¿los 50 m son la base o la diagonal?',
-   enun: 'Desde una esquina de una parcela se mide la diagonal hacia la esquina opuesta y se obtiene un ángulo de ' +
-         '<span class="num">35°</span> respecto a la base. El enunciado añade que «el lado de la base mide ' +
-         '<span class="num">50 m</span>». ¿Qué anchura tiene la parcela?',
+  {titulo: 'La era: ¿el dato es el lado o la diagonal?',
+   enun: 'En una era rectangular se mide la diagonal desde una esquina hasta la opuesta y se obtiene un ángulo de ' +
+         '<span class="num">41°</span> sobre el lado mayor. El enunciado añade que «el lado mayor mide ' +
+         '<span class="num">65 m</span>». ¿Qué anchura tiene la era?',
    ops: [
-     {t: 'Los 50 m son el lado de la base. La diagonal es la hipotenusa y la anchura es el cateto opuesto a los 35°',
+     {t: 'Los 65 m son el lado mayor: la diagonal es la hipotenusa y la anchura es el cateto opuesto a los 41°',
       ok: true,
-      why: 'El enunciado dice literalmente que la base mide 50 m, y el ángulo se toma desde la base: el triángulo ' +
-           'rectángulo tiene por catetos la base (50 m) y la anchura, y por hipotenusa la diagonal, que no se conoce. ' +
-           'La anchura es el cateto opuesto al ángulo, así que se despeja con la tangente.',
-      fig: {t:'recto', base:'base = 50 m', alto:'anchura = ?', angLab:'35°', ang:35}},
-     {t: 'Los 50 m son la diagonal. Entonces la anchura es el cateto opuesto a los 35°',
+      why: 'El enunciado identifica el dato: el lado mayor mide 65 m, y el ángulo se toma desde ese lado. El ' +
+           'triángulo rectángulo tiene por catetos el lado (65 m) y la anchura, y por hipotenusa la diagonal, que ' +
+           'no se conoce. La anchura es el cateto opuesto al ángulo, así que se despeja con la tangente.',
+      fig: {t:'recto', base:'lado = 65 m', alto:'anchura = ?', angLab:'41°', ang:41}},
+     {t: 'Los 65 m son la diagonal, así que la anchura es el cateto opuesto a los 41°',
       ok: false,
-      why: 'Esta lectura da 28,68 m y es internamente coherente, pero contradice el enunciado: si la diagonal midiera ' +
-           '50 m, la base no podría medir 50 m, porque la hipotenusa es siempre el lado más largo del triángulo ' +
-           'rectángulo. Además el texto dice «el lado de la base mide 50 m», no «la diagonal mide 50 m».',
-      fig: {t:'hip', diag:'diagonal = 50 m', base:'base = ?', alto:'anchura = ?', ang:35}},
-     {t: 'Los 50 m son la diagonal y la anchura es el cateto contiguo a los 35°',
+      why: 'Esta lectura da 42,64 m y es internamente coherente, pero contradice el enunciado: si la diagonal ' +
+           'midiera 65 m, el lado mayor no podría medir también 65 m, porque la hipotenusa es siempre el lado más ' +
+           'largo del triángulo rectángulo. El texto dice «el lado mayor mide 65 m», no «la diagonal mide 65 m».',
+      fig: {t:'hip', diag:'diagonal = 65 m', base:'lado = ?', alto:'anchura = ?', ang:41}},
+     {t: 'Los 65 m son la diagonal y la anchura es el cateto contiguo a los 41°',
       ok: false,
-      why: 'Con la diagonal como dato, la anchura es el cateto opuesto al ángulo (su seno) y el cateto contiguo es la ' +
-           'base. Esta lectura cambia de lado la incógnita y además arrastra el error anterior: da 40,96 m.',
-      fig: {t:'hip', diag:'diagonal = 50 m', base:'base = ?', alto:'anchura = ?', ang:35}}
+      why: 'Con la diagonal como dato, la anchura es el cateto opuesto al ángulo (su seno) y el cateto contiguo es ' +
+           'el lado. Esta lectura cambia de lado la incógnita y además arrastra el error anterior: da 49,06 m.',
+      fig: {t:'hip', diag:'diagonal = 65 m', base:'lado = ?', alto:'anchura = ?', ang:41}}
    ],
-   pide: 'Anchura', suf: 'm', tol: 0.05, val: 35.01,
-   sol: '<div class="formula">Lectura correcta: los 50 m son la base.\n' +
-        'anchura = 50 · tan 35° = 50 · 0,7002 = 35,01 m\n\n' +
-        'La otra lectura, para comparar:\n' +
-        'anchura = 50 · sen 35° = 50 · 0,5736 = 28,68 m\n' +
-        'base    = 50 · cos 35° = 50 · 0,8192 = 40,96 m</div>' +
-        '<p>Comprobación de la lectura correcta: la diagonal de esa parcela sería ' +
-        'la raíz de 50² + 35,01² = 61,04 m, mayor que la base, como tiene que ser. En cambio, con la lectura de la ' +
-        'diagonal la base saldría de 40,96 m, y eso choca con la frase «el lado de la base mide 50 m». El dato manda ' +
-        'sobre la comodidad del cálculo.</p>' +
-        '<p>Lo importante de este caso: con el mismo enunciado hay dos resultados posibles, 35,01 m y 28,68 m, y los ' +
-        'dos se calculan sin un solo error aritmético. La diferencia está en haber leído qué era el dato, no en la ' +
-        'trigonometría. Si en el examen el enunciado no aclara qué es cada número, la respuesta honesta es resolver ' +
+   pide: 'Anchura', suf: 'm', tol: 0.05, val: 56.50,
+   sol: '<div class="formula">Lectura correcta: los 65 m son el lado mayor.\n' +
+        'anchura = 65 · tan 41° = 65 · 0,8693 = 56,50 m\n\n' +
+        'Las otras dos lecturas, para comparar:\n' +
+        'anchura = 65 · sen 41° = 65 · 0,6561 = 42,64 m\n' +
+        'anchura = 65 · cos 41° = 65 · 0,7547 = 49,06 m</div>' +
+        '<p>Comprobación de la lectura correcta: la diagonal de esa era sería la raíz de 65² + 56,50² = 86,12 m, ' +
+        'mayor que el lado, como tiene que ser. En cambio, con la lectura de la diagonal el lado saldría 49,06 m, y ' +
+        'eso choca con la frase «el lado mayor mide 65 m». El dato manda sobre la comodidad del cálculo.</p>' +
+        '<p>Lo importante de este caso: con el mismo texto hay tres resultados posibles, 56,50 m, 42,64 m y ' +
+        '49,06 m, y los tres se calculan sin un solo error aritmético. La diferencia está en haber leído qué era el ' +
+        'dato, no en la trigonometría. Si el enunciado no aclara qué es cada número, la respuesta honesta es resolver ' +
         'con la lectura que el texto sostiene y dejar escrito el supuesto.</p>'},
 
-  {titulo: 'El río: ¿te acercas o te alejas?',
-   enun: 'La anchura de un río se determina colocando un jalón en la orilla opuesta. Desde un punto se observa el ' +
-         'jalón bajo un ángulo de <span class="num">60°</span> respecto a la orilla, y tras desplazarse ' +
-         '<span class="num">25 m</span> perpendicularmente a la orilla el ángulo pasa a ser de ' +
-         '<span class="num">45°</span>. ¿Qué anchura tiene el río?',
+  {titulo: 'La acequia: ¿te acercas o te alejas?',
+   enun: 'La anchura de una acequia se determina colocando una estaca en la orilla opuesta. Desde un punto se visa ' +
+         'la estaca con <span class="num">55°</span> respecto a la orilla y, tras desplazarse ' +
+         '<span class="num">18 m</span> a lo largo de la orilla, el ángulo pasa a ser de ' +
+         '<span class="num">38°</span>. ¿Qué anchura tiene la acequia?',
    ops: [
-     {t: 'El desplazamiento fue alejándose de la orilla: al ganar distancia el ángulo baja de 60° a 45°',
+     {t: 'El desplazamiento te aleja de la estaca: al ganar distancia el ángulo baja de 55° a 38°',
       ok: true,
-      why: 'Cuanto más lejos estás del jalón, más pequeño es el ángulo con que lo ves: por eso el ángulo baja. La ' +
-           'segunda posición es la lejana, y el ángulo mayor, 60°, es el de la primera. La resta es tan 60 − tan 45, ' +
-           'siempre el mayor menos el menor.',
-      fig: {t:'dospos', sep:'25 m', lejos:45, cerca:60, alto:'ancho = ?', etLejos:'2ª posición', etCerca:'1ª posición'}},
-     {t: 'El desplazamiento fue acercándose a la orilla: el ángulo baja porque el jalón queda más alto',
+      why: 'Cuanto más lejos estás de la estaca, más pequeño es el ángulo con que la ves: por eso el ángulo baja. ' +
+           'La segunda posición es la lejana, y el ángulo mayor, 55°, es el de la primera. La resta es ' +
+           'tan 55 − tan 38, siempre el mayor menos el menor.',
+      fig: {t:'dospos', sep:'18 m', lejos:38, cerca:55, alto:'ancho = ?', etLejos:'2ª posición', etCerca:'1ª posición'}},
+     {t: 'El desplazamiento te acerca a la estaca: el ángulo baja porque la estaca queda más alta',
       ok: false,
-      why: 'Al acercarse el ángulo tiene que subir, no bajar. La altura del jalón no cambia con el desplazamiento: lo ' +
-           'que cambia es el cateto horizontal, y si lo acortas el ángulo crece. Esta lectura obligaría a que las dos ' +
-           'posiciones estuvieran cruzadas, y el croquis lo delata.',
-      fig: {t:'dospos', sep:'25 m', lejos:60, cerca:45, alto:'ancho = ?', etLejos:'1ª posición', etCerca:'2ª posición'}},
+      why: 'Al acercarse el ángulo tiene que subir, no bajar. La altura de la estaca no cambia con el ' +
+           'desplazamiento: lo que cambia es el cateto horizontal, y si lo acortas el ángulo crece. Esta lectura ' +
+           'obligaría a que las dos posiciones estuvieran cruzadas, y el croquis lo delata.',
+      fig: {t:'dospos', sep:'18 m', lejos:55, cerca:38, alto:'ancho = ?', etLejos:'1ª posición', etCerca:'2ª posición'}},
      {t: 'Da igual el sentido: la fórmula da la misma anchura acercándose que alejándose',
       ok: false,
-      why: 'El número sale igual porque la fórmula no sabe de sentidos, pero la resta se hace mayor menos menor: si ' +
-           'inviertes el orden el resultado sale negativo, y un ancho negativo no significa nada. Los datos solo son ' +
-           'coherentes si el desplazamiento te aleja; si el enunciado dijera que te acercas, habría que rehacerlo.',
+      why: 'El número sale igual porque la fórmula no sabe de sentidos, pero la resta se hace mayor menos menor: ' +
+           'si inviertes el orden el resultado sale negativo, y un ancho negativo no significa nada. Los datos solo ' +
+           'son coherentes si el desplazamiento te aleja; si el enunciado dijera que te acercas, habría que rehacerlo.',
       fig: null}
    ],
-   pide: 'Anchura del río', suf: 'm', tol: 0.05, val: 59.15,
-   sol: '<div class="formula">Posición 1: α = 60°   Posición 2 (más lejos): β = 45°   d = 25 m\n\n' +
+   pide: 'Anchura de la acequia', suf: 'm', tol: 0.05, val: 31.05,
+   sol: '<div class="formula">Posición 1: α = 55°   Posición 2 (más lejos): β = 38°   d = 18 m\n\n' +
         'ancho = d · tan α · tan β / (tan α − tan β)\n' +
-        '      = 25 · 1,7321 · 1 / (1,7321 − 1)\n' +
-        '      = 43,3013 / 0,7321 = 59,15 m</div>' +
-        '<p>Comprobación por las dos posiciones. Desde la primera, la distancia horizontal al jalón es ' +
-        '59,15 / tan 60° = 34,15 m. Desde la segunda, 59,15 / tan 45° = 59,15 m. La diferencia entre las dos es ' +
-        '25,00 m, que es exactamente el desplazamiento del enunciado. La geometría cierra, y solo con la segunda ' +
+        '      = 18 · 1,4281 · 0,7813 / (1,4281 − 0,7813)\n' +
+        '      = 20,084 / 0,6469 = 31,05 m</div>' +
+        '<p>Comprobación por las dos posiciones. Desde la primera, la distancia horizontal a la estaca es ' +
+        '31,05 / tan 55° = 21,74 m. Desde la segunda, 31,05 / tan 38° = 39,74 m. La diferencia entre las dos es ' +
+        '18,00 m, que es exactamente el desplazamiento del enunciado. La geometría cierra, y solo con la segunda ' +
         'posición más lejos.</p>' +
-        '<p>Si se resta al revés, tan 45 − tan 60 = −0,7321, y el ancho sale −59,15 m. Un ancho negativo no es un ' +
-        'ancho: es la señal de que la resta está invertida. Y si de verdad te hubieras acercado, el ángulo tendría que ' +
-        'haber subido de 60° a 81° para el mismo desplazamiento, no bajado a 45°.</p>'},
+        '<p>Si se resta al revés, tan 38 − tan 55 = −0,6469, y el ancho sale −31,05 m. Un ancho negativo no es un ' +
+        'ancho: es la señal de que la resta está invertida. Y si de verdad te hubieras acercado, el ángulo tendría ' +
+        'que haber subido, no bajado.</p>'},
 
-  {titulo: 'El molino: los ángulos vienen en orden inverso',
-   enun: 'Un molino de viento se observa desde dos puntos alineados con su base, separados ' +
-         '<span class="num">50 m</span>. Desde el punto más lejano el ángulo de elevación es de ' +
-         '<span class="num">18°</span> y desde el más cercano, de <span class="num">27°</span>. ¿Qué altura tiene ' +
-         'el molino?',
+  {titulo: 'El depósito: los ángulos vienen en orden inverso',
+   enun: 'La altura de un depósito de agua se mide desde dos estaciones alineadas con su base que distan ' +
+         '<span class="num">42 m</span>. La estación más alejada da un ángulo de elevación de ' +
+         '<span class="num">21°</span> y la más próxima, de <span class="num">33°</span>. ¿Qué altura tiene ' +
+         'el depósito?',
    ops: [
-     {t: 'El de 27° es el de la posición cercana y el de 18° el de la lejana; la resta es tan 27 − tan 18',
+     {t: 'El de 33° es el de la posición cercana y el de 21° el de la lejana; la resta es tan 33 − tan 21',
       ok: true,
-      why: 'El enunciado ya dice cuál es cada uno: lejano 18°, cercano 27°. Y la geometría lo confirma, porque al ' +
-           'acercarse el ángulo crece. La incógnita intermedia es la distancia del punto cercano al pie del molino, ' +
-           'y la resta va del ángulo mayor al menor.',
-      fig: {t:'dospos', sep:'50 m', lejos:18, cerca:27, alto:'altura = ?', etLejos:'lejano', etCerca:'cercano'}},
-     {t: 'El de 18° es el de la posición cercana y el de 27° el de la lejana: al acercarse el ángulo disminuye',
+      why: 'El enunciado ya dice cuál es cada uno, y la geometría lo confirma: al acercarse, el ángulo crece. La ' +
+           'incógnita intermedia es la distancia del punto cercano al pie del depósito, y la resta va del ángulo ' +
+           'mayor al menor.',
+      fig: {t:'dospos', sep:'42 m', lejos:21, cerca:33, alto:'altura = ?', etLejos:'lejano', etCerca:'cercano'}},
+     {t: 'El de 21° es el de la posición cercana y el de 33° el de la lejana: al acercarse el ángulo disminuye',
       ok: false,
       why: 'Es justo al revés de cómo funciona la perspectiva: acercarse agranda el ángulo. Con esta lectura el ' +
            'croquis coloca la posición «cercana» por detrás de la lejana, y la resta sale negativa.',
-      fig: {t:'dospos', sep:'50 m', lejos:27, cerca:18, alto:'altura = ?', etLejos:'cercano', etCerca:'lejano'}},
-     {t: 'Los 50 m son la distancia horizontal del molino al punto cercano, así que la altura es 50 · tan 27',
+      fig: {t:'dospos', sep:'42 m', lejos:33, cerca:21, alto:'altura = ?', etLejos:'cercano', etCerca:'lejano'}},
+     {t: 'Los 42 m son la distancia horizontal del depósito al punto cercano, así que la altura es 42 · tan 33',
       ok: false,
-      why: 'Los 50 m son la separación entre los dos puntos de observación, no la distancia al molino. Con esta ' +
+      why: 'Los 42 m son la separación entre los dos puntos de observación, no la distancia al depósito. Con esta ' +
            'lectura se desprecia el segundo ángulo, y el dato del enunciado que sobra siempre es el que hay que usar.',
-      fig: {t:'recto', base:'50 m', alto:'altura = ?', angLab:'27°', ang:27}}
+      fig: {t:'recto', base:'42 m', alto:'altura = ?', angLab:'33°', ang:33}}
    ],
-   pide: 'Altura del molino', suf: 'm', tol: 0.05, val: 44.84,
-   sol: '<div class="formula">x = distancia del punto cercano al pie del molino\n\n' +
-        'x · tan 27° = (x + 50) · tan 18°\n' +
-        'x · (0,5095 − 0,3249) = 50 · 0,3249\n' +
-        'x = 16,245 / 0,1846 = 88,00 m\n\n' +
-        'h = 88,00 · tan 27° = 88,00 · 0,5095 = 44,84 m\n\n' +
-        'Fórmula directa:\n' +
-        'h = 50 · tan 18° · tan 27° / (tan 27° − tan 18°) = 44,84 m</div>' +
-        '<p>Comprobación desde el punto lejano: está a 88,00 + 50,00 = 138,00 m, y 138,00 · tan 18° = ' +
-        '138,00 · 0,3249 = 44,84 m. Las dos vías dan lo mismo, que es la garantía de que los ángulos están en su ' +
-        'sitio.</p>' +
-        '<p>Este caso y el del poste que viene después son el mismo problema con los datos en otro orden. En uno el ' +
-        'enunciado nombra las posiciones y en el otro no; en los dos, el ángulo grande es siempre el de la posición ' +
-        'cercana, y la resta se hace grande menos pequeño.</p>'},
+   pide: 'Altura del depósito', suf: 'm', tol: 0.05, val: 39.43,
+   sol: '<div class="formula">x = distancia del punto cercano al pie del depósito\n\n' +
+        'x · tan 33° = (x + 42) · tan 21°\n' +
+        'x · (0,6494 − 0,3839) = 42 · 0,3839\n' +
+        'x = 16,122 / 0,2655 = 60,71 m\n\n' +
+        'h = 60,71 · tan 33° = 60,71 · 0,6494 = 39,43 m</div>' +
+        '<p>Comprobación desde el punto lejano: la distancia al pie es 60,71 + 42 = 102,71 m, y ' +
+        '102,71 · tan 21° = 39,43 m. La altura sale igual por los dos lados, que es la prueba de que la incógnita ' +
+        'se planteó bien.</p>' +
+        '<p>Con ángulos pequeños el resultado es muy sensible: aquí 21° y 33° son propios de un objeto lejano, y ' +
+        'medio grado de error en la medida del ángulo pequeño mueve la altura cerca de un metro.</p>'},
 
-  {titulo: 'El poste: los 20 m son la separación, no la distancia',
-   enun: 'Desde un punto A se observa la parte superior de un poste con un ángulo de <span class="num">25°</span>. ' +
-         'Al acercarse <span class="num">20 m</span>, el ángulo pasa a ser de <span class="num">40°</span>. ¿Qué ' +
-         'altura tiene el poste?',
+  {titulo: 'La chimenea: los 24 m son la separación, no la distancia',
+   enun: 'Desde un punto se visa la punta de una chimenea con un ángulo de elevación de <span class="num">31°</span>. ' +
+         'Al acercarse <span class="num">24 m</span>, el ángulo pasa a <span class="num">47°</span>. ¿Qué altura ' +
+         'tiene la chimenea?',
    ops: [
-     {t: 'Los 20 m separan las dos posiciones, y el ángulo mayor, 40°, corresponde a la posición más cercana',
+     {t: 'Los 24 m son la separación entre las dos posiciones; la altura sale de D·tan 31 = (D − 24)·tan 47',
       ok: true,
-      why: '«Al acercarse 20 m» describe el movimiento entre las dos posiciones, no la distancia al poste. El ángulo ' +
-           'crece al acercarse, así que 40° es la posición cercana y 25° la lejana. Es el mismo esquema que el molino.',
-      fig: {t:'dospos', sep:'20 m', lejos:25, cerca:40, alto:'altura = ?', etLejos:'lejos', etCerca:'cerca'}},
-     {t: 'Los 20 m son la distancia de la posición más cercana al pie del poste',
+      why: 'El enunciado dice «al acercarse 24 m»: es el desplazamiento entre las dos estaciones, no la distancia ' +
+           'al pie. La incógnita intermedia es D, la distancia del punto lejano al pie, y la igualdad de alturas ' +
+           'da la ecuación.',
+      fig: {t:'dospos', sep:'24 m', lejos:31, cerca:47, alto:'altura = ?', etLejos:'1ª posición', etCerca:'2ª posición'}},
+     {t: 'Los 24 m son la distancia al pie desde la segunda posición, así que la altura es 24 · tan 47',
       ok: false,
-      why: 'Entonces el segundo ángulo sobraría, y con él la mitad del enunciado. Además, si la posición cercana ' +
-           'estuviera a 20 m, la altura sería 16,78 m y la lejana quedaría a 36,0 m, una separación de 16 m que no ' +
-           'es la que dice el texto.',
-      fig: {t:'recto', base:'20 m', alto:'altura = ?', angLab:'40°', ang:40}},
-     {t: 'Los 20 m son la distancia de la posición más lejana al pie del poste',
+      why: 'Eso supone que la segunda estación está a 24 m del pie de la chimenea, cosa que el enunciado no dice. ' +
+           'El resultado, 25,74 m, es plausible y por eso el error pasa desapercibido; y deja el primer ángulo sin ' +
+           'usar, que es la señal de alarma.',
+      fig: {t:'recto', base:'24 m', alto:'altura = ?', angLab:'47°', ang:47}},
+     {t: 'Los 24 m son la distancia desde la primera posición, así que la altura es 24 · tan 31',
       ok: false,
-      why: 'Con esa lectura la altura saldría 9,33 m (20 · tan 25°), y la posición cercana quedaría por delante de ' +
-           'la lejana sin que el enunciado lo diga. El desplazamiento se mide entre las dos visuales, no desde el pie.',
-      fig: {t:'recto', base:'20 m', alto:'altura = ?', angLab:'25°', ang:25}}
+      why: 'Mismo error que el anterior, con el otro ángulo: da 14,42 m. Si la primera estación estuviera a 24 m ' +
+           'del pie, acercarse otros 24 m dejaría la segunda sobre el pie de la chimenea y el ángulo sería de 90°.',
+      fig: {t:'recto', base:'24 m', alto:'altura = ?', angLab:'31°', ang:31}}
    ],
-   pide: 'Altura del poste', suf: 'm', tol: 0.05, val: 21.00,
-   sol: '<div class="formula">x = distancia del punto cercano al pie del poste\n\n' +
-        'x · tan 40° = (x + 20) · tan 25°\n' +
-        'x · (0,8391 − 0,4663) = 20 · 0,4663\n' +
-        'x = 9,326 / 0,3728 = 25,02 m\n\n' +
-        'h = 25,02 · tan 40° = 25,02 · 0,8391 = 21,00 m\n\n' +
-        'Fórmula directa:\n' +
-        'h = 20 · tan 25° · tan 40° / (tan 40° − tan 25°) = 20,99 m</div>' +
-        '<p>Comprobación desde el punto A: está a 25,02 + 20,00 = 45,02 m, y 45,02 · tan 25° = 45,02 · 0,4663 = ' +
-        '20,99 m. La diferencia con los 21,00 m de la otra vía es de un centímetro, puro redondeo de las tangentes.</p>' +
-        '<p>Las dos lecturas equivocadas dan 16,78 m y 9,33 m: valores presentables y falsos. La forma de detectarlo ' +
-        'es comprobar si con ellos el segundo ángulo encaja. Si tomas x = 20 m desde el pie, la visual a 25° corta la ' +
-        'vertical del poste a 16,78 m, y desde ese mismo punto a 20 m del pie el ángulo sería de 40°, no de 25°: el ' +
-        'enunciado se contradice.</p>'},
+   pide: 'Altura de la chimenea', suf: 'm', tol: 0.05, val: 32.80,
+   sol: '<div class="formula">D = distancia del punto lejano al pie\n\n' +
+        'D · tan 31° = (D − 24) · tan 47°\n' +
+        'D · (1,0724 − 0,6009) = 24 · 1,0724\n' +
+        'D = 25,737 / 0,4715 = 54,59 m\n\n' +
+        'h = 54,59 · tan 31° = 54,59 · 0,6009 = 32,80 m\n\n' +
+        'Comprobación desde el punto cercano (54,59 − 24 = 30,59 m):\n' +
+        '30,59 · tan 47° = 30,59 · 1,0724 = 32,80 m  ✓</div>' +
+        '<p>Las dos lecturas equivocadas dan 25,74 m y 14,42 m, y ninguna de las dos usa el enunciado completo: la ' +
+        'primera se come el ángulo de 31° y la segunda el de 47°. Cuando en un ejercicio de dos posiciones sobra un ' +
+        'dato, el planteamiento está mal.</p>'},
 
-  {titulo: 'El edificio: la altura, no la distancia',
-   enun: 'Un topógrafo necesita calcular la altura de un edificio midiendo el ángulo de elevación desde dos posiciones ' +
-         'separadas <span class="num">30 m</span>. En la primera posición el ángulo es de ' +
-         '<span class="num">20°</span> y en la segunda, de <span class="num">35°</span>. ¿Qué altura tiene el ' +
-         'edificio?',
+  {titulo: 'La torre: ¿cuál de los dos ángulos es el de la posición cercana?',
+   enun: 'La altura de una torre de incendios se mide desde dos posiciones separadas <span class="num">36 m</span>. ' +
+         'Los ángulos de elevación obtenidos son <span class="num">26°</span> y <span class="num">39°</span>, sin ' +
+         'decir cuál corresponde a cada posición. ¿Qué altura tiene la torre?',
    ops: [
-     {t: 'Los 35° corresponden a la posición cercana; se calcula la distancia a esa posición y después la altura',
+     {t: 'El de 39° es el de la posición cercana y el de 26° el de la lejana',
       ok: true,
-      why: 'El ángulo sube al acercarse, así que 35° es el cercano y 20° el lejano. El método tiene dos pasos y hay ' +
-           'que devolver el segundo: la distancia calculada es una incógnita intermedia, no el resultado que se pide.',
-      fig: {t:'dospos', sep:'30 m', lejos:20, cerca:35, alto:'altura = ?', etLejos:'1ª posición', etCerca:'2ª posición'}},
-     {t: 'Lo que se pide es la distancia horizontal desde la posición más lejana hasta el edificio, que es 62,48 m',
+      why: 'Aunque el enunciado no lo diga, la geometría lo impone: la posición más cercana ve el objeto con más ' +
+           'ángulo. Con 26° como lejano y 39° como cercano las dos ecuaciones son compatibles; al revés, la resta ' +
+           'sale negativa.',
+      fig: {t:'dospos', sep:'36 m', lejos:26, cerca:39, alto:'altura = ?', etLejos:'?', etCerca:'?'}},
+     {t: 'El de 26° es el de la posición cercana y el de 39° el de la lejana',
       ok: false,
-      why: 'Se pide la altura. Los 62,48 m son la distancia del punto lejano al pie del edificio, un valor que sale ' +
-           'en el camino y que se confunde con el resultado final con alarmante frecuencia: es casi el triple de la ' +
-           'altura real.',
-      fig: {t:'dospos', sep:'30 m', lejos:20, cerca:35, alto:'altura = ?', etLejos:'1ª posición', etCerca:'2ª posición'}},
-     {t: 'Los 30 m son la altura del edificio y hay que despejar el ángulo',
+      why: 'Invertido: al acercarse el ángulo crece, así que el pequeño es el de la posición lejana. Con esta ' +
+           'lectura la resta tan 26 − tan 39 sale negativa y la distancia también.',
+      fig: {t:'dospos', sep:'36 m', lejos:39, cerca:26, alto:'altura = ?', etLejos:'?', etCerca:'?'}},
+     {t: 'Los 36 m son la distancia horizontal al pie desde la segunda posición, así que la altura es 36 · tan 39',
       ok: false,
-      why: 'Los 30 m son la separación entre las dos estaciones. Una altura no se da como dato cuando es justo lo ' +
-           'que se pregunta, y además 30 m de altura con esos ángulos no cuadran con ninguna distancia posible.',
-      fig: null}
+      why: 'Los 36 m son la separación entre las dos estaciones. Tomarlos como distancia al pie da 29,15 m, un ' +
+           'número plausible que además deja sin usar el otro ángulo.',
+      fig: {t:'recto', base:'36 m', alto:'altura = ?', angLab:'39°', ang:39}}
    ],
-   pide: 'Altura del edificio', suf: 'm', tol: 0.05, val: 22.74,
-   sol: '<div class="formula">x = distancia de la 2ª posición (la cercana) al pie del edificio\n\n' +
-        'x · tan 35° = (x + 30) · tan 20°\n' +
-        'x · (0,7002 − 0,3640) = 30 · 0,3640\n' +
-        'x = 10,92 / 0,3362 = 32,48 m\n\n' +
-        'Altura:  h = 32,48 · tan 35° = 32,48 · 0,7002 = 22,74 m\n\n' +
-        'Fórmula directa:\n' +
-        'h = 30 · tan 20° · tan 35° / (tan 35° − tan 20°) = 22,74 m</div>' +
-        '<p>Comprobación desde la posición lejana: está a 32,48 + 30,00 = 62,48 m del pie, y ' +
-        '62,48 · tan 20° = 62,48 · 0,3640 = 22,74 m. La misma altura por los dos lados.</p>' +
-        '<p>De ahí sale la confusión: los 62,48 m son un número que aparece en la cuenta y que mucha gente entrega ' +
-        'como respuesta. Un edificio de 22,74 m visto desde 62 m se ve bajo 20°; visto desde 32 m, bajo 35°. Comprobar ' +
-        'el orden de magnitud con la distancia evita el error: a 30 m de separación, una altura de 62,5 m obligaría a ' +
-        'ángulos de 62,5° y 45°, no de 20° y 35°.</p>'},
+   pide: 'Altura de la torre', suf: 'm', tol: 0.05, val: 44.15,
+   sol: '<div class="formula">D = distancia del punto lejano al pie (α = 26°)   d = 36 m\n\n' +
+        'D = d · tan 39° / (tan 39° − tan 26°)\n' +
+        '  = 36 · 0,8098 / (0,8098 − 0,4877)\n' +
+        '  = 29,152 / 0,3221 = 90,52 m\n\n' +
+        'h = 90,52 · tan 26° = 90,52 · 0,4877 = 44,15 m\n\n' +
+        'Comprobación desde el punto cercano (90,52 − 36 = 54,52 m):\n' +
+        '54,52 · tan 39° = 54,52 · 0,8098 = 44,15 m  ✓</div>' +
+        '<p>Cuando el enunciado no dice cuál es cuál, la decisión no es una preferencia: solo una de las dos ' +
+        'asignaciones da una resta positiva y una altura compatible con las dos visuales. Esa es la asignación ' +
+        'correcta, y conviene escribirla en el croquis antes de calcular.</p>'},
 
-  {titulo: 'La pendiente: «respecto al terreno» es respecto a la horizontal',
-   enun: 'En un camino rural hay una diferencia de altura de <span class="num">15 m</span> en una distancia ' +
-         'horizontal de <span class="num">100 m</span>. El enunciado pide «el ángulo de inclinación respecto al ' +
-         'terreno». ¿Cuál es ese ángulo?',
+  {titulo: 'El cortafuegos: «respecto al terreno» es respecto a la horizontal',
+   enun: 'Un cortafuegos sube <span class="num">18 m</span> a lo largo de <span class="num">240 m</span> medidos en ' +
+         'horizontal. El enunciado pide «la inclinación respecto al terreno». ¿Qué ángulo hay que ' +
+         'entregar?',
    ops: [
-     {t: 'El ángulo se mide respecto a la horizontal, así que tan α = 15/100 y α = 8,53°',
+     {t: 'El ángulo entre la rasante y la horizontal: arctan(18/240) = 4,29°',
       ok: true,
-      why: 'La inclinación de un terreno se mide siempre desde el plano horizontal: es el ángulo que forma la rampa ' +
-           'con la horizontal, y su tangente es el desnivel entre la distancia horizontal. La expresión «respecto al ' +
-           'terreno» del enunciado es una redacción descuidada del propio profesor.',
-      fig: {t:'recto', base:'100 m (horizontal)', alto:'15 m', angLab:'α = ?', ang:8.53}},
-     {t: 'El ángulo se mide respecto al terreno inclinado, así que hay que usar el seno: α = 8,63°',
+      why: 'En topografía la inclinación de una rasante se mide respecto a la horizontal, aunque el enunciado diga ' +
+           '«respecto al terreno»: el terreno es la rasante. El cociente 18/240 = 0,075 es la tangente del ángulo.',
+      fig: {t:'recto', base:'240 m', alto:'18 m', angLab:'?', ang:4.29}},
+     {t: 'El ángulo entre la rasante y la vertical: 90 − 4,29 = 85,71°',
       ok: false,
-      why: 'Solo sería así si los 100 m se hubieran medido sobre la rampa y no en horizontal. El enunciado dice ' +
-           '«distancia horizontal», así que los 100 m son la proyección. Además, el ángulo de una pendiente se define ' +
-           'siempre desde la horizontal, nunca desde la propia rampa.',
-      fig: {t:'recto', base:'100 m (horizontal)', alto:'15 m', angLab:'α = ?', ang:8.53,
-            nota:'con 8,63° el cateto horizontal no mediría 100 m'}},
-     {t: 'El 15 sobre 100 ya es la pendiente en porcentaje, y en grados son directamente 15°',
+      why: 'La vertical no es la referencia de una pendiente, y un ángulo de 85,71° describiría una pared, no un ' +
+           'cortafuegos. Si el dato fuera cenital, sí habría que restar de 90, pero aquí no lo es.',
+      fig: null},
+     {t: 'El mismo número que el porcentaje, 7,5°, porque la pendiente ya está en tantos por ciento',
       ok: false,
-      why: 'Confunde porcentaje con grados. Una pendiente del 15 % es tan α = 0,15, es decir 8,53°, no 15°. El ' +
-           'porcentaje es cien veces la tangente; el ángulo es el arco cuya tangente vale 0,15.',
-      fig: {t:'recto', base:'100 m (horizontal)', alto:'15 m', angLab:'15°', ang:15,
-            nota:'con 15° el desnivel sería de 26,79 m, no de 15 m'}}
+      why: 'Confunde grados con porcentaje. La pendiente es el 7,5 %, y el ángulo cuya tangente vale 0,075 es ' +
+           '4,29°: son dos formas de decir lo mismo, no el mismo número.',
+      fig: {t:'recto', base:'240 m', alto:'18 m', angLab:'?', ang:7.5}}
    ],
-   pide: 'Ángulo de inclinación', suf: '°', tol: 0.05, val: 8.53,
-   sol: '<div class="formula">tan α = desnivel / distancia horizontal = 15 / 100 = 0,15\n' +
-        'α = arctan 0,15 = 8,53°\n\n' +
-        'La pendiente en porcentaje es ese mismo cociente por 100:\n' +
-        'p = 0,15 × 100 = 15 %</div>' +
-        '<p>Comprobación: tan 8,53° = 0,1500, y 100 · tan 8,53° = 15,00 m, que es el desnivel del enunciado. El ' +
-        'resultado tiene que ser pequeño, porque un 15 % es una rampa suave: en carretera, las pendientes fuertes ' +
-        'rondan el 10 % y las señales de tráfico avisan a partir del 5 %.</p>' +
-        '<p>La lectura del seno da 8,63° y la del «15 % son 15°» da 15°, que es casi el doble. La diferencia entre ' +
-        '8,53 y 8,63 es de una décima de grado: parece pequeña, pero viene de haber usado la hipotenusa en lugar del ' +
-        'cateto horizontal, y ese mismo error en una distancia de 500 m se convierte en medio metro. Se admite un ' +
-        'margen de 0,05° para que el resultado del seno no pase por bueno.</p>'},
+   pide: 'Ángulo de inclinación', suf: '°', tol: 0.05, val: 4.29,
+   sol: '<div class="formula">tan α = desnivel / distancia horizontal = 18 / 240 = 0,075\n\n' +
+        'α = arctan 0,075 = 4,29°\n' +
+        'pendiente en porcentaje = 0,075 · 100 = 7,5 %</div>' +
+        '<p>Comprobación: con 4,29°, la distancia sobre el terreno sería 240 / cos 4,29° = 240,67 m, y el desnivel ' +
+        '240,67 · sen 4,29° = 18,00 m. Los dos caminos devuelven el dato del enunciado.</p>' +
+        '<p>La regla que resuelve estos casos: primero se identifica la referencia del ángulo —horizontal, vertical ' +
+        'o el propio terreno— y solo después se elige la razón trigonométrica. Aquí «respecto al terreno» significa ' +
+        'respecto a la rasante, que es la horizontal del problema.</p>'},
 
-  {titulo: 'Los dos mojones: cuándo hace falta la ley del coseno',
-   enun: 'Un topógrafo observa dos mojones desde un punto A. El ángulo entre las dos visuales es de ' +
-         '<span class="num">50°</span>. La distancia de A al primer mojón es <span class="num">40 m</span> y al ' +
-         'segundo, <span class="num">60 m</span>. ¿Qué distancia separa los dos mojones?',
+  {titulo: 'Los dos vértices: el ángulo está en la estación',
+   enun: 'Desde una estación se visan dos vértices, P y Q. La distancia a P es de <span class="num">52 m</span>, la ' +
+         'distancia a Q es de <span class="num">71 m</span> y el ángulo entre las dos visuales es de ' +
+         '<span class="num">64°</span>. ¿Qué distancia hay entre P y Q?',
    ops: [
-     {t: 'El 50° está en el vértice A, entre las dos visuales: es el ángulo opuesto al lado que se busca y va a la ley del coseno',
+     {t: 'Los 64° son el ángulo comprendido entre las dos visuales, así que se usa la ley del coseno',
       ok: true,
-      why: 'Los dos lados conocidos salen de A y el ángulo está también en A: se conocen dos lados y el ángulo que ' +
-           'forman, que es exactamente el caso de la ley del coseno. El lado buscado queda enfrente del ángulo.',
-      fig: {t:'tri', a:'40 m', b:'60 m', angLab:'50°', ang:50, lado:'distancia = ?'}},
-     {t: 'El 50° es lo que cada visual forma con la línea que une los mojones, así que el triángulo tiene dos ángulos de 50°',
+      why: 'El ángulo está en la estación, entre los dos lados conocidos: ese es exactamente el caso de la ley del ' +
+           'coseno. El lado buscado es el que cierra el triángulo frente a ese ángulo.',
+      fig: {t:'tri', a:'b = 71 m', b:'c = 52 m', angLab:'64°', ang:64, lado:'a = ?'}},
+     {t: 'Los 64° son el ángulo que forma cada visual con la línea que une P y Q: se usa el seno',
       ok: false,
-      why: 'Con dos ángulos de 50° el tercero sería de 80°, y el triángulo quedaría determinado por otros datos. El ' +
-           'enunciado dice «el ángulo entre las dos visuales», es decir, el que está en A y abarca las dos.',
-      fig: {t:'tri', a:'40 m', b:'60 m', angLab:'50°', ang:50, lado:'distancia = ?'}},
-     {t: 'Con dos lados y un ángulo se resuelve con Pitágoras, porque los 40 y los 60 m son perpendiculares',
+      why: 'El enunciado dice «entre las dos visuales», no «de cada visual con la base». Con esa lectura habría ' +
+           'que conocer la distancia P-Q para usar el seno, que es justo la incógnita: el planteamiento no se puede ' +
+           'cerrar.',
+      fig: null},
+     {t: 'Con dos lados basta Pitágoras: raíz de 52² + 71² = 88,01 m',
       ok: false,
-      why: 'Pitágoras exige un ángulo recto, y aquí entre las visuales hay 50°, no 90°. Aplicarlo daría 72,11 m, que ' +
-           'corresponde a un ángulo de 90° entre las visuales: casi 26 m de más.',
-      fig: {t:'tri', a:'40 m', b:'60 m', angLab:'50°', ang:50, lado:'distancia = ?'}}
+      why: 'Pitágoras exige ángulo recto, y aquí el ángulo es de 64°. Además 88,01 m es mayor que las dos visuales ' +
+           'y mayor que la suma de los dos ángulos del triángulo admitiría: es el resultado del error clásico.',
+      fig: {t:'tri', a:'b = 71 m', b:'c = 52 m', angLab:'90°', ang:90, lado:'a = ?'}}
    ],
-   pide: 'Distancia entre los mojones', suf: 'm', tol: 0.05, val: 45.98,
-   sol: '<div class="formula">d² = a² + b² − 2 · a · b · cos 50°\n' +
-        '   = 40² + 60² − 2 · 40 · 60 · 0,6428\n' +
-        '   = 1 600 + 3 600 − 3 085,4\n' +
-        '   = 2 114,6\n' +
-        'd  = 45,98 m</div>' +
-        '<p>Comprobación de sentido: la distancia buscada tiene que estar entre 60 − 40 = 20 m (si las visuales ' +
-        'estuvieran en la misma dirección) y 60 + 40 = 100 m (si fueran opuestas). 45,98 m está dentro del intervalo, ' +
-        'más cerca del mínimo porque el ángulo es agudo.</p>' +
-        '<p>Y la comprobación inversa, que es la que convence: con los tres lados, la ley del coseno devuelve el ' +
-        'ángulo. cos A = (40² + 60² − 45,98²) / (2 · 40 · 60) = (1 600 + 3 600 − 2 114,6) / 4 800 = 0,6428, y ' +
-        'arccos 0,6428 = 50,0°. El triángulo está bien resuelto.</p>'},
+   pide: 'Distancia entre P y Q', suf: 'm', tol: 0.05, val: 67.14,
+   sol: '<div class="formula">a² = 52² + 71² − 2 · 52 · 71 · cos 64°\n' +
+        'a² = 2 704 + 5 041 − 7 384 · 0,4384\n' +
+        'a² = 7 745 − 3 236,93 = 4 508,07\n' +
+        'a  = √4 508,07 = 67,14 m</div>' +
+        '<p>Comprobación de sentido: el lado tiene que quedar entre la diferencia y la suma de los otros dos, es ' +
+        'decir entre 19 m y 123 m. Los 67,14 m caen dentro, y además son menores que los 88,01 m de Pitágoras, como ' +
+        'corresponde a un ángulo menor de 90°.</p>' +
+        '<p>Y con la ley del seno se cierran los ángulos: sen P̂ = 52 · sen 64° / 67,14 = 0,6961, luego P̂ = 44,11° ' +
+        'y Q̂ = 180 − 64 − 44,11 = 71,89°. El ángulo mayor, 71,89°, queda frente al lado mayor, 71 m: coherente.</p>'},
 
   {titulo: 'El dron: la altura es un cateto, no la distancia',
-   enun: 'Un dron vuela a <span class="num">120 m</span> de altura sobre un terreno horizontal. El ángulo de ' +
-         'depresión hacia un tractor es de <span class="num">55°</span>. ¿Qué distancia horizontal hay entre el ' +
-         'dron y el tractor?',
+   enun: 'Un dron se mantiene a <span class="num">95 m</span> de altura sobre el terreno y visa un punto del suelo ' +
+         'con un ángulo de depresión de <span class="num">62°</span>. ¿A qué distancia horizontal del punto está?',
    ops: [
-     {t: 'Los 120 m son el cateto vertical y la distancia horizontal es el otro cateto: se divide, d = 120 / tan 55',
+     {t: 'Los 95 m son el cateto opuesto y la distancia horizontal es el contiguo: D = 95 / tan 62°',
       ok: true,
-      why: 'El ángulo de depresión se mide desde la horizontal del dron, y los 120 m son el cateto opuesto a ese ' +
-           'ángulo. El cateto contiguo, que es la distancia horizontal, se despeja dividiendo. Desde el tractor, el ' +
-           'ángulo de elevación es el mismo por alternos internos.',
-      fig: {t:'depres', alto:'120 m', angLab:'55°', horiz:'d = ?', ang:55}},
-     {t: 'Los 120 m son la distancia horizontal y la altura hay que calcularla con 120 · tan 55',
+      why: 'La horizontal del dron y la visual forman el ángulo de depresión; la distancia buscada es el cateto ' +
+           'contiguo y la altura, el opuesto. La tangente relaciona los dos, y se despeja el contiguo.',
+      fig: {t:'depres', alto:'95 m', angLab:'62°', horiz:'D = ?', ang:62}},
+     {t: 'La distancia horizontal es 95 · tan 62° = 178,67 m',
       ok: false,
-      why: 'El enunciado dice «vuela a 120 m de altura»: es una altura, no una distancia en el plano. Además, ' +
-           'multiplicar da 171,38 m, casi el doble de la altura, y a 55° la distancia horizontal tiene que ser menor ' +
-           'que la altura.',
+      why: 'Invierte la razón: multiplicar por la tangente daría una distancia mayor que la altura, cuando un ' +
+           'ángulo de 62° casi vertical significa que el punto está cerca del pie. Además ese resultado no cumple ' +
+           'D · tan 62° = 95 m.',
       fig: null},
-     {t: 'La depresión se mide desde la vertical, así que hay que usar el seno: d = 120 · sen 55',
+     {t: 'La distancia horizontal es la inclinada: 95 / sen 62° = 107,59 m',
       ok: false,
-      why: 'El ángulo de depresión se mide desde la horizontal, no desde la vertical. Con la vertical el ángulo ' +
-           'sería de 35°, y además el seno daría 98,30 m, que no usa ni el cateto correcto ni la razón correcta.',
+      why: 'Eso es la visual, no la horizontal: el seno relaciona la altura con la hipotenusa. La horizontal es ' +
+           'siempre más corta que la inclinada, y 107,59 m no lo cumple frente a la altura.',
+      fig: {t:'depres', alto:'95 m', angLab:'62°', horiz:'visor = ?', ang:62}}
+   ],
+   pide: 'Distancia horizontal', suf: 'm', tol: 0.05, val: 50.51,
+   sol: '<div class="formula">tan 62° = 95 / D   ⇒   D = 95 / tan 62° = 95 / 1,8807 = 50,51 m</div>' +
+        '<p>Comprobación: 50,51 · 1,8807 = 95,00 m, la altura del enunciado. Y la distancia inclinada sería ' +
+        '95 / sen 62° = 107,59 m, mayor que la horizontal, como tiene que ser.</p>' +
+        '<p>La regla de una línea: con un ángulo de depresión, la altura es el cateto opuesto y la distancia ' +
+        'horizontal el contiguo. Si el resultado sale mayor que la altura con un ángulo grande, se ha multiplicado ' +
+        'donde había que dividir.</p>'},
+
+  {titulo: 'La antena y su sombra: la sombra es un cateto',
+   enun: 'Una antena vertical proyecta una sombra de <span class="num">28 m</span> cuando la altura del sol es de ' +
+         '<span class="num">41°</span>. ¿Cuánto mide la antena?',
+   ops: [
+     {t: 'La sombra es el cateto contiguo y la antena el opuesto: h = 28 · tan 41°',
+      ok: true,
+      why: 'El rayo de sol, la antena y su sombra forman un triángulo rectángulo en el pie. El ángulo del sol va en ' +
+           'el extremo de la sombra, así que la sombra es el cateto contiguo y la altura el opuesto.',
+      fig: {t:'recto', base:'sombra = 28 m', alto:'antena = ?', angLab:'41°', ang:41}},
+     {t: 'La sombra es la hipotenusa: h = 28 · sen 41° = 18,37 m',
+      ok: false,
+      why: 'La sombra no es la visual del rayo, es su proyección en el suelo: es un cateto. Tomarla como hipotenusa ' +
+           'da 18,37 m, y la comprobación falla porque 18,37 / 28 = 0,656, que no es tan 41°.',
+      fig: {t:'hip', diag:'sombra = 28 m', base:'?', alto:'antena = ?', ang:41}},
+     {t: 'Se usa el coseno: h = 28 · cos 41° = 21,13 m',
+      ok: false,
+      why: 'El coseno relacionaría la sombra con la visual, no con la altura. Con 21,13 m, la tangente del ángulo ' +
+           'saldría 21,13/28 = 0,7547, es decir 37°, y el enunciado dice 41°: el resultado no cuadra con su propio ' +
+           'dato.',
+      fig: {t:'recto', base:'sombra = 28 m', alto:'antena = ?', angLab:'41°', ang:41}}
+   ],
+   pide: 'Altura de la antena', suf: 'm', tol: 0.05, val: 24.34,
+   sol: '<div class="formula">h = s · tan α = 28 · tan 41° = 28 · 0,8693 = 24,34 m</div>' +
+        '<p>Comprobación por el camino inverso: 24,34 / 28 = 0,8693, y arctan 0,8693 = 41,0°. Cuadra con el dato.</p>' +
+        '<p>El atajo de campo, sin clinómetro: una estaca de 1,70 m que proyecta 1,96 m al mismo tiempo da la misma ' +
+        'tangente (1,70/1,96 = 0,8673), y aplicada a 28 m de sombra devuelve 24,28 m.</p>'},
+
+  {titulo: 'La torre de vigilancia: un ángulo medido desde la vertical',
+   enun: 'Desde una estación situada a <span class="num">46 m</span> del pie de una torre de vigilancia, el ' +
+         'goniómetro da <span class="num">68°</span> medidos desde la vertical (ángulo cenital). ¿Qué altura tiene ' +
+         'la torre?',
+   ops: [
+     {t: 'Primero se pasa a elevación: 90 − 68 = 22°, y después h = 46 · tan 22°',
+      ok: true,
+      why: 'El cenital se mide desde la vertical del aparato: 0° es el cénit y 90° el horizonte. La altura se ' +
+           'calcula con el ángulo sobre la horizontal, que es el complementario.',
+      fig: {t:'depres', alto:'h = ?', angLab:'22°', horiz:'46 m', ang:22}},
+     {t: 'Se usa tal cual: h = 46 · tan 68° = 113,85 m',
+      ok: false,
+      why: 'Eso sería si los 68° estuvieran medidos desde la horizontal, y entonces la torre sería más del doble ' +
+           'de larga que la distancia a su pie: media torre de 113 m para verla a 68° desde 46 m no encaja con ' +
+           'ningún croquis real.',
+      fig: null},
+     {t: 'Se usa el seno del cenital: h = 46 / sen 22° = 122,79 m',
+      ok: false,
+      why: 'Mezcla la referencia del ángulo con la elección de la razón: con la distancia horizontal conocida y la ' +
+           'altura buscada, la razón es la tangente, no el seno. El seno daría la visual, no la altura.',
       fig: null}
    ],
-   pide: 'Distancia horizontal', suf: 'm', tol: 0.05, val: 84.03,
-   sol: '<div class="formula">tan 55° = altura / distancia horizontal = 120 / d\n' +
-        'd = 120 / tan 55° = 120 / 1,4281 = 84,03 m</div>' +
-        '<p>Comprobación: tan 55° = 120 / 84,03 = 1,4281, que es el valor de la tangente de 55°. Y el control de ' +
-        'orden de magnitud: a 55° de depresión, el dron está más alto que lejos, así que la distancia horizontal ' +
-        'tiene que ser menor que los 120 m. 84,03 < 120.</p>' +
-        '<p>La lectura equivocada, multiplicando, da 171,38 m, y ahí el control de orden de magnitud salta: con ' +
-        '84 m de altura y 171 m de distancia horizontal el ángulo sería de 26°, no de 55°. Cuando el resultado ' +
-        'contradice una desigualdad tan simple, el error no está en la calculadora, está en haber elegido la ' +
-        'operación.</p>'},
-
-  {titulo: 'La sombra del silo: la sombra es un cateto',
-   enun: 'Un silo proyecta una sombra de <span class="num">36 m</span> cuando el ángulo de elevación del sol es de ' +
-         '<span class="num">37°</span>. ¿Qué altura tiene el silo?',
-   ops: [
-     {t: 'La sombra es el cateto horizontal y el ángulo está en el extremo de la sombra: h = 36 · tan 37',
-      ok: true,
-      why: 'La sombra se mide sobre el suelo, así que es un cateto. El rayo de sol forma 37° con el suelo en el ' +
-           'extremo de la sombra, y la altura es el cateto opuesto a ese ángulo: se multiplica por la tangente.',
-      fig: {t:'recto', base:'sombra = 36 m', alto:'h = ?', angLab:'37°', ang:37}},
-     {t: 'La sombra es la hipotenusa del triángulo, así que h = 36 · sen 37',
-      ok: false,
-      why: 'La sombra no es una visual ni una rampa: es la proyección del silo sobre el suelo, un cateto. Tomarla ' +
-           'como hipotenusa da 21,67 m, seis metros menos que el valor correcto.',
-      fig: {t:'recto', base:'sombra = 36 m', alto:'h = ?', angLab:'37°', ang:37}},
-     {t: 'El ángulo de 37° está en lo alto del silo, entre la vertical y el rayo de sol',
-      ok: false,
-      why: 'La elevación del sol se mide respecto a la horizontal, desde el suelo. El ángulo entre la vertical y el ' +
-           'rayo sería su complementario, 53°, y con él la cuenta es la misma solo si se usa la cotangente, cosa que ' +
-           'casi nadie hace bien bajo presión.',
-      fig: {t:'recto', base:'sombra = 36 m', alto:'h = ?', angLab:'53°', ang:53}}
-   ],
-   pide: 'Altura del silo', suf: 'm', tol: 0.05, val: 27.13,
-   sol: '<div class="formula">h = 36 · tan 37° = 36 · 0,7536 = 27,13 m</div>' +
-        '<p>Comprobación: el rayo de sol baja a 37°, menos de 45°, así que el sol está bajo y la sombra es más larga ' +
-        'que el objeto. Se cumple: 27,13 < 36. Si el ángulo hubiera sido de 45°, la sombra y la altura serían ' +
-        'iguales, que es la comprobación más rápida de este tipo de problema.</p>' +
-        '<p>Las dos lecturas equivocadas dan 21,67 m (con el seno) y 28,75 m (con el coseno). Son valores parecidos ' +
-        'al bueno, y por eso el error pasa desapercibido: solo una comprobación de orden de magnitud o el cálculo ' +
-        'por la vía inversa, arctan(27,13/36) = 37,0°, lo delata.</p>'},
-
-  {titulo: 'La torre: un ángulo medido desde la vertical',
-   enun: 'Desde un punto situado a <span class="num">30 m</span> de la base de una torre, el ángulo entre la visual ' +
-         'a lo alto y la vertical que pasa por ese punto es de <span class="num">68°</span>. ¿Qué altura tiene la ' +
-         'torre?',
-   ops: [
-     {t: 'El ángulo se mide desde la vertical: el ángulo en la base del triángulo es 90 − 68 = 22°, y la altura es 30 · tan 22',
-      ok: true,
-      why: 'Si el ángulo con la vertical es 68°, el que forma la visual con el suelo es su complementario, 22°. Con ' +
-           'ese ángulo la altura es el cateto opuesto y los 30 m el contiguo. Es el mismo triángulo con el ángulo ' +
-           'traspuesto.',
-      fig: {t:'depres', alto:'?', angLab:'68°', horiz:'30 m', ang:68}},
-     {t: 'El ángulo de 68° es la elevación medida desde el suelo, así que h = 30 · tan 68',
-      ok: false,
-      why: 'El enunciado no dice elevación: dice «entre la visual y la vertical». Tomarlo como elevación da 74,25 m, ' +
-           'más del doble de la distancia, y entonces el ángulo con la vertical sería de 22°, no de 68°.',
-      fig: {t:'recto', base:'30 m', alto:'h = ?', angLab:'68°', ang:68,
-            nota:'a 68° de elevación la torre mediría 74,25 m'}},
-     {t: 'El ángulo se mide desde la vertical, así que la altura es la hipotenusa y vale 30 · sen 68',
-      ok: false,
-      why: 'La altura nunca es la hipotenusa: es un cateto vertical, perpendicular al suelo. Los 30 m son el cateto ' +
-           'horizontal, así que el seno no interviene en este despeje.',
-      fig: {t:'depres', alto:'?', angLab:'68°', horiz:'30 m', ang:68}}
-   ],
-   pide: 'Altura de la torre', suf: 'm', tol: 0.05, val: 12.12,
-   sol: '<div class="formula">Ángulo con la vertical: 68°  ⇒  ángulo con el suelo: 90° − 68° = 22°\n\n' +
-        'h = 30 · tan 22° = 30 · 0,4040 = 12,12 m\n\n' +
-        'Equivalente:  h = 30 / tan 68° = 30 / 2,4751 = 12,12 m</div>' +
-        '<p>Comprobación de sentido: un ángulo de 68° con la vertical significa que la visual está a solo 22° sobre ' +
-        'la horizontal, es decir, casi horizontal. La torre tiene que ser mucho más baja que la distancia a la que ' +
-        'estás, y lo es: 12,12 m frente a 30 m. Con la cuenta inversa, arctan(30/12,12) = 68,0°, que es el dato del ' +
-        'enunciado.</p>' +
-        '<p>Este caso es nuevo, del mismo tipo que el de la pendiente: el enunciado nombra una referencia distinta ' +
-        'de la habitual, la vertical en lugar de la horizontal. La regla es siempre la misma: identificar desde dónde ' +
-        'se mide el ángulo antes de elegir la razón trigonométrica, porque entre 68° y 22° hay un factor de seis en ' +
-        'el resultado.</p>'}
+   pide: 'Altura de la torre', suf: 'm', tol: 0.05, val: 18.59,
+   sol: '<div class="formula">Ángulo con la vertical: 68°  ⇒  elevación sobre la horizontal: 90° − 68° = 22°\n\n' +
+        'h = 46 · tan 22° = 46 · 0,4040 = 18,59 m\n\n' +
+        'Equivalente:  h = 46 / tan 68° = 46 / 2,4751 = 18,59 m</div>' +
+        '<p>Comprobación de sentido: un cenital de 68° deja la visual a solo 22° sobre la horizontal, así que la ' +
+        'torre tiene que ser bastante más baja que la distancia a la que estás: 18,59 m frente a 46 m. La cuenta ' +
+        'inversa devuelve el dato: arctan(18,59/46) = 22,0°, y su cenital, 68,0°.</p>' +
+        '<p>Este caso es del mismo tipo que el de la pendiente: el enunciado nombra una referencia distinta de la ' +
+        'habitual, aquí la vertical. La regla es siempre la misma: identificar desde dónde se mide el ángulo antes ' +
+        'de elegir la razón trigonométrica, porque entre 68° y 22° hay un factor de seis en el resultado.</p>'}
   ];
 
   /* ---------- estado ---------- */
@@ -972,32 +942,32 @@ examen.</p>
 </script>
 
 <h2>Por qué estos diez y no otros</h2>
-<p>Cada caso corresponde a una línea concreta de la ficha del curso. La columna de la derecha es el resultado correcto
+<p>Cada caso corresponde a un tipo de defecto distinto, y entre los diez cubren los que aparecen una y otra vez en los enunciados de clase. La columna de la derecha es el resultado correcto
 con la lectura buena, y sirve para comprobar en un vistazo si has entendido cuál es la lectura buena.</p>
 
 <table>
   <tr><th style="width:8%">Caso</th><th>Enunciado</th><th style="width:30%">Dónde está el defecto</th>
       <th style="width:15%">Resultado</th></tr>
-  <tr><td>1</td><td>Anchura de una parcela de 50 m de base y diagonal a 35°</td>
-      <td>No distingue si los 50 m son la base o la diagonal</td><td class="num">35,01 m</td></tr>
-  <tr><td>2</td><td>Ancho de un río tras desplazarse 25 m</td>
-      <td>No dice si el desplazamiento acerca o aleja</td><td class="num">59,15 m</td></tr>
-  <tr><td>3</td><td>Molino visto desde dos puntos a 50 m</td>
-      <td>Da los ángulos en orden inverso, del lejano al cercano</td><td class="num">44,84 m</td></tr>
-  <tr><td>4</td><td>Poste observado antes y después de acercarse 20 m</td>
-      <td>No dice si los 20 m son la separación o la distancia al poste</td><td class="num">21,00 m</td></tr>
-  <tr><td>5</td><td>Edificio desde dos posiciones a 30 m</td>
-      <td>No aclara cuál de los dos ángulos es el de la posición cercana</td><td class="num">22,74 m</td></tr>
-  <tr><td>6</td><td>Pendiente de un camino con 15 m de desnivel en 100 m</td>
-      <td>«Respecto al terreno» cuando el ángulo se mide respecto a la horizontal</td><td class="num">8,53°</td></tr>
-  <tr><td>7</td><td>Dos mojones vistos desde A con 50° entre las visuales</td>
-      <td>No dice si el ángulo está en A o en cada mojón</td><td class="num">45,98 m</td></tr>
-  <tr><td>8</td><td>Dron a 120 m con depresión de 55°</td>
-      <td>No aclara qué es la altura y qué la distancia horizontal</td><td class="num">84,03 m</td></tr>
-  <tr><td>9</td><td>Sombra de 36 m con el sol a 37°</td>
-      <td>No dice desde dónde se mide la elevación del sol</td><td class="num">27,13 m</td></tr>
-  <tr><td>10</td><td>Torre a 30 m de distancia, ángulo de 68° con la vertical</td>
-      <td>La referencia del ángulo es la vertical en lugar de la horizontal</td><td class="num">12,12 m</td></tr>
+  <tr><td>1</td><td>Era rectangular con el lado mayor de 65 m y la diagonal a 41°</td>
+      <td>No distingue si los 65 m son el lado o la diagonal</td><td class="num">56,50 m</td></tr>
+  <tr><td>2</td><td>Anchura de una acequia tras desplazarse 18 m por la orilla</td>
+      <td>No dice si el desplazamiento acerca o aleja</td><td class="num">31,05 m</td></tr>
+  <tr><td>3</td><td>Depósito visto desde dos puntos a 42 m</td>
+      <td>Da los ángulos en orden inverso, del lejano al cercano</td><td class="num">39,43 m</td></tr>
+  <tr><td>4</td><td>Chimenea observada antes y después de acercarse 24 m</td>
+      <td>No dice si los 24 m son la separación o la distancia al pie</td><td class="num">32,80 m</td></tr>
+  <tr><td>5</td><td>Torre de incendios desde dos posiciones a 36 m</td>
+      <td>No aclara cuál de los dos ángulos es el de la posición cercana</td><td class="num">44,15 m</td></tr>
+  <tr><td>6</td><td>Pendiente de un cortafuegos con 18 m de desnivel en 240 m</td>
+      <td>«Respecto al terreno» cuando el ángulo se mide respecto a la horizontal</td><td class="num">4,29°</td></tr>
+  <tr><td>7</td><td>Dos vértices vistos desde una estación con 64° entre las visuales</td>
+      <td>No dice si el ángulo está en la estación o en cada vértice</td><td class="num">67,14 m</td></tr>
+  <tr><td>8</td><td>Dron a 95 m con depresión de 62°</td>
+      <td>No aclara qué es la altura y qué la distancia horizontal</td><td class="num">50,51 m</td></tr>
+  <tr><td>9</td><td>Sombra de 28 m con el sol a 41°</td>
+      <td>No dice desde dónde se mide la elevación del sol</td><td class="num">24,34 m</td></tr>
+  <tr><td>10</td><td>Torre de vigilancia a 46 m de distancia, cenital de 68°</td>
+      <td>La referencia del ángulo es la vertical en lugar de la horizontal</td><td class="num">18,59 m</td></tr>
 </table>
 
 <h2>Las tres preguntas que hay que hacerse antes de calcular</h2>
@@ -1006,16 +976,16 @@ ahorran el ejercicio entero.</p>
 <ol>
   <li><p><strong>¿Qué es cada número?</strong> Un dato puede ser una distancia horizontal, una distancia medida sobre
   el terreno, una altura o una separación entre dos estaciones. La diferencia entre las tres primeras es pequeña en
-  una ladera suave y enorme en una pendiente fuerte. En el caso de la pendiente, 100 m sobre el terreno y 100 m en
-  horizontal dan 8,63° y 8,53°: poco, pero en el caso 3 la diferencia entre tomar los 50 m como separación o como
-  distancia al molino es de 44,84 m frente a 25,48 m.</p></li>
+  una ladera suave y enorme en una pendiente fuerte. En el caso de la pendiente, 240 m sobre el terreno y 240 m en
+  horizontal no dan el mismo ángulo, y en el caso 3 la diferencia entre tomar los 42 m como separación o como
+  distancia al depósito es de 39,43 m frente a 27,27 m.</p></li>
   <li><p><strong>¿Desde dónde se mide el ángulo?</strong> Desde la horizontal del observador, desde la vertical o
   desde el suelo en la base del objeto. Un ángulo de 68° desde la vertical son 22° desde el suelo, y con esa confusión
-  la torre pasa de 12,12 m a 74,25 m. La pregunta se contesta buscando en el enunciado la palabra que nombra la
+  la torre pasa de 18,59 m a 113,85 m. La pregunta se contesta buscando en el enunciado la palabra que nombra la
   referencia: «elevación», «depresión», «con la vertical», «respecto a la horizontal».</p></li>
   <li><p><strong>¿Qué se pide exactamente?</strong> La altura de un edificio o la distancia a la que está. En el
-  método de dos posiciones aparece una distancia intermedia que en el caso 5 vale 62,48 m y que mucha gente entrega
-  como respuesta cuando la pregunta era la altura, que son 22,74 m. Antes de escribir el resultado, vuelve a leer la
+  método de dos posiciones aparece una distancia intermedia que en el caso 5 vale 90,52 m y que mucha gente entrega
+  como respuesta cuando la pregunta era la altura, que son 44,15 m. Antes de escribir el resultado, vuelve a leer la
   última línea del enunciado y comprueba que lo que has calculado es eso.</p></li>
 </ol>
 
@@ -1024,8 +994,8 @@ ahorran el ejercicio entero.</p>
 ángulo disminuye al desplazarte, te has alejado, y si aumenta, te has acercado. No hay excepciones, porque el ángulo
 solo depende de la distancia horizontal al objeto. Si los datos del enunciado describen un sentido imposible, la
 salida correcta no es forzar la cuenta: es escribir que el enunciado es contradictorio y resolver con el sentido que
-la geometría permite. En el caso del río, el ángulo baja de 60° a 45°, luego el desplazamiento aleja, y la fórmula se
-aplica con el ángulo mayor en la primera posición.</p>
+la geometría permite. En el caso de la acequia, el ángulo baja de 55° a 38°, luego el desplazamiento aleja, y la
+fórmula se aplica con el ángulo mayor en la primera posición.</p>
 </div>
 
 <h2>Antes de seguir</h2>
