@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Generador · Gonios a coordenadas</title>
+<style>
+:root{
+  --ink:#1b2530; --navy:#16324f; --navy2:#2c5a84; --line:#d3d9df; --bg:#f7f8f9;
+  --soft:#edf1f4; --ok:#1f6b3a; --bad:#8f2222; --warnc:#7a5a00;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:19px/1.62 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+.wrap{max-width:980px;margin:0 auto;padding:26px 26px 90px}
+header.top{border-bottom:2px solid var(--navy);padding-bottom:12px;margin-bottom:26px}
+.kicker{font-size:13.5px;letter-spacing:.14em;text-transform:uppercase;color:#5b6875;font-weight:600}
+h1{font-size:31px;line-height:1.22;margin:.22em 0 .28em;color:var(--navy);font-weight:660;letter-spacing:-.01em}
+.sub{font-size:19px;color:#3c4a58;margin:0}
+h2{font-size:22.5px;margin:2.1em 0 .45em;color:var(--navy);font-weight:650;
+   border-left:4px solid var(--navy);padding-left:11px;line-height:1.3}
+h2:first-of-type{margin-top:1.2em}
+h3{font-size:19.5px;margin:1.5em 0 .3em;font-weight:650;color:#22303d}
+h4{font-size:17px;margin:1.2em 0 .3em;font-weight:650;color:#22303d}
+p{margin:.62em 0}
+.lead{font-size:20px;color:#2c3a48}
+ul,ol{padding-left:1.4em;margin:.55em 0}
+li{margin:.3em 0}
+li>ul,li>ol{margin:.3em 0}
+a{color:var(--navy2)}
+strong{font-weight:660}
+.num{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.formula{
+  font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:17px;line-height:1.7;
+  background:var(--soft);border-left:3px solid var(--navy);padding:11px 15px;margin:1em 0;
+  overflow-x:auto;white-space:pre-wrap;
+}
+.formula em{font-style:normal;color:var(--navy);font-weight:600}
+.demo{background:#fff;border:1px solid var(--line);padding:16px 16px 18px;margin:1.3em 0}
+.demo .tat{font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:#5b6875;
+  font-weight:650;margin:0 0 12px}
+.ctrl{display:grid;grid-template-columns:165px 1fr 135px;gap:12px;align-items:center;margin:.55em 0}
+.ctrl label{font-size:17px}
+.ctrl .val{text-align:right;font-family:ui-monospace,monospace;font-size:18px;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:#16324f;height:22px}
+input[type=number],input[type=text],select{
+  font:inherit;font-size:18px;padding:6px 9px;border:1px solid #b7c0c9;background:#fff;
+  color:var(--ink);border-radius:0;width:100%
+}
+input:focus,select:focus,button:focus{outline:2px solid var(--navy2);outline-offset:1px}
+input.ok{border-color:var(--ok);background:#f1f7f3}
+input.bad{border-color:var(--bad);background:#fdf3f3}
+button{
+  font:inherit;font-size:16px;padding:7px 15px;border:1px solid var(--navy);border-radius:0;
+  background:var(--navy);color:#fff;cursor:pointer
+}
+button:hover{background:#1d4368}
+button.ghost{background:#fff;color:var(--navy)}
+button.ghost:hover{background:var(--soft)}
+.botones{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:9px;margin:12px 0 0}
+.readout div{background:var(--soft);padding:8px 11px}
+.readout b{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  color:#5b6875;font-weight:650;margin-bottom:2px}
+.readout span{font-family:ui-monospace,monospace;font-size:18px;font-variant-numeric:tabular-nums}
+.note{background:#fbfaf4;border-left:3px solid #b08a2e;padding:11px 15px;margin:1.1em 0}
+.warn{background:#fcf4f4;border-left:3px solid var(--bad);padding:11px 15px;margin:1.1em 0}
+.good{background:#f1f7f3;border-left:3px solid var(--ok);padding:11px 15px;margin:1.1em 0}
+.feedback{margin-top:11px;font-size:17.5px;line-height:1.55}
+.feedback.good::before{content:"";}
+.fb-good{color:var(--ok)}
+.fb-bad{color:var(--bad)}
+.fb-neutral{color:#3c4a58}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:17px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--soft);font-weight:650;font-size:16px}
+td.num,th.num{font-family:ui-monospace,monospace;font-variant-numeric:tabular-nums}
+nav.strip{display:flex;gap:15px;align-items:center;flex-wrap:wrap;font-size:15.5px;
+  border-bottom:1px solid var(--line);padding:0 0 10px;margin:-4px 0 24px;color:#5b6875}
+nav.strip a{color:var(--navy2);text-decoration:none;border-bottom:1px solid #c5d3e0}
+nav.strip a:hover{border-bottom-color:var(--navy2)}
+nav.strip .act{color:#5b6875;font-weight:650}
+nav.strip .sep{color:#ccd4db}
+nav.pager{display:flex;justify-content:space-between;gap:14px;margin-top:54px;padding-top:16px;
+  border-top:1px solid var(--line);font-size:16px}
+nav.pager a{color:var(--navy);text-decoration:none;border-bottom:1px solid #a9bdd0;padding-bottom:1px}
+nav.pager a:hover{border-bottom-color:var(--navy)}
+nav.pager .sp{flex:1}
+svg{display:block;max-width:100%;height:auto;font-family:ui-monospace,monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.tiny{font-size:15.5px;color:#5b6875;line-height:1.5}
+.pasos{counter-reset:p;list-style:none;padding-left:0}
+.pasos>li{counter-increment:p;position:relative;padding-left:42px;margin:.85em 0}
+.pasos>li::before{
+  content:counter(p);position:absolute;left:0;top:.05em;width:28px;height:28px;border:1.5px solid var(--navy);
+  color:var(--navy);font-size:15px;font-weight:700;text-align:center;line-height:25px;
+  font-family:ui-monospace,monospace
+}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin:1.2em 0}
+.card{background:#fff;border:1px solid var(--line);padding:14px 16px;display:block;
+  text-decoration:none;color:var(--ink)}
+.card:hover{border-color:var(--navy);background:#fbfcfd}
+.card .n{font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:#5b6875;font-weight:650}
+.card .t{font-size:19px;color:var(--navy);font-weight:650;margin:.15em 0 .25em;line-height:1.28;min-height:2.56em}
+.card .d{font-size:16px;color:#46545f;line-height:1.45}
+.tag{display:inline-block;font-size:13px;border:1px solid var(--line);background:var(--soft);
+  padding:1px 7px;margin:4px 4px 0 0;color:#46545f}
+kbd{font-family:ui-monospace,monospace;font-size:15px;border:1px solid #b7c0c9;border-bottom-width:2px;
+  padding:1px 5px;background:#fff}
+.checkline{display:flex;gap:10px;align-items:baseline;margin:.4em 0}
+.checkline input[type=checkbox]{width:18px;height:18px;accent-color:#16324f;flex:none}
+@media (max-width:740px){
+  body{font-size:18px}
+  .wrap{padding:18px 16px 70px}
+  h1{font-size:26px} h2{font-size:20.5px}
+  .ctrl{grid-template-columns:110px 1fr 105px;gap:8px}
+  .grid2{grid-template-columns:1fr}
+}
+@media print{
+  body{background:#fff}
+  .demo{break-inside:avoid}
+  nav.pager{display:none}
+}
+</style>
+
+<script>
+/* ---------- utilidades comunes (idénticas en todas las páginas) ---------- */
+const $  = (s, r) => (r||document).querySelector(s);
+const $$ = (s, r) => Array.from((r||document).querySelectorAll(s));
+
+/* Lee un número escrito por el alumno: admite coma o punto decimal,
+   espacios, el símbolo de grado y el sufijo de gonios. */
+function leerNum(v){
+  if (typeof v === 'number') return v;
+  let s = String(v == null ? '' : v).trim();
+  s = s.replace(/\s+/g,'').replace(/[°º]/g,'').replace(/(rad|gon|g|m|s)$/i,'');
+  if (s === '') return NaN;
+  if (s.includes(',') && s.includes('.')) s = s.replace(/\./g,'').replace(',', '.');
+  else if (s.includes(',')) s = s.replace(',', '.');
+  return parseFloat(s);
+}
+/* Formato español: coma decimal, cifras fijas. */
+function fmt(x, d){
+  d = (d === undefined) ? 2 : d;
+  if (!isFinite(x)) return '—';
+  return x.toFixed(d).replace('.', ',');
+}
+/* Sexagesimal: {g,m,s} a partir de grados decimales */
+function aSexa(x){
+  let neg = x < 0; x = Math.abs(x);
+  let g = Math.floor(x + 1e-12);
+  let mm = (x - g) * 60;
+  let m = Math.floor(mm + 1e-9);
+  let s = (mm - m) * 60;
+  if (s >= 59.9995){ s = 0; m += 1; }
+  if (m >= 60){ m -= 60; g += 1; }
+  return {g:(neg?-g:g), m:m, s:s};
+}
+/* Centesimal: {g,m,s} */
+function aCentes(x){
+  let neg = x < 0; x = Math.abs(x);
+  let g = Math.floor(x + 1e-12);
+  let mm = (x - g) * 100;
+  let m = Math.floor(mm + 1e-9);
+  let s = (mm - m) * 100;
+  if (s >= 99.995){ s = 0; m += 1; }
+  if (m >= 100){ m -= 100; g += 1; }
+  return {g:(neg?-g:g), m:m, s:s};
+}
+function txtSexa(x, ds){
+  ds = (ds === undefined) ? 1 : ds;
+  const f = Math.pow(10, ds);
+  let total = Math.round(Math.abs(x) * 3600 * f);
+  const g = Math.floor(total / (3600 * f));
+  let rem = total - g * 3600 * f;
+  const m = Math.floor(rem / (60 * f));
+  rem = rem - m * 60 * f;
+  const si = String(Math.floor(rem / f)).padStart(2, '0');
+  const dec = ds > 0 ? ',' + String(rem % f).padStart(ds, '0') : '';
+  return (x < 0 ? '−' : '') + g + '° ' + String(m).padStart(2, '0') + '\u2032 ' + si + dec + '\u2033';
+}
+function txtCentes(x, ds){
+  ds = (ds === undefined) ? 1 : ds;
+  const f = Math.pow(10, ds);
+  let total = Math.round(Math.abs(x) * 10000 * f);
+  const g = Math.floor(total / (10000 * f));
+  let rem = total - g * 10000 * f;
+  const m = Math.floor(rem / (100 * f));
+  rem = rem - m * 100 * f;
+  const si = String(Math.floor(rem / f)).padStart(2, '0');
+  const dec = ds > 0 ? ',' + String(rem % f).padStart(ds, '0') : '';
+  return (x < 0 ? '−' : '') + g + 'g ' + String(m).padStart(2, '0') + 'm ' + si + dec + 's';
+}
+/* Retorno de estado en un campo: ok / mal */
+function marcar(el, estado){
+  el.classList.remove('ok','bad');
+  if (estado === 1) el.classList.add('ok');
+  else if (estado === 0) el.classList.add('bad');
+}
+function fb(el, tipo, texto){
+  el.className = 'feedback ' + (tipo === 1 ? 'fb-good' : tipo === 0 ? 'fb-bad' : 'fb-neutral');
+  el.innerHTML = texto;
+  return tipo;
+}
+/* Formatea un ángulo en radianes como múltiplo exacto de π si el denominador es pequeño */
+function aPi(x){
+  const r = x / Math.PI;
+  for (let q = 1; q <= 24; q++){
+    const p = r * q;
+    if (Math.abs(p - Math.round(p)) < 1e-9){
+      const n = Math.round(p);
+      if (q === 1) return (n === 1 ? 'π' : n + 'π');
+      if (n === 1) return 'π/' + q;
+      return n + 'π/' + q;
+    }
+  }
+  return null;
+}
+/* Sincroniza el relleno visual de los sliders (solo estética) */
+function refrescaSliders(root){
+  $$('input[type=range]', root || document).forEach(function(r){
+    const p = (r.value - r.min) / (r.max - r.min) * 100;
+    r.style.background = 'linear-gradient(90deg,#16324f ' + p + '%,#cfd7de ' + p + '%)';
+    r.style.height = '6px';
+    r.style.borderRadius = '0';
+    r.style.appearance = 'none';
+    r.style.webkitAppearance = 'none';
+  });
+}
+</script>
+<style>
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:16px;height:16px;background:#16324f;border:2px solid #fff;
+  box-shadow:0 0 0 1px #16324f;cursor:pointer
+}
+input[type=range]::-moz-range-thumb{
+  width:14px;height:14px;background:#16324f;border:2px solid #fff;box-shadow:0 0 0 1px #16324f;cursor:pointer
+}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<header class="top"><div class="kicker">Día 2 · Generador D</div><h1>Generador · Gonios a coordenadas</h1><p class="sub">Ángulo en gonios, distancia y de ahí a ΔX, ΔY y azimut</p></header><nav class="strip"><a href="index.html">Índice</a><span class="sep">·</span><span class="act">Generador D</span><span class="sep">·</span><a href="09_de_gonios_a_coordenadas.html">Lección 9 &rarr;</a></nav>
+<main>
+<p class="lead">La estación total no devuelve coordenadas: devuelve un azimut en gonios y una distancia. El trabajo de gabinete
+consiste en convertir cada visual en dos incrementos, ΔX y ΔY, que se suman a las coordenadas de la estación para
+obtener las del punto visado. Este generador fabrica ese cálculo con números nuevos en cada intento, en los dos
+sentidos: de gonios a coordenadas, y de coordenadas a distancia y azimut, que es lo que se hace el día que hay que
+replantear una estaquilla en el monte.</p>
+
+<p>En un inventario forestal o en el deslinde de una parcela, el plano se dibuja a partir de esas coordenadas: sin
+ellas no hay mapa, no hay forma de comprobar si dos puntos medidos en días distintos coinciden, y no hay manera de
+volver a encontrar un árbol marcado seis meses después. Todo lo que sigue son dos líneas de trigonometría y una
+disciplina de signos. Lo que se practica aquí no es aritmética nueva: es no equivocarse al elegir el cuadrante.</p>
+
+<h2>1. De la visual al triángulo</h2>
+<p>Cada punto visado desde la estación forma un triángulo rectángulo con la vertical del norte y la horizontal del
+este. La distancia <span class="num">D</span> es la hipotenusa; los dos catetos son los incrementos de coordenadas.
+El cateto que corre hacia el este se llama <span class="num">ΔX</span> y el que corre hacia el norte,
+<span class="num">ΔY</span>. El ángulo que separa la visual del norte —medido en sentido horario— es el azimut
+<span class="num">θ</span>.</p>
+
+<p>Con esa figura delante, el seno y el coseno no son un convenio arbitrario: el seno de un ángulo es el cateto
+opuesto partido por la hipotenusa, y el cateto opuesto al azimut es justamente el desplazamiento hacia el este. El
+coseno es el cateto contiguo, que es el desplazamiento hacia el norte. De ahí salen las dos fórmulas del módulo:</p>
+
+<div class="formula">ΔX = D · sen θ        (componente este)
+ΔY = D · cos θ        (componente norte)</div>
+
+<p>Y las coordenadas del punto visado se obtienen sumando a las de la estación, que es el dato de partida de toda
+la libreta:</p>
+
+<div class="formula">X(P) = X(E) + ΔX
+Y(P) = Y(E) + ΔY</div>
+
+<p>En topografía el eje de ordenadas es el norte y el de abscisas el este, al contrario de lo que suele hacerse en
+matemáticas. Ese detalle explica por qué el seno va con la X: el ángulo se mide desde el eje Y, así que el cateto
+opuesto cae sobre el eje X. Si en algún momento dudas del orden, dibuja el cuadrante y mira dónde cae el cateto.</p>
+
+<p>Los gonios entran en el cálculo solo por el valor del ángulo. La calculadora, en cambio, suele trabajar en
+grados o en radianes, de modo que hay que pasar el ángulo antes de llamar al seno. El factor es exacto y no tiene
+decimales que arrastrar: <span class="num">1 g = 0,9°</span>, y en el sentido contrario
+<span class="num">1° = 10/9 g</span>. Para radianes, la vuelta completa son <span class="num">400 g</span> y
+<span class="num">2π rad</span>, luego un gonio vale <span class="num">π/200 rad</span>.</p>
+
+<h2>2. Los signos los decide el cuadrante</h2>
+<p>Aquí está el ochenta por ciento de los errores. La calculadora devuelve el signo correcto si se le da el ángulo
+completo, pero si se trabaja con el rumbo —el ángulo agudo medido desde el eje más próximo— hay que poner el signo a
+mano. La regla es sencilla: el azimut se cuenta desde el norte hacia el este, así que los dos primeros cuadrantes
+tienen componente este positiva y los dos últimos la tienen negativa. El cambio ocurre exactamente al pasar de
+<span class="num">200 g</span>.</p>
+
+<table>
+  <tr><th style="width:26%">Azimut θ</th><th style="width:18%">Cuadrante</th><th style="width:14%">ΔX (este)</th>
+      <th style="width:14%">ΔY (norte)</th><th>Dónde está el punto</th></tr>
+  <tr><td class="num">0 – 100 g</td><td>NE</td><td class="num">+</td><td class="num">+</td>
+      <td>Al nordeste de la estación</td></tr>
+  <tr><td class="num">100 – 200 g</td><td>SE</td><td class="num">+</td><td class="num">−</td>
+      <td>Al sudeste</td></tr>
+  <tr><td class="num">200 – 300 g</td><td>SO</td><td class="num">−</td><td class="num">−</td>
+      <td>Al sudoeste</td></tr>
+  <tr><td class="num">300 – 400 g</td><td>NO</td><td class="num">−</td><td class="num">+</td>
+      <td>Al noroeste</td></tr>
+</table>
+
+<p>Fíjate en la columna de ΔX: es positiva en los dos primeros cuadrantes y negativa en los dos últimos. El seno
+del azimut hace exactamente eso, porque es positivo entre <span class="num">0 g</span> y
+<span class="num">200 g</span> y negativo entre <span class="num">200 g</span> y
+<span class="num">400 g</span>. El coseno, en cambio, es positivo cerca del norte (por debajo de
+<span class="num">100 g</span> y por encima de <span class="num">300 g</span>) y negativo cuando el punto queda al
+sur. Por eso un azimut de <span class="num">250 g</span> da los dos incrementos negativos y uno de
+<span class="num">350 g</span> da ΔX negativo y ΔY positivo.</p>
+
+<h2>3. Demostración: gira la visual</h2>
+<p>Mueve el azimut y verás cómo la visual recorre el plano cuadrado con el norte arriba, mientras los dos
+incrementos cambian de valor y, en <span class="num">200 g</span> y en <span class="num">300 g</span>, de signo. El
+rótulo del cuadrante activo se oscurece para que veas en cuál estás. Cambia también la distancia: los incrementos
+crecen en proporción, pero el cuadrante no se mueve.</p>
+
+<div class="demo">
+<p class="tat">Demostración 1 · La visual y sus dos componentes</p>
+<div class="ctrl">
+  <label for="az">Azimut θ</label>
+  <input id="az" type="range" min="5" max="395" step="1" value="137">
+  <span class="val" id="azV">137 g</span>
+</div>
+<div class="ctrl">
+  <label for="di">Distancia D</label>
+  <input id="di" type="range" min="20" max="300" step="1" value="85">
+  <span class="val" id="diV">85 m</span>
+</div>
+<svg id="cro1" viewBox="0 0 540 450" width="540" height="450" role="img"
+     aria-label="Plano cuadrado con el norte arriba, la estación en el centro y la visual en su cuadrante"></svg>
+<div class="readout">
+  <div><b>ΔX = D · sen θ</b><span id="oDX">—</span></div>
+  <div><b>ΔY = D · cos θ</b><span id="oDY">—</span></div>
+  <div><b>Cuadrante</b><span id="oCua">—</span></div>
+  <div><b>θ en sexagesimal</b><span id="oSex">—</span></div>
+</div>
+<p class="tiny">El cuadrado es el plano; el punto azul oscuro del centro es la estación, el rojo es el punto visado.
+Las líneas discontinuas son los dos catetos: la horizontal mide ΔX y la vertical mide ΔY.</p>
+</div>
+
+<h2>4. Un ejemplo completo, con los tres pasos</h2>
+<p>Desde la estación se visa la base de un pino con un azimut de <span class="num">137,52 g</span> y una distancia
+reducida de <span class="num">84,60 m</span>. Los tres pasos son siempre los mismos: convertir el ángulo, aplicar
+seno y coseno, y comprobar que la hipotenusa reconstruida coincide con la distancia medida.</p>
+
+<ol class="pasos">
+  <li><p><strong>Pasar los gonios a grados</strong>, porque la calculadora va a pedir el ángulo en grados o en
+  radianes:</p>
+  <div class="formula">137,52 g × 0,9 = 123,768°
+(en radianes: 137,52 × π/200 = 2,16016 rad)</div></li>
+
+  <li><p><strong>Aplicar seno y coseno</strong> al ángulo ya convertido. La calculadora debe estar en el modo
+  correcto: si está en grados, se le da 123,768; si está en radianes, 2,16016. Mezclar los dos es el error más
+  frecuente.</p>
+  <div class="formula">ΔX = 84,60 × sen 123,768° = 84,60 × 0,83130 = +70,33 m
+ΔY = 84,60 × cos 123,768° = 84,60 × (−0,55583) = −47,02 m</div></li>
+
+  <li><p><strong>Comprobar con Pitágoras.</strong> Los dos catetos tienen que devolver la distancia de partida; si
+  no la devuelven, el error está en el ángulo, no en el redondeo.</p>
+  <div class="formula">√(70,33² + 47,02²) = √(4946,31 + 2210,88) = √7157,19 = 84,60 m  ✓</div></li>
+</ol>
+
+<p>El resultado tiene sentido: el azimut está entre <span class="num">100 g</span> y <span class="num">200 g</span>,
+en el cuadrante sudeste, así que el punto cae al este y al sur de la estación. ΔX positivo y ΔY negativo, como
+debía ser. Las coordenadas del pino, si la estación estaba en <span class="num">X = 1000,00</span> e
+<span class="num">Y = 1000,00</span>, son <span class="num">X = 1070,33</span> e
+<span class="num">Y = 952,98</span>.</p>
+
+<p class="tiny">Un aviso sobre el redondeo: los 70,33 m y los 47,02 m están redondeados a dos decimales. Si se
+encadenan muchas visuales conviene arrastrar tres o cuatro decimales en la libreta y redondear solo al pasarlos al
+plano, porque los errores de redondeo se suman cuando se encadenan puntos.</p>
+
+<h2>5. La operación inversa: replantear</h2>
+<p>El camino contrario se usa cada vez que hay que volver al campo con el plano hecho. Se conocen las coordenadas
+de la estación y las del punto que hay que marcar con una estaca; la estación total pide un azimut y una distancia,
+no unas coordenadas. Hay que despejarlos de las mismas dos fórmulas, y esta vez con la raíz y el arco tangente.</p>
+
+<div class="formula">D = √(ΔX² + ΔY²)
+
+θ = arco cuya tangente es ΔX / ΔY, con el cuadrante que marquen los signos de los dos</div>
+
+<p>El arco tangente de una calculadora devuelve siempre un ángulo entre <span class="num">−90°</span> y
+<span class="num">+90°</span>, es decir, un rumbo, nunca un azimut completo. Por eso ese paso no se puede delegar en
+la máquina: hay que mirar los signos de ΔX y de ΔY, decidir el cuadrante y componer el azimut a mano.</p>
+
+<ol class="pasos">
+  <li><p><strong>Distancia</strong>, con Pitágoras sobre los dos incrementos:</p>
+  <div class="formula">D = √(142,30² + 96,75²) = √(20249,29 + 9360,56) = √29609,85 = 172,08 m</div></li>
+
+  <li><p><strong>Rumbo</strong>, con el cociente en valor absoluto para que el arco tangente no dé negativo:</p>
+  <div class="formula">atan(142,30 / 96,75) = atan(1,47080) = 55,79°</div></li>
+
+  <li><p><strong>Componer el azimut.</strong> ΔX es positivo y ΔY negativo: cuadrante sudeste, donde el azimut se
+  obtiene restando el rumbo de 180°.</p>
+  <div class="formula">θ = 180° − 55,79° = 124,21°
+
+En gonios: 124,21° × 10/9 = 138,01 g</div></li>
+
+  <li><p><strong>Comprobar</strong> volviendo a los incrementos de partida con el azimut hallado:</p>
+  <div class="formula">172,08 × sen 124,21° = +142,30  ✓
+172,08 × cos 124,21° = −96,75   ✓</div></li>
+</ol>
+
+<p>Las cuatro composiciones posibles del azimut a partir del rumbo son estas, y conviene tenerlas escritas en la
+libreta: en el NE el azimut es el rumbo; en el SE es <span class="num">180° − rumbo</span>; en el SO es
+<span class="num">180° + rumbo</span>; en el NO es <span class="num">360° − rumbo</span>. Un alumno que se salta
+este paso obtiene un punto correcto en distancia y colocado en el cuadrante equivocado, que es peor que un error
+evidente porque parece razonable sobre el plano.</p>
+
+<h2>6. Practicar</h2>
+<p>El generador produce dos tipos de ejercicio. En el primero te da el azimut en gonios y la distancia, y pide los
+dos incrementos más el azimut pasado a grados. En el segundo te da los incrementos y pide la distancia y el azimut
+en gonios, que es el cálculo del replanteo. El croquis de la derecha se dibuja con los datos del ejercicio: úsalo
+para comprobar el cuadrante antes de escribir los signos.</p>
+
+<div class="demo" id="maquina">
+  <p class="tat">Ejercicio <span id="numE">1</span> &nbsp;·&nbsp; <span id="tipoE">—</span></p>
+  <div class="botones" id="modos" style="margin-bottom:6px">
+    <button class="ghost" data-m="1">Modo 1 · gonios y distancia → ΔX, ΔY</button>
+    <button class="ghost" data-m="2">Modo 2 · ΔX, ΔY → distancia y azimut</button>
+  </div>
+  <div id="enun" style="margin:16px 0 4px;font-size:19px;line-height:1.55"></div>
+  <div class="grid2">
+    <div>
+      <div id="campos" style="margin:6px 0 4px"></div>
+      <div class="botones">
+        <button id="bCheck">Comprobar</button>
+        <button id="bOtro" class="ghost">Otro ejercicio</button>
+      </div>
+      <div class="feedback" id="fbk"></div>
+    </div>
+    <div>
+      <svg id="cro2" viewBox="0 0 540 450" width="540" height="450" role="img"
+           aria-label="Croquis del ejercicio con la estación, la visual y los signos de cada cuadrante"></svg>
+      <p class="tiny">E es la estación y P el punto calculado. Los cuatro rótulos de las esquinas dan los signos de
+      ΔX y ΔY en cada cuadrante.</p>
+    </div>
+  </div>
+  <details id="soldet" style="margin-top:14px">
+    <summary style="cursor:pointer;font-size:16.5px;color:#16324f">Ver solución paso a paso</summary>
+    <div id="sol" style="margin-top:10px"></div>
+  </details>
+</div>
+
+<div class="readout" style="margin-top:-6px">
+  <div><b>Modo</b><span id="mMod">1</span></div>
+  <div><b>Aciertos</b><span id="mAci">0</span></div>
+  <div><b>Intentos</b><span id="mInt">0</span></div>
+  <div><b>Racha</b><span id="mRac">0</span></div>
+</div>
+
+<p class="tiny">Tolerancias de corrección: en los incrementos y en la distancia se admite un error de cinco
+centímetros; en el azimut, de dos décimas de grado o de dos décimas de gonio. Escrito con las cifras que se usan en
+el plano, dos decimales bastan: si tu resultado difiere en más, el fallo está en el método y no en el redondeo.</p>
+
+<h2>7. Los errores que se repiten</h2>
+<ol>
+  <li><p><strong>La calculadora en el modo equivocado.</strong> Se pasa el ángulo a grados, se teclea 123,768 y la
+  máquina sigue en radianes: el seno sale <span class="num">0,94409</span> en lugar de
+  <span class="num">0,83130</span>. El resultado es creíble y está mal. Antes de cada tanda de cálculos, mira la
+  pantalla: tiene que poner <span class="num">DEG</span>, o <span class="num">RAD</span> si se ha pasado a
+  radianes, nunca <span class="num">GRAD</span> con un ángulo escrito en grados.</p></li>
+
+  <li><p><strong>Cambiar seno por coseno.</strong> Asignar el coseno a ΔX gira el punto noventa gonios alrededor de
+  la estación. Se detecta enseguida con la comprobación de Pitágoras, que sigue saliendo bien, pero el punto cae en
+  otro sitio. La comprobación de la hipotenusa no detecta este error: solo lo detecta mirar el cuadrante en el
+  croquis.</p></li>
+
+  <li><p><strong>Perder el signo.</strong> Anotar los dos incrementos en positivo coloca el punto en el noreste de
+  la estación siempre, y además crea un punto simétrico del verdadero respecto de los dos ejes. Es el fallo más
+  caro en un levantamiento de varios días, porque el plano parece coherente y los puntos se duplican.</p></li>
+
+  <li><p><strong>Confundir azimut con rumbo.</strong> El rumbo nunca pasa de <span class="num">100 g</span> y se
+  mide desde el eje más próximo, no desde el norte. Una libreta que trae <span class="num">62 g</span> puede ser un
+  azimut del primer cuadrante o un rumbo del cuarto, y solo lo dice el croquis. Si el dato no lleva cuadrante y el
+  valor es menor que <span class="num">100 g</span>, pregunta antes de calcular.</p></li>
+
+  <li><p><strong>Olvidar sumar las coordenadas de la estación.</strong> ΔX y ΔY son incrementos, no coordenadas. Un
+  punto con ΔX = 70,33 m no está en <span class="num">X = 70,33</span>: está en la X de la estación más
+  70,33 m.</p></li>
+</ol>
+
+<div class="note">
+<p><strong>Comprobación de sentido, en tres segundos.</strong> Antes de escribir el resultado, mira el croquis: si
+el azimut está entre 100 g y 200 g, el punto cae al sudeste y ΔY tiene que ser negativo. Si los dos incrementos te
+salen del mismo signo en un azimut de <span class="num">250 g</span>, algo se ha torcido. Esta comprobación detecta
+los errores de signo y de cuadrante mejor que cualquier repaso de las cuentas.</p>
+</div>
+
+<p>Con esto queda cerrado el eslabón entre la libreta de campo y el plano. La lección
+<a href="09_de_gonios_a_coordenadas.html">De gonios a coordenadas</a> desarrolla el mismo cálculo con la deducción
+completa, la tabla de cuadrantes y los ejemplos de la ficha; conviene tenerla abierta al lado mientras se hacen los
+primeros ejercicios de este generador. Y cuando tres seguidos salgan a la primera y con los signos correctos, el
+paso siguiente es encadenar varias visuales desde la misma estación y dibujar el polígono completo.</p>
+
+<script>
+(function(){
+  const NS = 'http://www.w3.org/2000/svg';
+  const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  const RAD_G = Math.PI / 200;      /* un gonio en radianes */
+  const K_GON = 0.9;                /* un gonio en grados sexagesimales */
+
+  /* número para pantalla: coma decimal y signo menos tipográfico */
+  function num(x, d){
+    d = (d === undefined) ? 2 : d;
+    return fmt(x, d).replace('-', '\u2212');
+  }
+  function conSigno(x, d){
+    d = (d === undefined) ? 2 : d;
+    return (x < 0 ? '\u2212' : '+') + fmt(Math.abs(x), d);
+  }
+  /* cuadrante a partir del azimut en gonios */
+  function cuadrante(g){
+    g = ((g % 400) + 400) % 400;
+    if (g < 100) return {n:'NE', sx:'+', sy:'+', ran:'0 a 100 g'};
+    if (g < 200) return {n:'SE', sx:'+', sy:'\u2212', ran:'100 a 200 g'};
+    if (g < 300) return {n:'SO', sx:'\u2212', sy:'\u2212', ran:'200 a 300 g'};
+    return {n:'NO', sx:'\u2212', sy:'+', ran:'300 a 400 g'};
+  }
+
+  /* ---------- croquis ---------- */
+  function limpia(svg){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function mk(svg, tag, attrs, txt){
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (txt !== undefined) e.textContent = txt;
+    svg.appendChild(e);
+    return e;
+  }
+
+  function croquis(svg, dx, dy, D, gon, op){
+    op = op || {};
+    limpia(svg);
+    const cx = 270, cy = 220, H = 150;
+    const x0 = cx - H, y0 = cy - H, x1 = cx + H, y1 = cy + H;
+    const rad = gon * RAD_G;
+    const r = Math.min(112, 48 + D / 300 * 62);
+    const px = cx + r * Math.sin(rad), py = cy - r * Math.cos(rad);
+    const act = cuadrante(gon).n;
+
+    mk(svg, 'rect', {x:x0, y:y0, width:2*H, height:2*H, fill:'#fbfcfd', stroke:'#8d99a4', 'stroke-width':1.5});
+    mk(svg, 'line', {x1:x0+6, y1:cy, x2:x1-6, y2:cy, stroke:'#cfd7de', 'stroke-width':1, 'stroke-dasharray':'5 4'});
+    mk(svg, 'line', {x1:cx, y1:y0+6, x2:cx, y2:y1-6, stroke:'#cfd7de', 'stroke-width':1, 'stroke-dasharray':'5 4'});
+
+    /* signos de cada cuadrante */
+    [['NE', x1-12, y0+24, 'end',   'ΔX +   ΔY +'],
+     ['NO', x0+12, y0+24, 'start', 'ΔX \u2212   ΔY +'],
+     ['SE', x1-12, y1-14, 'end',   'ΔX +   ΔY \u2212'],
+     ['SO', x0+12, y1-14, 'start', 'ΔX \u2212   ΔY \u2212']].forEach(function(t){
+      mk(svg, 'text', {x:t[1], y:t[2], 'text-anchor':t[3], 'font-size':12.5,
+                       fill:(t[0] === act ? '#16324f' : '#93a0ab'),
+                       'font-weight':(t[0] === act ? '600' : '400')}, t[4]);
+    });
+
+    /* norte y los cuatro puntos cardinales */
+    mk(svg, 'line', {x1:cx, y1:y0-8, x2:cx, y2:y0-32, stroke:'#16324f', 'stroke-width':1.5});
+    mk(svg, 'polygon', {points:(cx-5)+','+(y0-28)+' '+cx+','+(y0-42)+' '+(cx+5)+','+(y0-28), fill:'#16324f'});
+    mk(svg, 'text', {x:cx+10, y:y0-28, 'font-size':14, fill:'#16324f', 'font-weight':'600'}, 'N');
+    mk(svg, 'text', {x:cx, y:y1+24, 'text-anchor':'middle', 'font-size':13, fill:'#5b6875'}, 'S');
+    mk(svg, 'text', {x:x1+14, y:cy+5, 'font-size':13, fill:'#5b6875'}, 'E');
+    mk(svg, 'text', {x:x0-14, y:cy+5, 'text-anchor':'end', 'font-size':13, fill:'#5b6875'}, 'O');
+
+    /* arco del azimut */
+    if (gon > 4 && gon < 396){
+      const R = 46;
+      const ex = cx + R * Math.sin(rad), ey = cy - R * Math.cos(rad);
+      mk(svg, 'path', {d:'M ' + cx + ' ' + (cy - R) + ' A ' + R + ' ' + R + ' 0 ' +
+                         (gon > 200 ? 1 : 0) + ' 1 ' + ex + ' ' + ey,
+                       fill:'none', stroke:'#1f6b3a', 'stroke-width':1.6});
+      if (op.aLabel){
+        const hm = rad / 2, R2 = R + 19;
+        mk(svg, 'text', {x:cx + R2 * Math.sin(hm), y:cy - R2 * Math.cos(hm) + 4,
+                         'text-anchor':'middle', 'font-size':12.5, fill:'#1f6b3a'}, fmt(gon, 2) + ' g');
+      }
+    }
+
+    /* catetos */
+    mk(svg, 'line', {x1:cx, y1:cy, x2:px, y2:cy, stroke:'#2c5a84', 'stroke-width':1, 'stroke-dasharray':'4 3'});
+    mk(svg, 'line', {x1:px, y1:cy, x2:px, y2:py, stroke:'#2c5a84', 'stroke-width':1, 'stroke-dasharray':'4 3'});
+
+    /* visual y puntos */
+    mk(svg, 'line', {x1:cx, y1:cy, x2:px, y2:py, stroke:'#16324f', 'stroke-width':2});
+    mk(svg, 'circle', {cx:cx, cy:cy, r:4.5, fill:'#16324f'});
+    mk(svg, 'circle', {cx:px, cy:py, r:5, fill:'#8f2222'});
+    mk(svg, 'text', {x:cx - 9, y:cy + 19, 'text-anchor':'end', 'font-size':12.5, fill:'#16324f'}, 'E');
+    const ux = Math.sin(rad), uy = -Math.cos(rad);
+    mk(svg, 'text', {x:px + ux * 17, y:py + uy * 17 + 5,
+                     'text-anchor':(ux > 0.2 ? 'start' : (ux < -0.2 ? 'end' : 'middle')),
+                     'font-size':13, fill:'#8f2222'}, 'P');
+
+    /* etiquetas de los catetos */
+    if (Math.abs(px - cx) > 30)
+      mk(svg, 'text', {x:(cx + px) / 2, y:cy + (dy < 0 ? 16 : -8), 'text-anchor':'middle',
+                       'font-size':12.5, fill:'#2c5a84'}, 'ΔX');
+    if (Math.abs(py - cy) > 30)
+      mk(svg, 'text', {x:px + (dx < 0 ? -8 : 8), y:(cy + py) / 2 + 4,
+                       'text-anchor':(dx < 0 ? 'end' : 'start'), 'font-size':12.5, fill:'#2c5a84'}, 'ΔY');
+
+    /* cota de la distancia, solo cuando no es la incógnita */
+    if (op.dLabel){
+      const nx = -uy, ny = ux;
+      mk(svg, 'text', {x:(cx + px) / 2 + nx * 16, y:(cy + py) / 2 + ny * 16 + 4, 'text-anchor':'middle',
+                       'font-size':12.5, fill:'#16324f'}, 'D = ' + fmt(D, 2) + ' m');
+    }
+  }
+
+  /* ---------- demostración ---------- */
+  function demo(){
+    const gon = parseFloat($('#az').value);
+    const D = parseFloat($('#di').value);
+    $('#azV').textContent = fmt(gon, 0) + ' g';
+    $('#diV').textContent = fmt(D, 0) + ' m';
+    const rad = gon * RAD_G;
+    const dx = D * Math.sin(rad), dy = D * Math.cos(rad);
+    const q = cuadrante(gon);
+    croquis($('#cro1'), dx, dy, D, gon, {dLabel:true, aLabel:true});
+    $('#oDX').textContent = conSigno(dx, 1) + ' m';
+    $('#oDY').textContent = conSigno(dy, 1) + ' m';
+    $('#oCua').textContent = q.n + '  (ΔX ' + q.sx + ', ΔY ' + q.sy + ')';
+    $('#oSex').textContent = fmt(gon * K_GON, 2) + '°';
+  }
+  ['az', 'di'].forEach(function(id){ $('#' + id).addEventListener('input', demo); });
+  demo();
+
+  /* ---------- generador de ejercicios ---------- */
+  let modo = 1, nEjer = 0, aciertos = 0, intentos = 0, racha = 0, actual = null;
+
+  /* azimut centesimal con dos decimales, lejos de los cardinales */
+  function gonAleatorio(){
+    let g;
+    do {
+      g = rnd(8, 392) + rnd(0, 99) / 100;
+    } while (Math.min(Math.abs(Math.sin(g * RAD_G)), Math.abs(Math.cos(g * RAD_G))) < 0.16);
+    return g;
+  }
+
+  const TIPOS = {
+    directa: function(){
+      const gon = gonAleatorio();
+      const D = rnd(200, 3000) / 10;
+      const rad = gon * RAD_G;
+      const deg = gon * K_GON;
+      const dx = D * Math.sin(rad), dy = D * Math.cos(rad);
+      const dxr = Math.round(dx * 100) / 100, dyr = Math.round(dy * 100) / 100;
+      const hip = Math.sqrt(dxr * dxr + dyr * dyr);
+      const q = cuadrante(gon);
+      return {
+        titulo: 'Gonios y distancia → incrementos',
+        enun: 'Estacionas en el punto <strong>E</strong>, dentro del rodal, y visáis la base de un pino. La ' +
+              'estación total da una distancia reducida de <span class="num">' + fmt(D, 1) + ' m</span> y un ' +
+              'azimut de <span class="num">' + fmt(gon, 2) + ' g</span>. Calcula los incrementos ΔX y ΔY ' +
+              '(con su signo) y pasa el azimut a grados sexagesimales.',
+        campos: [
+          {et:'ΔX', suf:'m', tol:0.05, val:dx},
+          {et:'ΔY', suf:'m', tol:0.05, val:dy},
+          {et:'Azimut', suf:'°', tol:0.2, val:deg}
+        ],
+        cro: {dx:dx, dy:dy, D:D, gon:gon, dLabel:true, aLabel:true},
+        pista: 'Comprueba tres cosas: que la calculadora esté en grados si has pasado los gonios con el factor ' +
+               '0,9, que el seno vaya con ΔX y el coseno con ΔY, y que los signos sean los del cuadrante ' + q.n +
+               ' (ΔX ' + q.sx + ', ΔY ' + q.sy + ').',
+        sol: '<div class="formula">1)  Gonios a grados decimales\n' +
+             '    ' + fmt(gon, 2) + ' g × 0,9 = ' + fmt(deg, 3) + '°\n' +
+             '    (en radianes: ' + fmt(gon, 2) + ' × π/200 = ' + fmt(rad, 5) + ' rad)\n' +
+             '\n' +
+             '2)  Componentes\n' +
+             '    ΔX = D · sen θ = ' + fmt(D, 2) + ' × sen ' + fmt(deg, 3) + '°\n' +
+             '       = ' + fmt(D, 2) + ' × ' + num(Math.sin(rad), 5) + ' = ' + conSigno(dxr, 2) + ' m\n' +
+             '\n' +
+             '    ΔY = D · cos θ = ' + fmt(D, 2) + ' × cos ' + fmt(deg, 3) + '°\n' +
+             '       = ' + fmt(D, 2) + ' × ' + num(Math.cos(rad), 5) + ' = ' + conSigno(dyr, 2) + ' m\n' +
+             '\n' +
+             '3)  Comprobación: √(ΔX² + ΔY²) tiene que dar D\n' +
+             '    √(' + fmt(Math.abs(dxr), 2) + '² + ' + fmt(Math.abs(dyr), 2) + '²)\n' +
+             '    = √(' + fmt(dxr * dxr, 2) + ' + ' + fmt(dyr * dyr, 2) + ')\n' +
+             '    = √' + fmt(dxr * dxr + dyr * dyr, 2) + ' = ' + fmt(hip, 3) + ' m  ✓  (coincide con D = ' +
+             fmt(D, 2) + ' m)\n' +
+             '       La diferencia de milímetros es del redondeo a centímetros.</div>' +
+             '<p>El azimut ' + fmt(gon, 2) + ' g está en el intervalo ' + q.ran + ': cuadrante ' + q.n + ', con ' +
+             'ΔX ' + q.sx + ' y ΔY ' + q.sy + '. En sexagesimal, ' + fmt(deg, 3) + '° = ' + txtSexa(deg, 1) +
+             '. Si la estación estuviera en X = 1000,00 e Y = 1000,00, el pino caería en X = ' +
+             fmt(1000 + dxr, 2) + ' e Y = ' + fmt(1000 + dyr, 2) + '.</p>'
+      };
+    },
+
+    inversa: function(){
+      let dx, dy, D;
+      do {
+        dx = rnd(-2800, 2800) / 10;
+        dy = rnd(-2800, 2800) / 10;
+        D = Math.sqrt(dx * dx + dy * dy);
+      } while (D < 20 || D > 300 || Math.min(Math.abs(dx), Math.abs(dy)) < 0.16 * D);
+
+      let th = Math.atan2(dx, dy);
+      if (th < 0) th += 2 * Math.PI;
+      const deg = th * 180 / Math.PI;
+      const gon = deg * 10 / 9;
+      const rumbo = Math.atan(Math.abs(dx) / Math.abs(dy)) * 180 / Math.PI;
+      const q = cuadrante(gon);
+      const regla = q.n === 'NE' ? 'θ = rumbo = ' + fmt(rumbo, 2) + '°'
+                  : q.n === 'SE' ? 'θ = 180° \u2212 ' + fmt(rumbo, 2) + '° = ' + fmt(deg, 2) + '°'
+                  : q.n === 'SO' ? 'θ = 180° + ' + fmt(rumbo, 2) + '° = ' + fmt(deg, 2) + '°'
+                  : 'θ = 360° \u2212 ' + fmt(rumbo, 2) + '° = ' + fmt(deg, 2) + '°';
+
+      return {
+        titulo: 'Incrementos → distancia y azimut',
+        enun: 'Vas a replantear la esquina de una parcela. Tienes la estación en <strong>E</strong> y los ' +
+              'incrementos hasta la esquina: <span class="num">ΔX = ' + conSigno(dx, 2) + ' m</span> y ' +
+              '<span class="num">ΔY = ' + conSigno(dy, 2) + ' m</span>. Calcula la distancia y el azimut ' +
+              '(en gonios) que hay que marcar en la estación total.',
+        campos: [
+          {et:'Distancia', suf:'m', tol:0.05, val:D},
+          {et:'Azimut', suf:'g', tol:0.2, val:gon}
+        ],
+        cro: {dx:dx, dy:dy, D:D, gon:gon, dLabel:false, aLabel:false},
+        pista: 'Por un lado la distancia es la raíz de la suma de los cuadrados. Por otro, el arco tangente ' +
+               'del cociente solo da el rumbo: los signos ΔX ' + q.sx + ' y ΔY ' + q.sy + ' lo colocan en el ' +
+               'cuadrante ' + q.n + ', y el azimut hay que componerlo desde ahí.',
+        sol: '<div class="formula">1)  Distancia por Pitágoras\n' +
+             '    D = √(ΔX² + ΔY²)\n' +
+             '      = √(' + fmt(Math.abs(dx), 2) + '² + ' + fmt(Math.abs(dy), 2) + '²)\n' +
+             '      = √(' + fmt(dx * dx, 2) + ' + ' + fmt(dy * dy, 2) + ')\n' +
+             '      = √' + fmt(dx * dx + dy * dy, 2) + ' = ' + fmt(D, 2) + ' m\n' +
+             '\n' +
+             '2)  Rumbo con el cociente en valor absoluto\n' +
+             '    atan(' + fmt(Math.abs(dx), 2) + ' / ' + fmt(Math.abs(dy), 2) + ') = atan(' +
+             fmt(Math.abs(dx / dy), 5) + ') = ' + fmt(rumbo, 2) + '°\n' +
+             '\n' +
+             '3)  Azimut según el cuadrante ' + q.n + '\n' +
+             '    ' + regla + '\n' +
+             '    en gonios: ' + fmt(deg, 2) + '° × 10/9 = ' + fmt(gon, 2) + ' g\n' +
+             '\n' +
+             '4)  Comprobación: vuelta a los incrementos\n' +
+             '    ' + fmt(D, 2) + ' × sen ' + fmt(deg, 2) + '° = ' + conSigno(dx, 2) + '  ✓\n' +
+             '    ' + fmt(D, 2) + ' × cos ' + fmt(deg, 2) + '° = ' + conSigno(dy, 2) + '  ✓</div>' +
+             '<p>ΔX es ' + (dx < 0 ? 'negativo' : 'positivo') + ' y ΔY es ' + (dy < 0 ? 'negativo' : 'positivo') +
+             ', luego el punto está al ' + q.n + ' de la estación. El azimut en sexagesimal, ' + fmt(deg, 2) +
+             '°, equivale a ' + txtSexa(deg, 1) + ', y a ' + fmt(gon, 2) + ' g, que es lo que se teclea en la ' +
+             'estación total.</p>'
+      };
+    }
+  };
+
+  const POR_MODO = {1:['directa'], 2:['inversa']};
+
+  function nuevo(){
+    const tipo = pick(POR_MODO[modo]);
+    actual = TIPOS[tipo]();
+    nEjer++;
+    $('#numE').textContent = nEjer;
+    $('#tipoE').textContent = actual.titulo;
+    $('#enun').innerHTML = actual.enun;
+    $('#fbk').className = 'feedback';
+    $('#fbk').innerHTML = '';
+    $('#soldet').open = false;
+    croquis($('#cro2'), actual.cro.dx, actual.cro.dy, actual.cro.D, actual.cro.gon,
+            {dLabel:actual.cro.dLabel, aLabel:actual.cro.aLabel});
+
+    const cont = $('#campos');
+    cont.innerHTML = '';
+    actual.campos.forEach(function(c, i){
+      const fila = document.createElement('div');
+      fila.style.cssText = 'display:flex;gap:10px;align-items:center;margin:8px 0;flex-wrap:wrap';
+      const lab = document.createElement('span');
+      lab.textContent = c.et;
+      lab.style.cssText = 'min-width:88px;font-size:17px;color:#3c4a58';
+      const inp = document.createElement('input');
+      inp.type = 'text';
+      inp.inputMode = 'decimal';
+      inp.id = 'c' + i;
+      inp.style.width = '140px';
+      inp.addEventListener('keydown', function(e){ if (e.key === 'Enter') comprobar(); });
+      const suf = document.createElement('span');
+      suf.className = 'num';
+      suf.textContent = c.suf;
+      suf.style.cssText = 'font-size:18px;color:#3c4a58';
+      fila.appendChild(lab); fila.appendChild(inp); fila.appendChild(suf);
+      cont.appendChild(fila);
+    });
+    $('#sol').innerHTML = actual.sol;
+    const primero = $('#c0');
+    if (primero) primero.focus();
+  }
+
+  function comprobar(){
+    intentos++;
+    let todoBien = true, vacio = false, fallos = [];
+    actual.campos.forEach(function(c, i){
+      const inp = $('#c' + i);
+      const v = leerNum(inp.value);
+      if (inp.value.trim() === '') vacio = true;
+      const bien = isFinite(v) && Math.abs(v - c.val) <= c.tol;
+      marcar(inp, bien ? 1 : 0);
+      if (!bien){ todoBien = false; fallos.push(c.et); }
+    });
+    if (vacio){
+      fb($('#fbk'), null, 'Falta algún campo por rellenar. Aquí hay que dar todos los valores: ' +
+         actual.campos.map(function(c){ return c.et; }).join(', ') + '.');
+      return;
+    }
+    if (todoBien){
+      aciertos++; racha++;
+      fb($('#fbk'), 1, 'Correcto. ' + (racha >= 3 ? 'Tres seguidas: cambia de modo o sube la distancia.'
+                                                 : 'Sigue así.') +
+         ' Comprueba que el signo coincide con el cuadrante del croquis.');
+    } else {
+      racha = 0;
+      fb($('#fbk'), 0, 'Todavía no. Revisa ' + (fallos.length === 1 ? fallos[0]
+        : fallos.slice(0, -1).join(', ') + ' y ' + fallos[fallos.length - 1]) + '. ' + actual.pista);
+    }
+    $('#mAci').textContent = aciertos;
+    $('#mInt').textContent = intentos;
+    $('#mRac').textContent = racha;
+  }
+
+  $$('#modos button').forEach(function(b){
+    b.addEventListener('click', function(){
+      modo = parseInt(b.dataset.m, 10);
+      $('#mMod').textContent = modo;
+      $$('#modos button').forEach(function(o){ o.classList.add('ghost'); });
+      b.classList.remove('ghost');
+      nuevo();
+    });
+  });
+  $('#bCheck').addEventListener('click', comprobar);
+  $('#bOtro').addEventListener('click', nuevo);
+
+  /* gancho de depuración: permite leer el ejercicio desde fuera sin mostrarlo */
+  window.__topoDebug = function(){
+    return {titulo: $('#tipoE').textContent, enunciado: $('#enun').textContent,
+            modo: modo,
+            respuestas: actual.campos.map(function(c){ return c.val; }),
+            tolerancias: actual.campos.map(function(c){ return c.tol; }),
+            datos: actual.cro};
+  };
+  nuevo();
+})();
+</script>
+</main>
+<nav class="pager"><a href="gen_07_enunciados.html">&larr; Generador · Interpretar el enunciado</a><span class="sp"></span><a href="index.html">Índice</a><span class="sp"></span><a href="index.html">Volver al índice &rarr;</a></nav>
+</div>
+<script>refrescaSliders();</script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prácticas · material de refuerzo</title>
+<style>
+:root{
+  --ink:#1b2530; --navy:#16324f; --navy2:#2c5a84; --line:#d3d9df; --bg:#f7f8f9; --soft:#edf1f4;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:19px/1.62 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+.wrap{max-width:980px;margin:0 auto;padding:26px 26px 90px}
+header.top{border-bottom:2px solid var(--navy);padding-bottom:12px;margin-bottom:26px}
+.kicker{font-size:13.5px;letter-spacing:.14em;text-transform:uppercase;color:#5b6875;font-weight:600}
+h1{font-size:31px;line-height:1.22;margin:.22em 0 .28em;color:var(--navy);font-weight:660;letter-spacing:-.01em}
+.sub{font-size:19px;color:#3c4a58;margin:0}
+h2{font-size:22.5px;margin:2.1em 0 .45em;color:var(--navy);font-weight:650;
+   border-left:4px solid var(--navy);padding-left:11px;line-height:1.3}
+p{margin:.62em 0}
+.lead{font-size:20px;color:#2c3a48}
+a{color:var(--navy2)}
+.tiny{font-size:15.5px;color:#5b6875;line-height:1.5}
+.pr{background:#fff;border:1px solid var(--line);padding:18px 20px 20px;margin:1.2em 0}
+.pr .n{font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:#5b6875;font-weight:650}
+.pr .t{font-size:21px;color:var(--navy);font-weight:650;margin:.15em 0 .3em;line-height:1.3}
+.pr .d{font-size:17px;color:#46545f;margin:0 0 .2em}
+.tag{display:inline-block;font-size:13px;border:1px solid var(--line);background:var(--soft);
+  padding:1px 7px;margin:6px 4px 0 0;color:#46545f}
+.acciones{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.btn{
+  display:inline-block;font-size:16.5px;font-weight:600;text-decoration:none;
+  padding:9px 17px;border:1px solid var(--navy);background:var(--navy);color:#fff;
+}
+.btn:hover{background:#1d4368}
+.btn.ghost{background:#fff;color:var(--navy)}
+.btn.ghost:hover{background:var(--soft)}
+footer.fin{margin-top:44px;padding-top:16px;border-top:1px solid var(--line)}
+@media (max-width:740px){
+  body{font-size:18px}
+  .wrap{padding:18px 16px 70px}
+  h1{font-size:26px} h2{font-size:20.5px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <div class="kicker">Material del profesor</div>
+  <h1>Prácticas y refuerzo</h1>
+  <p class="sub">Ejercicios interactivos autocorregibles para acompañar las fichas de clase</p>
+</header>
+
+<main>
+<p class="lead">Cada bloque es una carpeta independiente que se abre en el navegador sin instalar nada,
+sin registrarse y sin conexión. Las respuestas se corrigen en el propio dispositivo: no se envía
+ningún dato a ninguna parte.</p>
+
+<h2>Disponible</h2>
+
+<div class="pr">
+  <div class="n">TOPOGRAFÍA AGRARIA · REFUERZO · DÍA 2</div>
+  <div class="t">Trigonometría aplicada al campo</div>
+  <p class="d">Cinco láminas y siete generadores de ejercicios: triángulo rectángulo, altura inaccesible
+  desde dos posiciones, ley del coseno, paso de gonios a coordenadas y control de redondeo.</p>
+  <span class="tag">CFGS Técnico Superior en Gestión Forestal</span>
+  <span class="tag">12 páginas</span>
+  <span class="tag">Funciona sin internet</span>
+  <div class="acciones">
+    <a class="btn" href="refuerzo_dia2/index.html">Abrir la práctica</a>
+    <a class="btn ghost" href="descargas/refuerzo_dia2.zip" download="refuerzo_dia2.zip">Descargar en .zip</a>
+  </div>
+</div>
+
+<h2>Cómo se usa</h2>
+<p>Se abre el bloque y se navega desde su índice. En los generadores, el botón «Otro ejercicio»
+cambia los números; se escribe el resultado en la casilla y se comprueba. Si no sale, el desplegable
+«Ver solución paso a paso» muestra el desarrollo completo con esos mismos números.</p>
+<p>El archivo <strong>.zip</strong> contiene la misma carpeta completa, con un <strong>LEEME.txt</strong> que
+explica el orden de trabajo. Se descarga al equipo y se abre con doble clic en <em>index.html</em>.</p>
+</main>
+
+<footer class="fin">
+  <p class="tiny">Este repositorio solo aloja material de práctica. No hay cuentas de alumnado, no se
+  registran resultados y las soluciones de los ejercicios van incluidas en las propias páginas: sirve
+  para entrenar, no para evaluar con nota.</p>
+</footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calculadora, redondeo y comprobación</title>
+<style>
+:root{
+  --ink:#1b2530; --navy:#16324f; --navy2:#2c5a84; --line:#d3d9df; --bg:#f7f8f9;
+  --soft:#edf1f4; --ok:#1f6b3a; --bad:#8f2222; --warnc:#7a5a00;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:19px/1.62 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+.wrap{max-width:980px;margin:0 auto;padding:26px 26px 90px}
+header.top{border-bottom:2px solid var(--navy);padding-bottom:12px;margin-bottom:26px}
+.kicker{font-size:13.5px;letter-spacing:.14em;text-transform:uppercase;color:#5b6875;font-weight:600}
+h1{font-size:31px;line-height:1.22;margin:.22em 0 .28em;color:var(--navy);font-weight:660;letter-spacing:-.01em}
+.sub{font-size:19px;color:#3c4a58;margin:0}
+h2{font-size:22.5px;margin:2.1em 0 .45em;color:var(--navy);font-weight:650;
+   border-left:4px solid var(--navy);padding-left:11px;line-height:1.3}
+h2:first-of-type{margin-top:1.2em}
+h3{font-size:19.5px;margin:1.5em 0 .3em;font-weight:650;color:#22303d}
+h4{font-size:17px;margin:1.2em 0 .3em;font-weight:650;color:#22303d}
+p{margin:.62em 0}
+.lead{font-size:20px;color:#2c3a48}
+ul,ol{padding-left:1.4em;margin:.55em 0}
+li{margin:.3em 0}
+li>ul,li>ol{margin:.3em 0}
+a{color:var(--navy2)}
+strong{font-weight:660}
+.num{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.formula{
+  font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:17px;line-height:1.7;
+  background:var(--soft);border-left:3px solid var(--navy);padding:11px 15px;margin:1em 0;
+  overflow-x:auto;white-space:pre-wrap;
+}
+.formula em{font-style:normal;color:var(--navy);font-weight:600}
+.demo{background:#fff;border:1px solid var(--line);padding:16px 16px 18px;margin:1.3em 0}
+.demo .tat{font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:#5b6875;
+  font-weight:650;margin:0 0 12px}
+.ctrl{display:grid;grid-template-columns:165px 1fr 135px;gap:12px;align-items:center;margin:.55em 0}
+.ctrl label{font-size:17px}
+.ctrl .val{text-align:right;font-family:ui-monospace,monospace;font-size:18px;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:#16324f;height:22px}
+input[type=number],input[type=text],select{
+  font:inherit;font-size:18px;padding:6px 9px;border:1px solid #b7c0c9;background:#fff;
+  color:var(--ink);border-radius:0;width:100%
+}
+input:focus,select:focus,button:focus{outline:2px solid var(--navy2);outline-offset:1px}
+input.ok{border-color:var(--ok);background:#f1f7f3}
+input.bad{border-color:var(--bad);background:#fdf3f3}
+button{
+  font:inherit;font-size:16px;padding:7px 15px;border:1px solid var(--navy);border-radius:0;
+  background:var(--navy);color:#fff;cursor:pointer
+}
+button:hover{background:#1d4368}
+button.ghost{background:#fff;color:var(--navy)}
+button.ghost:hover{background:var(--soft)}
+.botones{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:9px;margin:12px 0 0}
+.readout div{background:var(--soft);padding:8px 11px}
+.readout b{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  color:#5b6875;font-weight:650;margin-bottom:2px}
+.readout span{font-family:ui-monospace,monospace;font-size:18px;font-variant-numeric:tabular-nums}
+.note{background:#fbfaf4;border-left:3px solid #b08a2e;padding:11px 15px;margin:1.1em 0}
+.warn{background:#fcf4f4;border-left:3px solid var(--bad);padding:11px 15px;margin:1.1em 0}
+.good{background:#f1f7f3;border-left:3px solid var(--ok);padding:11px 15px;margin:1.1em 0}
+.feedback{margin-top:11px;font-size:17.5px;line-height:1.55}
+.feedback.good::before{content:"";}
+.fb-good{color:var(--ok)}
+.fb-bad{color:var(--bad)}
+.fb-neutral{color:#3c4a58}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:17px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--soft);font-weight:650;font-size:16px}
+td.num,th.num{font-family:ui-monospace,monospace;font-variant-numeric:tabular-nums}
+nav.strip{display:flex;gap:15px;align-items:center;flex-wrap:wrap;font-size:15.5px;
+  border-bottom:1px solid var(--line);padding:0 0 10px;margin:-4px 0 24px;color:#5b6875}
+nav.strip a{color:var(--navy2);text-decoration:none;border-bottom:1px solid #c5d3e0}
+nav.strip a:hover{border-bottom-color:var(--navy2)}
+nav.strip .act{color:#5b6875;font-weight:650}
+nav.strip .sep{color:#ccd4db}
+nav.pager{display:flex;justify-content:space-between;gap:14px;margin-top:54px;padding-top:16px;
+  border-top:1px solid var(--line);font-size:16px}
+nav.pager a{color:var(--navy);text-decoration:none;border-bottom:1px solid #a9bdd0;padding-bottom:1px}
+nav.pager a:hover{border-bottom-color:var(--navy)}
+nav.pager .sp{flex:1}
+svg{display:block;max-width:100%;height:auto;font-family:ui-monospace,monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.tiny{font-size:15.5px;color:#5b6875;line-height:1.5}
+.pasos{counter-reset:p;list-style:none;padding-left:0}
+.pasos>li{counter-increment:p;position:relative;padding-left:42px;margin:.85em 0}
+.pasos>li::before{
+  content:counter(p);position:absolute;left:0;top:.05em;width:28px;height:28px;border:1.5px solid var(--navy);
+  color:var(--navy);font-size:15px;font-weight:700;text-align:center;line-height:25px;
+  font-family:ui-monospace,monospace
+}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin:1.2em 0}
+.card{background:#fff;border:1px solid var(--line);padding:14px 16px;display:block;
+  text-decoration:none;color:var(--ink)}
+.card:hover{border-color:var(--navy);background:#fbfcfd}
+.card .n{font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:#5b6875;font-weight:650}
+.card .t{font-size:19px;color:var(--navy);font-weight:650;margin:.15em 0 .25em;line-height:1.28;min-height:2.56em}
+.card .d{font-size:16px;color:#46545f;line-height:1.45}
+.tag{display:inline-block;font-size:13px;border:1px solid var(--line);background:var(--soft);
+  padding:1px 7px;margin:4px 4px 0 0;color:#46545f}
+kbd{font-family:ui-monospace,monospace;font-size:15px;border:1px solid #b7c0c9;border-bottom-width:2px;
+  padding:1px 5px;background:#fff}
+.checkline{display:flex;gap:10px;align-items:baseline;margin:.4em 0}
+.checkline input[type=checkbox]{width:18px;height:18px;accent-color:#16324f;flex:none}
+@media (max-width:740px){
+  body{font-size:18px}
+  .wrap{padding:18px 16px 70px}
+  h1{font-size:26px} h2{font-size:20.5px}
+  .ctrl{grid-template-columns:110px 1fr 105px;gap:8px}
+  .grid2{grid-template-columns:1fr}
+}
+@media print{
+  body{background:#fff}
+  .demo{break-inside:avoid}
+  nav.pager{display:none}
+}
+</style>
+
+<script>
+/* ---------- utilidades comunes (idénticas en todas las páginas) ---------- */
+const $  = (s, r) => (r||document).querySelector(s);
+const $$ = (s, r) => Array.from((r||document).querySelectorAll(s));
+
+/* Lee un número escrito por el alumno: admite coma o punto decimal,
+   espacios, el símbolo de grado y el sufijo de gonios. */
+function leerNum(v){
+  if (typeof v === 'number') return v;
+  let s = String(v == null ? '' : v).trim();
+  s = s.replace(/\s+/g,'').replace(/[°º]/g,'').replace(/(rad|gon|g|m|s)$/i,'');
+  if (s === '') return NaN;
+  if (s.includes(',') && s.includes('.')) s = s.replace(/\./g,'').replace(',', '.');
+  else if (s.includes(',')) s = s.replace(',', '.');
+  return parseFloat(s);
+}
+/* Formato español: coma decimal, cifras fijas. */
+function fmt(x, d){
+  d = (d === undefined) ? 2 : d;
+  if (!isFinite(x)) return '—';
+  return x.toFixed(d).replace('.', ',');
+}
+/* Sexagesimal: {g,m,s} a partir de grados decimales */
+function aSexa(x){
+  let neg = x < 0; x = Math.abs(x);
+  let g = Math.floor(x + 1e-12);
+  let mm = (x - g) * 60;
+  let m = Math.floor(mm + 1e-9);
+  let s = (mm - m) * 60;
+  if (s >= 59.9995){ s = 0; m += 1; }
+  if (m >= 60){ m -= 60; g += 1; }
+  return {g:(neg?-g:g), m:m, s:s};
+}
+/* Centesimal: {g,m,s} */
+function aCentes(x){
+  let neg = x < 0; x = Math.abs(x);
+  let g = Math.floor(x + 1e-12);
+  let mm = (x - g) * 100;
+  let m = Math.floor(mm + 1e-9);
+  let s = (mm - m) * 100;
+  if (s >= 99.995){ s = 0; m += 1; }
+  if (m >= 100){ m -= 100; g += 1; }
+  return {g:(neg?-g:g), m:m, s:s};
+}
+function txtSexa(x, ds){
+  ds = (ds === undefined) ? 1 : ds;
+  const f = Math.pow(10, ds);
+  let total = Math.round(Math.abs(x) * 3600 * f);
+  const g = Math.floor(total / (3600 * f));
+  let rem = total - g * 3600 * f;
+  const m = Math.floor(rem / (60 * f));
+  rem = rem - m * 60 * f;
+  const si = String(Math.floor(rem / f)).padStart(2, '0');
+  const dec = ds > 0 ? ',' + String(rem % f).padStart(ds, '0') : '';
+  return (x < 0 ? '−' : '') + g + '° ' + String(m).padStart(2, '0') + '\u2032 ' + si + dec + '\u2033';
+}
+function txtCentes(x, ds){
+  ds = (ds === undefined) ? 1 : ds;
+  const f = Math.pow(10, ds);
+  let total = Math.round(Math.abs(x) * 10000 * f);
+  const g = Math.floor(total / (10000 * f));
+  let rem = total - g * 10000 * f;
+  const m = Math.floor(rem / (100 * f));
+  rem = rem - m * 100 * f;
+  const si = String(Math.floor(rem / f)).padStart(2, '0');
+  const dec = ds > 0 ? ',' + String(rem % f).padStart(ds, '0') : '';
+  return (x < 0 ? '−' : '') + g + 'g ' + String(m).padStart(2, '0') + 'm ' + si + dec + 's';
+}
+/* Retorno de estado en un campo: ok / mal */
+function marcar(el, estado){
+  el.classList.remove('ok','bad');
+  if (estado === 1) el.classList.add('ok');
+  else if (estado === 0) el.classList.add('bad');
+}
+function fb(el, tipo, texto){
+  el.className = 'feedback ' + (tipo === 1 ? 'fb-good' : tipo === 0 ? 'fb-bad' : 'fb-neutral');
+  el.innerHTML = texto;
+  return tipo;
+}
+/* Formatea un ángulo en radianes como múltiplo exacto de π si el denominador es pequeño */
+function aPi(x){
+  const r = x / Math.PI;
+  for (let q = 1; q <= 24; q++){
+    const p = r * q;
+    if (Math.abs(p - Math.round(p)) < 1e-9){
+      const n = Math.round(p);
+      if (q === 1) return (n === 1 ? 'π' : n + 'π');
+      if (n === 1) return 'π/' + q;
+      return n + 'π/' + q;
+    }
+  }
+  return null;
+}
+/* Sincroniza el relleno visual de los sliders (solo estética) */
+function refrescaSliders(root){
+  $$('input[type=range]', root || document).forEach(function(r){
+    const p = (r.value - r.min) / (r.max - r.min) * 100;
+    r.style.background = 'linear-gradient(90deg,#16324f ' + p + '%,#cfd7de ' + p + '%)';
+    r.style.height = '6px';
+    r.style.borderRadius = '0';
+    r.style.appearance = 'none';
+    r.style.webkitAppearance = 'none';
+  });
+}
+</script>
+<style>
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:16px;height:16px;background:#16324f;border:2px solid #fff;
+  box-shadow:0 0 0 1px #16324f;cursor:pointer
+}
+input[type=range]::-moz-range-thumb{
+  width:14px;height:14px;background:#16324f;border:2px solid #fff;box-shadow:0 0 0 1px #16324f;cursor:pointer
+}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<header class="top"><div class="kicker">Día 2 · Transversal</div><h1>Calculadora, redondeo y comprobación</h1><p class="sub">Los siete errores que hunden un ejercicio correcto y cómo detectarlos</p></header><nav class="strip"><a href="index.html">Índice</a><span class="sep">·</span><span class="act">Lección 10</span><span class="sep">·</span><a href="gen_06_conceptos.html">Generador C &rarr;</a></nav>
+<main>
+<p class="lead">Esta lámina no enseña topografía nueva: enseña a no estropear la que ya sabes. La mayoría de los ejercicios
+que se entregan mal no fallan por no entender el problema, sino por cuatro causas muy concretas que ocurren después
+de haberlo entendido: el modo de la calculadora, un paréntesis, un redondeo hecho demasiado pronto o una
+comprobación que no se hizo porque el resultado «parecía» bien. Todas se detectan en menos de un minuto.</p>
+
+<h2>1. El modo de la calculadora: DEG, RAD, GRAD</h2>
+<p>Las teclas trigonométricas reciben un número desnudo. Ese número no lleva unidad, así que la calculadora no puede
+adivinar qué significa: lo interpreta según el modo en que esté el aparato. Los tres modos son DEG (grados
+sexagesimales), RAD (radianes) y GRAD (grados centesimales, gonios). Puesto que el mismo número escrito «30»
+significa tres ángulos distintos según el modo, el mismo cálculo puede dar tres resultados distintos sin que cambie
+ni un dato de la libreta.</p>
+<p>La comprobación cuesta cinco segundos y se hace una vez al empezar cada sesión de cálculo: pulsa <kbd>sin</kbd>
+<kbd>3</kbd> <kbd>0</kbd> y mira qué sale.</p>
+<table>
+  <tr><th>Si sale…</th><th>El modo es…</th><th>Y significa que 30 es…</th></tr>
+  <tr><td class="num">0,5</td><td>DEG</td><td>30°, el modo que quieres para la ficha</td></tr>
+  <tr><td class="num">−0,988</td><td>RAD</td><td>30 radianes, casi cinco vueltas de circunferencia</td></tr>
+  <tr><td class="num">0,4540</td><td>GRAD</td><td>30 gonios, es decir 27°</td></tr>
+</table>
+<p>El caso de RAD es el más traicionero por el signo: 30 radianes son 30 − 4·2π = 4,867 rad, que cae en el cuarto
+cuadrante, y el seno sale negativo. Un cateto o una altura negativa en un problema de elevación no es un resultado
+extraño, es una señal de alarma. El caso de GRAD es más silencioso todavía: 0,4540 es un número perfectamente
+razonable, y solo se detecta sabiendo de antemano que sen 30° vale 0,5.</p>
+<div class="note">
+<p><strong>Por qué el resultado parece correcto aunque el modo esté mal.</strong> Las tres funciones trigonométricas
+devuelven valores en el mismo rango sea cual sea el modo. No hay ningún aviso, ningún error de sintaxis, ninguna
+pantalla en rojo: la calculadora hace lo que le piden y contesta con un decimal de cuatro cifras. La única defensa
+posible es conocer de antemano cuánto tiene que salir. Para eso sirve la comprobación con 30.</p>
+</div>
+
+<h2>2. Las funciones inversas y el botón SHIFT</h2>
+<p>Cuando lo que se conoce es el cociente y lo que se busca es el ángulo, se usan las funciones inversas: arcoseno,
+arcocoseno y arcotangente. En las calculadoras se llega a ellas con <kbd>SHIFT</kbd> o <kbd>2nd</kbd> antes de la
+tecla, y en la pantalla aparecen como <span class="num">sen⁻¹</span>, <span class="num">cos⁻¹</span> y
+<span class="num">tan⁻¹</span>. Esa notación es peligrosa: <span class="num">sen⁻¹</span> <em>no</em> es
+1/sen, es el ángulo cuyo seno vale lo que has escrito. La inversa de una razón trigonométrica no es la cosecante, y
+confundirlas produce resultados de otra escala por completo.</p>
+<p>Tres cosas que hay que tener presentes al usarlas:</p>
+<ol class="pasos">
+  <li><p><strong>Devuelven el resultado en el modo activo.</strong> Si el modo está en RAD, la arcotangente que
+  esperas en grados sale en radianes: 0,4636 en lugar de 26,57°. La comprobación del sen 30 vale también aquí, y hay
+  que hacerla antes de leer el resultado, no después.</p></li>
+  <li><p><strong>El arcoseno y el arcocoseno tienen dos soluciones.</strong> sen α = 0,5 se cumple con 30° y con
+  150°. La calculadora devuelve siempre la del primer o segundo cuadrante (entre −90° y 90° para el arcoseno). Si el
+  problema es un azimut, que puede ir de 0 a 400 g, hay que decidir el cuadrante con los datos del enunciado, no con
+  el número que da la máquina.</p></li>
+  <li><p><strong>La arcotangente de dos argumentos resuelve el cuadrante sola.</strong> Cuando el programa lo permite
+  —una hoja de cálculo con ATAN2, por ejemplo— se le pasan los dos incrementos por separado y devuelve el ángulo ya
+  colocado en su cuadrante. Es la única forma segura de recuperar un azimut a partir de ΔX y ΔY.</p></li>
+</ol>
+
+<h2>3. El paréntesis: la mitad de los resultados absurdos</h2>
+<p>La calculadora respeta la jerarquía de las operaciones y aplica primero las funciones, después las potencias,
+después los productos y al final las sumas. Eso significa que una expresión escrita de corrido puede estar
+calculando algo distinto de lo que parece:</p>
+<div class="formula">tan 30 + 5   =   (tan 30) + 5   =   0,5774 + 5   =   5,5774
+tan(30 + 5)  =   tan 35          =   0,7002</div>
+<p>Ocho veces mayor la una que la otra, con los mismos números en pantalla. En el primer caso el 5 se ha sumado al
+resultado de la tangente; en el segundo, al ángulo. Cuando el 5 es un ángulo —como ocurre al sumar una corrección o
+al componer dos giros— la forma correcta es la segunda, y para eso están los paréntesis: <strong>todo lo que va
+dentro de una función va entre paréntesis</strong>, aunque parezca obvio.</p>
+<p>El error tiene una variante muy frecuente en esta asignatura, la de la conversión de gonios. Al pasar el azimut a
+grados hay que multiplicar <em>el ángulo</em> por 0,9, no el seno:</p>
+<div class="formula">bien:   ΔX = 125,40 · sen(137,2 × 0,9) = 125,40 · sen 123,48° = 104,59 m
+mal:    ΔX = 125,40 · sen 137,2 · 0,9  = 125,40 · 0,6794 · 0,9  =  76,68 m</div>
+<p>Veintiocho metros de diferencia en un solo tramo, y el número malo no tiene ninguna pinta de estar mal. La regla
+que evita los dos casos es la misma: si dudas, pon paréntesis. No cuesta nada y no resta puntos.</p>
+
+<h2>4. Redondeo: dónde se redondea y dónde no</h2>
+<p>Redondear es necesario al final, porque un resultado con nueve decimales es una falsa promesa de precisión. Pero
+redondear <em>durante</em> el cálculo destruye información que luego no se recupera. La norma es simple: se opera con
+cuatro a seis decimales y se redondea una sola vez, al escribir el resultado.</p>
+<p>El daño depende de dónde se redondee. Redondear el seno a cuatro decimales mueve el resultado en milímetros; a
+tres, en centímetros; redondear el <em>ángulo</em> antes de operar lo mueve en decímetros:</p>
+<table>
+  <tr><th>Qué se redondea</th><th>Resultado de ΔX (D = 125,40 m, θ = 137,2 g)</th><th>Desviación</th></tr>
+  <tr><td>Nada (sen θ = 0,8340784)</td><td class="num">104,593 m</td><td class="num">—</td></tr>
+  <tr><td>sen θ a 4 decimales (0,8341)</td><td class="num">104,596 m</td><td class="num">3 mm</td></tr>
+  <tr><td>sen θ a 3 decimales (0,834)</td><td class="num">104,584 m</td><td class="num">1 cm</td></tr>
+  <tr><td>θ redondeado a 137 g</td><td class="num">104,810 m</td><td class="num">22 cm</td></tr>
+</table>
+<p>La última fila es la que hay que mirar dos veces. Quitar dos décimas de gonio parece inocente —0,2 g son 0,18°—
+y sin embargo desplaza el punto 22 cm en X y 33 cm en Y. En una poligonal de diez tramos, ese redondeo repetido
+puede meter medio metro de error antes de llegar al cierre, y entonces se culpa al instrumento.</p>
+<div class="warn">
+<p><strong>Lo que no se redondea nunca es el dato.</strong> Si la libreta dice 137,2 g y 125,40 m, esos son los
+números que entran en la fórmula. Convertir 125,40 en 125 «para que sea más cómodo» no es simplificar: es cambiar la
+medida. El redondeo se hace en el resultado, y como mucho se arrastra un decimal más de los que se van a presentar.</p>
+</div>
+
+<h2>5. Cifras significativas coherentes con los datos</h2>
+<p>Un resultado no puede ser más preciso que los datos de los que sale. En topografía esto tiene una traducción muy
+concreta, porque el error de un ángulo crece con la distancia a la que se aplica: una lectura de 0,1 g equivale a
+1,57 milésimas de radián, y multiplicada por 125 m son casi 20 cm de desplazamiento transversal.</p>
+<table>
+  <tr><th>Precisión de la lectura angular</th><th>Desplazamiento a 125 m</th><th>Decimales razonables en ΔX</th></tr>
+  <tr><td class="num">0,1 g</td><td class="num">0,20 m</td><td>decímetros</td></tr>
+  <tr><td class="num">0,01 g</td><td class="num">0,02 m</td><td>centímetros</td></tr>
+  <tr><td class="num">0,001 g</td><td class="num">0,002 m</td><td>milímetros</td></tr>
+</table>
+<p>De ahí una consecuencia que se ve en los exámenes: escribir «ΔX = 104,5934821 m» con un azimut leído a 0,1 g no
+es rigor, es ruido. Y al contrario, escribir «ΔX = 105 m» tira información que el instrumento sí tenía. La cifra
+correcta se elige mirando la precisión del dato más pobre, que casi siempre es el ángulo.</p>
+
+<h2>6. Comprobación de plausibilidad: la tabla de controles rápidos</h2>
+<p>Antes de entregar, cinco comprobaciones que no requieren volver a calcular nada. Ninguna demuestra que el
+resultado sea correcto, pero cada una detecta una familia entera de errores:</p>
+<table>
+  <tr><th>Control</th><th>Qué tiene que cumplirse</th><th>Qué detecta si falla</th></tr>
+  <tr><td>Ángulo de elevación</td><td>Entre −90° y +90° (0 a 100 g en valor absoluto); nunca más</td><td>Cenital usado como elevación, o suma de ángulos mal hecha</td></tr>
+  <tr><td>Ángulo menor de 45°</td><td>La distancia horizontal es <em>mayor</em> que la altura</td><td>Fórmula invertida: D y h cambiados de sitio</td></tr>
+  <tr><td>Seno y coseno</td><td>Siempre entre −1 y 1</td><td>Modo de la calculadora, o haber tecleado la tangente</td></tr>
+  <tr><td>Tamaño del resultado</td><td>Del orden de los datos: la altura de un poste no son 300 m</td><td>Error de unidad (metros por centímetros) o un paréntesis</td></tr>
+  <tr><td>Cierre de la poligonal</td><td>La suma de incrementos de la vuelta completa es casi cero</td><td>Un incremento cambiado de signo o un azimut mal referido</td></tr>
+</table>
+<p>La segunda fila merece un comentario, porque es la que más veces salva un ejercicio. Con 45° de elevación, la
+altura y la distancia horizontal son iguales (tan 45° = 1). Por debajo de 45°, el objeto está más lejos que alto; por
+encima, al contrario. Si un alumno calcula una altura de 60 m para un objeto que ve a 20° desde 15 m de distancia,
+la comprobación salta sola: a 20° el objeto tiene que estar mucho más lejos que alto, y 15 m de distancia no dan para
+60 m de altura.</p>
+
+<h2>7. Los tres errores que no son de cálculo</h2>
+<p>Hay tres fallos que no tienen nada que ver con la aritmética y que la calculadora no puede detectar, porque el
+resultado que devuelve es coherente con la operación que se le ha pedido:</p>
+<ol>
+  <li><p><strong>Mezclar gonios y grados.</strong> La libreta en gonios, la calculadora en DEG. Se desarrolla en la
+  lección 9, pero se resume aquí porque es el error más caro del módulo: cuatro quintas partes de los fallos de
+  gabinete en una obra real vienen de aquí. La conversión es ×0,9, y se escribe en el papel antes de encender la
+  máquina.</p></li>
+
+  <li><p><strong>Mezclar el ángulo cenital con el de elevación.</strong> El instrumento mide desde la vertical; las
+  fórmulas de las fichas usan la elevación desde el horizonte. Elevación = 100 g − cenital. Si el cenital es 62 g y
+  se usa como elevación, la altura sale casi el doble de lo que es, y con la misma pinta de resultado correcto.</p></li>
+
+  <li><p><strong>Redondear antes de la comprobación cruzada.</strong> La comprobación de que la distancia se recupera
+  con √(ΔX² + ΔY²) solo funciona si los incrementos no están redondeados. Si se redondean a un decimal y luego se
+  comprueba, el resultado da 125,3 o 125,5 y uno se pasa media hora buscando un error que ha creado él mismo con el
+  redondeo.</p></li>
+</ol>
+
+<h2>8. Demostración: ¿qué está mal en este cálculo?</h2>
+<p>Cuatro cálculos, cuatro errores distintos, todos reales. En cada uno tienes que identificar la causa, no rehacer la
+cuenta. Los números están elegidos para que el resultado erróneo resulte verosímil: si el error fuera evidente a
+simple vista, no haría falta esta lámina.</p>
+
+<div class="demo">
+<p class="tat">Demostración 1 · Diagnóstico de cuatro cálculos</p>
+<div id="casos"></div>
+<div class="readout" style="margin-top:16px">
+  <div><b>Aciertos</b><span id="ac">0</span></div>
+  <div><b>Fallos</b><span id="fa">0</span></div>
+  <div><b>Casos resueltos</b><span id="re">0 de 4</span></div>
+</div>
+</div>
+
+<script>
+(function(){
+  const OPCIONES = ['Modo de la calculadora', 'Paréntesis', 'Gonios tomados como grados', 'Redondeo intermedio'];
+
+  const CASOS = [
+    {
+      titulo: 'Caso 1 · El cateto que sale negativo',
+      plantilla: 'hipotenusa = 20,00 m      ángulo = 30°\ncateto opuesto = 20,00 · sen 30 = −19,76 m',
+      correcta: 0,
+      explica: 'La calculadora estaba en RAD. sen 30 radianes vale −0,9880, y de ahí el signo menos y el tamaño del ' +
+        'resultado. Con el modo en DEG, sen 30° = 0,5 y el cateto mide 10,00 m. Un seno negativo en un ángulo agudo ' +
+        'no es un resultado raro: es la firma del modo equivocado.'
+    },
+    {
+      titulo: 'Caso 2 · La conversión que se cuela dentro del seno',
+      plantilla: 'D = 125,40 m      θ = 137,2 g\nΔX = 125,40 · sen 137,2 · 0,9 = 125,40 · 0,6115 = 76,68 m',
+      correcta: 1,
+      explica: 'El 0,9 tiene que ir dentro del paréntesis, multiplicando al ángulo y no al seno. Lo correcto es sen(137,2 × 0,9) = sen 123,48° = ' +
+        '0,83408, y entonces ΔX = 104,59 m. Faltan 27,9 m, y el número erróneo no tiene ninguna pinta de estar mal: ' +
+        'es positivo, es del orden de la distancia y tiene decimales.'
+    },
+    {
+      titulo: 'Caso 3 · El azimut que parece correcto',
+      plantilla: 'D = 100,00 m      θ = 250,0 g\nΔX = 100 · sen 250° = −93,97 m      ΔY = 100 · cos 250° = −34,20 m',
+      correcta: 2,
+      explica: 'El ángulo está en gonios y se ha metido en modo DEG. 250 g son 225°, con seno y coseno de −0,70711, ' +
+        'así que lo correcto es ΔX = −70,71 m y ΔY = −70,71 m. El error pasó desapercibido porque el cuadrante era ' +
+        'el bueno —suroeste, los dos signos negativos— y solo falla el tamaño.'
+    },
+    {
+      titulo: 'Caso 4 · El azimut redondeado de más',
+      plantilla: 'θ = 137,2 g, redondeado a 137 g antes de operar\nΔX = 125,40 · sen 137 g = 104,81 m\nΔY = 125,40 · cos 137 g = −68,85 m',
+      correcta: 3,
+      explica: 'Con el azimut completo salen ΔX = 104,59 m y ΔY = −69,18 m. Las dos décimas de gonio que se han ' +
+        'tirado desplazan el punto 22 cm en X y 33 cm en Y. El ángulo se redondea al final, nunca antes de operar; ' +
+        'y si hay que arrastrar un redondeo, se arrastra en el resultado, no en el dato.'
+    }
+  ];
+
+  let aciertos = 0, fallos = 0, resueltos = 0;
+
+  function marcaTotal(){
+    $('#ac').textContent = aciertos;
+    $('#fa').textContent = fallos;
+    $('#re').textContent = resueltos + ' de 4';
+  }
+
+  CASOS.forEach(function(caso, iCaso){
+    const caja = document.createElement('div');
+    caja.style.marginBottom = '22px';
+
+    const h = document.createElement('h4');
+    h.textContent = caso.titulo;
+    h.style.marginBottom = '8px';
+    caja.appendChild(h);
+
+    const pre = document.createElement('div');
+    pre.className = 'formula';
+    pre.textContent = caso.plantilla;
+    caja.appendChild(pre);
+
+    const fila = document.createElement('div');
+    fila.className = 'botones';
+    caja.appendChild(fila);
+
+    const fb = document.createElement('div');
+    fb.className = 'feedback fb-neutral';
+    caja.appendChild(fb);
+
+    caso.opciones = [];
+    OPCIONES.forEach(function(texto, iOpc){
+      const b = document.createElement('button');
+      b.className = 'ghost';
+      b.textContent = texto;
+      b.addEventListener('click', function(){
+        if (caso.resuelto) return;
+        caso.resuelto = true;
+        resueltos++;
+        const acierto = (iOpc === caso.correcta);
+        if (acierto){ aciertos++; } else { fallos++; }
+        // pintar la elegida y la correcta
+        caso.opciones.forEach(function(btn, j){
+          btn.disabled = true;
+          if (j === caso.correcta){ btn.className = ''; }
+          else if (j === iOpc){ btn.className = 'ghost'; btn.style.borderColor = '#8f2222'; btn.style.color = '#8f2222'; }
+        });
+        fb.className = 'feedback ' + (acierto ? 'fb-good' : 'fb-bad');
+        fb.innerHTML = (acierto ? '<strong>Correcto.</strong> ' : '<strong>No es eso.</strong> ') + caso.explica;
+        marcaTotal();
+      });
+      fila.appendChild(b);
+      caso.opciones.push(b);
+    });
+
+    $('#casos').appendChild(caja);
+  });
+
+  marcaTotal();
+})();
+</script>
+
+<h2>9. Checklist antes de entregar</h2>
+<p>Ocho comprobaciones, en este orden, sobre el papel o sobre la pantalla. Ninguna lleva más de medio minuto, y entre
+todas cubren prácticamente todos los fallos que se cometen en la ficha.</p>
+<ol class="pasos">
+  <li><p><strong>Modo de la calculadora.</strong> sen 30 tiene que dar 0,5. Si da −0,988 o 0,4540, cambia el modo
+  antes de seguir.</p></li>
+  <li><p><strong>Todos los ángulos pasados a grados.</strong> Cada lectura en gonios de la libreta, multiplicada por
+  0,9 y anotada en el papel. No se deja ninguna conversión para la memoria.</p></li>
+  <li><p><strong>Cenitales convertidos.</strong> Elevación = 100 g − cenital, y el signo revisado: si el punto está
+  por debajo del horizonte, la elevación es negativa.</p></li>
+  <li><p><strong>Convenio de ejes.</strong> Seno en X, coseno en Y, norte en el eje Y. Contraste rápido: con azimut
+  0 g el desplazamiento tiene que ser todo en Y.</p></li>
+  <li><p><strong>Paréntesis cerrados.</strong> La conversión afecta al ángulo, no al seno. Toda función lleva su
+  argumento entre paréntesis.</p></li>
+  <li><p><strong>Decimales y redondeo.</strong> Cuatro a seis decimales durante el cálculo, redondeo una sola vez al
+  final, y cifras del resultado coherentes con la precisión del dato angular.</p></li>
+  <li><p><strong>Comprobación inversa.</strong> √(ΔX² + ΔY²) devuelve la distancia de partida, y el cuadrante de los
+  signos coincide con el azimut.</p></li>
+  <li><p><strong>Control de tamaño.</strong> El resultado es del orden de los datos: ni una altura de 300 m para un
+  poste, ni un ΔX mayor que la distancia medida.</p></li>
+</ol>
+<p>Si al llegar al punto 7 la comprobación no cuadra, no se retoca el resultado: se vuelve al punto 2. Nueve de cada
+diez veces el fallo está en un ángulo que no se convirtió o en un cenital tomado por elevación.</p>
+<p>Para practicar el diagnóstico, el <a href="gen_06_conceptos.html">generador C</a> plantea preguntas cortas sobre
+unidades, errores de calculadora y ángulos mal planteados; para practicar las cuentas completas con gonios está el
+<a href="gen_08_coordenadas.html">generador D</a>.</p>
+</main>
+<nav class="pager"><a href="09_de_gonios_a_coordenadas.html">&larr; De gonios a coordenadas</a><span class="sp"></span><a href="index.html">Índice</a><span class="sp"></span><a href="gen_02_triangulo_rectangulo.html">Generador · Triángulo rectángulo &rarr;</a></nav>
+</div>
+<script>refrescaSliders();</script>
+</body>
+</html>

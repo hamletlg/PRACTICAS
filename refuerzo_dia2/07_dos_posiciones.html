@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dos posiciones: la altura inaccesible</title>
+<style>
+:root{
+  --ink:#1b2530; --navy:#16324f; --navy2:#2c5a84; --line:#d3d9df; --bg:#f7f8f9;
+  --soft:#edf1f4; --ok:#1f6b3a; --bad:#8f2222; --warnc:#7a5a00;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:19px/1.62 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+.wrap{max-width:980px;margin:0 auto;padding:26px 26px 90px}
+header.top{border-bottom:2px solid var(--navy);padding-bottom:12px;margin-bottom:26px}
+.kicker{font-size:13.5px;letter-spacing:.14em;text-transform:uppercase;color:#5b6875;font-weight:600}
+h1{font-size:31px;line-height:1.22;margin:.22em 0 .28em;color:var(--navy);font-weight:660;letter-spacing:-.01em}
+.sub{font-size:19px;color:#3c4a58;margin:0}
+h2{font-size:22.5px;margin:2.1em 0 .45em;color:var(--navy);font-weight:650;
+   border-left:4px solid var(--navy);padding-left:11px;line-height:1.3}
+h2:first-of-type{margin-top:1.2em}
+h3{font-size:19.5px;margin:1.5em 0 .3em;font-weight:650;color:#22303d}
+h4{font-size:17px;margin:1.2em 0 .3em;font-weight:650;color:#22303d}
+p{margin:.62em 0}
+.lead{font-size:20px;color:#2c3a48}
+ul,ol{padding-left:1.4em;margin:.55em 0}
+li{margin:.3em 0}
+li>ul,li>ol{margin:.3em 0}
+a{color:var(--navy2)}
+strong{font-weight:660}
+.num{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.formula{
+  font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:17px;line-height:1.7;
+  background:var(--soft);border-left:3px solid var(--navy);padding:11px 15px;margin:1em 0;
+  overflow-x:auto;white-space:pre-wrap;
+}
+.formula em{font-style:normal;color:var(--navy);font-weight:600}
+.demo{background:#fff;border:1px solid var(--line);padding:16px 16px 18px;margin:1.3em 0}
+.demo .tat{font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:#5b6875;
+  font-weight:650;margin:0 0 12px}
+.ctrl{display:grid;grid-template-columns:165px 1fr 135px;gap:12px;align-items:center;margin:.55em 0}
+.ctrl label{font-size:17px}
+.ctrl .val{text-align:right;font-family:ui-monospace,monospace;font-size:18px;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:#16324f;height:22px}
+input[type=number],input[type=text],select{
+  font:inherit;font-size:18px;padding:6px 9px;border:1px solid #b7c0c9;background:#fff;
+  color:var(--ink);border-radius:0;width:100%
+}
+input:focus,select:focus,button:focus{outline:2px solid var(--navy2);outline-offset:1px}
+input.ok{border-color:var(--ok);background:#f1f7f3}
+input.bad{border-color:var(--bad);background:#fdf3f3}
+button{
+  font:inherit;font-size:16px;padding:7px 15px;border:1px solid var(--navy);border-radius:0;
+  background:var(--navy);color:#fff;cursor:pointer
+}
+button:hover{background:#1d4368}
+button.ghost{background:#fff;color:var(--navy)}
+button.ghost:hover{background:var(--soft)}
+.botones{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:9px;margin:12px 0 0}
+.readout div{background:var(--soft);padding:8px 11px}
+.readout b{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  color:#5b6875;font-weight:650;margin-bottom:2px}
+.readout span{font-family:ui-monospace,monospace;font-size:18px;font-variant-numeric:tabular-nums}
+.note{background:#fbfaf4;border-left:3px solid #b08a2e;padding:11px 15px;margin:1.1em 0}
+.warn{background:#fcf4f4;border-left:3px solid var(--bad);padding:11px 15px;margin:1.1em 0}
+.good{background:#f1f7f3;border-left:3px solid var(--ok);padding:11px 15px;margin:1.1em 0}
+.feedback{margin-top:11px;font-size:17.5px;line-height:1.55}
+.feedback.good::before{content:"";}
+.fb-good{color:var(--ok)}
+.fb-bad{color:var(--bad)}
+.fb-neutral{color:#3c4a58}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:17px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--soft);font-weight:650;font-size:16px}
+td.num,th.num{font-family:ui-monospace,monospace;font-variant-numeric:tabular-nums}
+nav.strip{display:flex;gap:15px;align-items:center;flex-wrap:wrap;font-size:15.5px;
+  border-bottom:1px solid var(--line);padding:0 0 10px;margin:-4px 0 24px;color:#5b6875}
+nav.strip a{color:var(--navy2);text-decoration:none;border-bottom:1px solid #c5d3e0}
+nav.strip a:hover{border-bottom-color:var(--navy2)}
+nav.strip .act{color:#5b6875;font-weight:650}
+nav.strip .sep{color:#ccd4db}
+nav.pager{display:flex;justify-content:space-between;gap:14px;margin-top:54px;padding-top:16px;
+  border-top:1px solid var(--line);font-size:16px}
+nav.pager a{color:var(--navy);text-decoration:none;border-bottom:1px solid #a9bdd0;padding-bottom:1px}
+nav.pager a:hover{border-bottom-color:var(--navy)}
+nav.pager .sp{flex:1}
+svg{display:block;max-width:100%;height:auto;font-family:ui-monospace,monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.tiny{font-size:15.5px;color:#5b6875;line-height:1.5}
+.pasos{counter-reset:p;list-style:none;padding-left:0}
+.pasos>li{counter-increment:p;position:relative;padding-left:42px;margin:.85em 0}
+.pasos>li::before{
+  content:counter(p);position:absolute;left:0;top:.05em;width:28px;height:28px;border:1.5px solid var(--navy);
+  color:var(--navy);font-size:15px;font-weight:700;text-align:center;line-height:25px;
+  font-family:ui-monospace,monospace
+}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin:1.2em 0}
+.card{background:#fff;border:1px solid var(--line);padding:14px 16px;display:block;
+  text-decoration:none;color:var(--ink)}
+.card:hover{border-color:var(--navy);background:#fbfcfd}
+.card .n{font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:#5b6875;font-weight:650}
+.card .t{font-size:19px;color:var(--navy);font-weight:650;margin:.15em 0 .25em;line-height:1.28;min-height:2.56em}
+.card .d{font-size:16px;color:#46545f;line-height:1.45}
+.tag{display:inline-block;font-size:13px;border:1px solid var(--line);background:var(--soft);
+  padding:1px 7px;margin:4px 4px 0 0;color:#46545f}
+kbd{font-family:ui-monospace,monospace;font-size:15px;border:1px solid #b7c0c9;border-bottom-width:2px;
+  padding:1px 5px;background:#fff}
+.checkline{display:flex;gap:10px;align-items:baseline;margin:.4em 0}
+.checkline input[type=checkbox]{width:18px;height:18px;accent-color:#16324f;flex:none}
+@media (max-width:740px){
+  body{font-size:18px}
+  .wrap{padding:18px 16px 70px}
+  h1{font-size:26px} h2{font-size:20.5px}
+  .ctrl{grid-template-columns:110px 1fr 105px;gap:8px}
+  .grid2{grid-template-columns:1fr}
+}
+@media print{
+  body{background:#fff}
+  .demo{break-inside:avoid}
+  nav.pager{display:none}
+}
+</style>
+
+<script>
+/* ---------- utilidades comunes (idénticas en todas las páginas) ---------- */
+const $  = (s, r) => (r||document).querySelector(s);
+const $$ = (s, r) => Array.from((r||document).querySelectorAll(s));
+
+/* Lee un número escrito por el alumno: admite coma o punto decimal,
+   espacios, el símbolo de grado y el sufijo de gonios. */
+function leerNum(v){
+  if (typeof v === 'number') return v;
+  let s = String(v == null ? '' : v).trim();
+  s = s.replace(/\s+/g,'').replace(/[°º]/g,'').replace(/(rad|gon|g|m|s)$/i,'');
+  if (s === '') return NaN;
+  if (s.includes(',') && s.includes('.')) s = s.replace(/\./g,'').replace(',', '.');
+  else if (s.includes(',')) s = s.replace(',', '.');
+  return parseFloat(s);
+}
+/* Formato español: coma decimal, cifras fijas. */
+function fmt(x, d){
+  d = (d === undefined) ? 2 : d;
+  if (!isFinite(x)) return '—';
+  return x.toFixed(d).replace('.', ',');
+}
+/* Sexagesimal: {g,m,s} a partir de grados decimales */
+function aSexa(x){
+  let neg = x < 0; x = Math.abs(x);
+  let g = Math.floor(x + 1e-12);
+  let mm = (x - g) * 60;
+  let m = Math.floor(mm + 1e-9);
+  let s = (mm - m) * 60;
+  if (s >= 59.9995){ s = 0; m += 1; }
+  if (m >= 60){ m -= 60; g += 1; }
+  return {g:(neg?-g:g), m:m, s:s};
+}
+/* Centesimal: {g,m,s} */
+function aCentes(x){
+  let neg = x < 0; x = Math.abs(x);
+  let g = Math.floor(x + 1e-12);
+  let mm = (x - g) * 100;
+  let m = Math.floor(mm + 1e-9);
+  let s = (mm - m) * 100;
+  if (s >= 99.995){ s = 0; m += 1; }
+  if (m >= 100){ m -= 100; g += 1; }
+  return {g:(neg?-g:g), m:m, s:s};
+}
+function txtSexa(x, ds){
+  ds = (ds === undefined) ? 1 : ds;
+  const f = Math.pow(10, ds);
+  let total = Math.round(Math.abs(x) * 3600 * f);
+  const g = Math.floor(total / (3600 * f));
+  let rem = total - g * 3600 * f;
+  const m = Math.floor(rem / (60 * f));
+  rem = rem - m * 60 * f;
+  const si = String(Math.floor(rem / f)).padStart(2, '0');
+  const dec = ds > 0 ? ',' + String(rem % f).padStart(ds, '0') : '';
+  return (x < 0 ? '−' : '') + g + '° ' + String(m).padStart(2, '0') + '\u2032 ' + si + dec + '\u2033';
+}
+function txtCentes(x, ds){
+  ds = (ds === undefined) ? 1 : ds;
+  const f = Math.pow(10, ds);
+  let total = Math.round(Math.abs(x) * 10000 * f);
+  const g = Math.floor(total / (10000 * f));
+  let rem = total - g * 10000 * f;
+  const m = Math.floor(rem / (100 * f));
+  rem = rem - m * 100 * f;
+  const si = String(Math.floor(rem / f)).padStart(2, '0');
+  const dec = ds > 0 ? ',' + String(rem % f).padStart(ds, '0') : '';
+  return (x < 0 ? '−' : '') + g + 'g ' + String(m).padStart(2, '0') + 'm ' + si + dec + 's';
+}
+/* Retorno de estado en un campo: ok / mal */
+function marcar(el, estado){
+  el.classList.remove('ok','bad');
+  if (estado === 1) el.classList.add('ok');
+  else if (estado === 0) el.classList.add('bad');
+}
+function fb(el, tipo, texto){
+  el.className = 'feedback ' + (tipo === 1 ? 'fb-good' : tipo === 0 ? 'fb-bad' : 'fb-neutral');
+  el.innerHTML = texto;
+  return tipo;
+}
+/* Formatea un ángulo en radianes como múltiplo exacto de π si el denominador es pequeño */
+function aPi(x){
+  const r = x / Math.PI;
+  for (let q = 1; q <= 24; q++){
+    const p = r * q;
+    if (Math.abs(p - Math.round(p)) < 1e-9){
+      const n = Math.round(p);
+      if (q === 1) return (n === 1 ? 'π' : n + 'π');
+      if (n === 1) return 'π/' + q;
+      return n + 'π/' + q;
+    }
+  }
+  return null;
+}
+/* Sincroniza el relleno visual de los sliders (solo estética) */
+function refrescaSliders(root){
+  $$('input[type=range]', root || document).forEach(function(r){
+    const p = (r.value - r.min) / (r.max - r.min) * 100;
+    r.style.background = 'linear-gradient(90deg,#16324f ' + p + '%,#cfd7de ' + p + '%)';
+    r.style.height = '6px';
+    r.style.borderRadius = '0';
+    r.style.appearance = 'none';
+    r.style.webkitAppearance = 'none';
+  });
+}
+</script>
+<style>
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:16px;height:16px;background:#16324f;border:2px solid #fff;
+  box-shadow:0 0 0 1px #16324f;cursor:pointer
+}
+input[type=range]::-moz-range-thumb{
+  width:14px;height:14px;background:#16324f;border:2px solid #fff;box-shadow:0 0 0 1px #16324f;cursor:pointer
+}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<header class="top"><div class="kicker">Día 2 · Peldaño 7 · Núcleo</div><h1>Dos posiciones: la altura inaccesible</h1><p class="sub">El método que comparten los problemas 5, 7 y 10, con la demostración de la fórmula</p></header><nav class="strip"><a href="index.html">Índice</a><span class="sep">·</span><span class="act">Lección 7</span><span class="sep">·</span><a href="gen_04_dos_posiciones.html">Generador B3 &rarr;</a></nav>
+<main>
+<p class="lead">Este es el peldaño que decide el módulo. Los problemas 5, 7 y 10 de la ficha —y una buena parte de los que
+vendrán después— son el mismo problema con otros números: hay que medir la altura de algo a lo que no se puede
+subir ni acercar lo suficiente. La técnica se llama <strong>método de las dos posiciones</strong>, y no es una fórmula
+que haya que memorizar: es un sistema de dos ecuaciones que se resuelve igual que cualquier otro.</p>
+
+<h2>1. Por qué no basta con una sola visual</h2>
+<p>Desde un punto se mide el ángulo con el que se ve lo alto de un poste: 25°. Con ese dato y nada más, ¿cuánto
+mide el poste? La respuesta honesta es <em>no se sabe</em>. Un poste bajo muy cerca y un poste alto muy lejos se ven
+exactamente con el mismo ángulo. La tangente relaciona la altura con la distancia, pero hay dos incógnitas y una
+sola ecuación:</p>
+<div class="formula">h = D · tan α        ← una ecuación, dos incógnitas (h y D)</div>
+<p>Falta un dato. Hay tres maneras de conseguirlo: medir la distancia al pie del objeto (imposible si está al otro
+lado de un barranco o de una alambrada), usar la sombra (solo si hay sol y el terreno es llano) o —la que nos ocupa—
+<strong>medir el ángulo desde dos puntos separados una distancia conocida</strong>. Esa última es la que funciona
+siempre, con sol o sin él, en pendiente y a distancia.</p>
+
+<h2>2. El dibujo, que es la mitad del problema</h2>
+<p>Se eligen dos puntos alineados con el objeto, uno más lejos y otro más cerca, separados por una distancia
+<span class="num">d</span> que se mide con cinta. Desde cada uno se visa la parte alta del objeto y se anota el ángulo
+de elevación. Llamaremos:</p>
+<ul>
+  <li><span class="num">α</span> (alfa) al ángulo medido en el punto <strong>lejano</strong> — el pequeño;</li>
+  <li><span class="num">β</span> (beta) al ángulo medido en el punto <strong>cercano</strong> — el grande;</li>
+  <li><span class="num">d</span> a la distancia entre los dos puntos de observación;</li>
+  <li><span class="num">D</span> a la distancia desde el punto lejano hasta el pie del objeto (no se mide: se calcula);</li>
+  <li><span class="num">h</span> a la altura que buscamos.</li>
+</ul>
+<p>Como el punto cercano está <span class="num">d</span> metros por delante del lejano, su distancia al pie del
+objeto es <span class="num">D − d</span>. Ahí está la clave de todo el método: <strong>el mismo objeto se ve desde
+dos distancias distintas y la diferencia entre esas distancias es un dato conocido</strong>. Esa diferencia es lo
+que rompe el bloqueo de la sección anterior.</p>
+
+<h2>3. La demostración, término a término</h2>
+<p>Vamos a deducir la fórmula sin saltarnos ningún paso, porque quien la entiende no la olvida y además sabe
+reconocer cuándo la ha aplicado al revés.</p>
+
+<ol class="pasos">
+  <li><p><strong>Triángulo del punto lejano.</strong> Desde el punto lejano hay un triángulo rectángulo con cateto
+  opuesto <span class="num">h</span> y contiguo <span class="num">D</span>:</p>
+  <div class="formula">h = D · tan α</div></li>
+
+  <li><p><strong>Triángulo del punto cercano.</strong> Desde el punto cercano el cateto contiguo ya no es
+  <span class="num">D</span>, sino <span class="num">D − d</span>:</p>
+  <div class="formula">h = (D − d) · tan β</div></li>
+
+  <li><p><strong>Igualar.</strong> La altura del objeto es la misma vista desde donde se mire: es una sola. Por tanto
+  los dos lados derechos valen lo mismo, y ahí muere la segunda incógnita:</p>
+  <div class="formula">D · tan α = (D − d) · tan β</div></li>
+
+  <li><p><strong>Desarrollar el paréntesis.</strong> Solo el segundo miembro:</p>
+  <div class="formula">D · tan α = D · tan β − d · tan β</div></li>
+
+  <li><p><strong>Reunir las D a la izquierda.</strong> Pasa el término <span class="num">D·tan β</span> restando:</p>
+  <div class="formula">D · tan α − D · tan β = − d · tan β</div>
+  <p>Y sacar factor común <span class="num">D</span>:</p>
+  <div class="formula">D · (tan α − tan β) = − d · tan β</div></li>
+
+  <li><p><strong>Cambiar los dos signos.</strong> Multiplicamos arriba y abajo por −1 para dejar el paréntesis en
+  positivo (queda más legible y evita el error de signo):</p>
+  <div class="formula">D · (tan β − tan α) = d · tan β</div></li>
+
+  <li><p><strong>Despejar D.</strong> Dividiendo por el paréntesis:</p>
+  <div class="formula">        d · tan β
+D = ─────────────────────
+        tan β − tan α</div></li>
+
+  <li><p><strong>Y la altura.</strong> Con <span class="num">D</span> ya conocido, basta volver al primer triángulo.
+  No hace falta ninguna fórmula nueva:</p>
+  <div class="formula">h = D · tan α</div></li>
+</ol>
+
+<div class="note">
+<p><strong>Lo que hay que retener no es la fórmula, sino la maniobra.</strong> Los ocho pasos hacen siempre lo mismo:
+escribir la altura desde cada punto, <em>igualarlas</em> porque es la misma altura, y despejar la distancia que no se
+puede medir. Si en un examen se olvida la fórmula final, se repite la maniobra en treinta segundos y se llega al
+mismo sitio. Si se memoriza la fórmula y se invierte un cociente, el resultado sale plausible y falso.</p>
+</div>
+
+<h2>4. Demostración interactiva</h2>
+<p>Mueve los tres deslizadores. El dibujo se reconstruye a escala y los cálculos se rehacen en el acto. Observa cómo
+la altura <span class="num">h</span> se obtiene por dos caminos independientes —desde el punto lejano y desde el
+cercano— y cómo los dos dan necesariamente el mismo número: esa es la comprobación cruzada, y es gratis.</p>
+
+<div class="demo">
+<p class="tat">Demostración 2 · El método con números vivos</p>
+<div class="ctrl">
+  <label for="al">α (lejano)</label>
+  <input id="al" type="range" min="5" max="55" step="0.5" value="25">
+  <span class="val" id="alV">25,0°</span>
+</div>
+<div class="ctrl">
+  <label for="be">β (cercano)</label>
+  <input id="be" type="range" min="10" max="80" step="0.5" value="40">
+  <span class="val" id="beV">40,0°</span>
+</div>
+<div class="ctrl">
+  <label for="dd">d entre puntos</label>
+  <input id="dd" type="range" min="5" max="100" step="1" value="20">
+  <span class="val" id="ddV">20 m</span>
+</div>
+<svg id="cro" viewBox="0 0 620 380" width="620" height="380" role="img"
+     aria-label="Croquis de dos posiciones alineadas con un objeto"></svg>
+<div class="readout">
+  <div><b>D (lejano al pie)</b><span id="oD">—</span></div>
+  <div><b>h = D · tan α</b><span id="oH1">—</span></div>
+  <div><b>h = (D−d) · tan β</b><span id="oH2">—</span></div>
+</div>
+<div class="feedback" id="aviso"></div>
+<p class="tiny">Prueba a poner β menor que α: el dibujo se rompe y el aviso explica por qué. No es un fallo del
+programa; es que esa combinación no puede darse en el campo.</p>
+</div>
+
+<script>
+(function(){
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = $('#cro');
+  const W = 620, H = 380, suelo = 300, xPie = 95;
+  const T = g => Math.tan(g * Math.PI / 180);
+
+  function limpia(){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function el(tag, attrs, txt){
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (txt !== undefined) e.textContent = txt;
+    svg.appendChild(e); return e;
+  }
+
+  function dibuja(alpha, beta, d, D, h){
+    limpia();
+    const anchoDisp = W - xPie - 55;
+    const s = Math.min(anchoDisp / D, 205 / h);
+    const hpx = h * s;
+    const xLej = xPie + D * s;
+    const xCer = xPie + (D - d) * s;
+    const yAlto = suelo - hpx;
+
+    // suelo
+    el('line', {x1:35, y1:suelo, x2:W - 25, y2:suelo, stroke:'#8d99a4', 'stroke-width':1.5});
+    for (let x = 35; x < W - 20; x += 12){
+      el('line', {x1:x, y1:suelo, x2:x + 6, y2:suelo + 7, stroke:'#c3cbd2', 'stroke-width':1});
+    }
+    // objeto
+    el('rect', {x:xPie - 9, y:yAlto, width:18, height:hpx, fill:'#16324f', opacity:'0.85'});
+    el('line', {x1:xPie, y1:yAlto, x2:xPie, y2:suelo, stroke:'#16324f', 'stroke-width':1, 'stroke-dasharray':'3 3'});
+
+    // visuales
+    el('line', {x1:xPie, y1:yAlto, x2:xLej, y2:suelo, stroke:'#2c5a84', 'stroke-width':1.6,
+                'stroke-dasharray':'6 4'});
+    el('line', {x1:xPie, y1:yAlto, x2:xCer, y2:suelo, stroke:'#2c5a84', 'stroke-width':1.6,
+                'stroke-dasharray':'6 4'});
+
+    // observadores
+    [[xLej, 'A (lejano)', alpha], [xCer, 'B (cercano)', beta]].forEach(function(o){
+      el('circle', {cx:o[0], cy:suelo, r:5, fill:'#16324f'});
+    });
+
+    // arcos de ángulo
+    function arco(x, ang, color){
+      const r = 46;
+      const x2 = x - r * Math.cos(ang * Math.PI / 180);
+      const y2 = suelo - r * Math.sin(ang * Math.PI / 180);
+      el('path', {d:'M ' + (x - r) + ' ' + suelo + ' A ' + r + ' ' + r + ' 0 0 1 ' + x2 + ' ' + y2,
+                  fill:'none', stroke:color, 'stroke-width':2});
+      const xm = x - (r + 15) * Math.cos(ang * Math.PI / 360);
+      const ym = suelo - (r + 15) * Math.sin(ang * Math.PI / 360);
+      el('text', {x:xm, y:ym + 5, 'text-anchor':'middle', 'font-size':14, fill:color,
+                  'font-weight':'600'}, ang.toFixed(1).replace('.', ',') + '°');
+    }
+    arco(xLej, alpha, '#1f6b3a');
+    arco(xCer, beta, '#8f2222');
+
+    // etiquetas de los puntos
+    el('text', {x:xLej, y:suelo + 24, 'text-anchor':'middle', 'font-size':13, fill:'#3c4a58'}, 'A');
+    el('text', {x:xCer, y:suelo - 9, 'text-anchor':'middle', 'font-size':13, fill:'#3c4a58'}, 'B');
+
+    // cota de altura
+    const xc = 45;
+    el('line', {x1:xc, y1:yAlto, x2:xc, y2:suelo, stroke:'#16324f', 'stroke-width':1});
+    el('line', {x1:xc - 5, y1:yAlto, x2:xc + 5, y2:yAlto, stroke:'#16324f', 'stroke-width':1.5});
+    el('line', {x1:xc - 5, y1:suelo, x2:xc + 5, y2:suelo, stroke:'#16324f', 'stroke-width':1.5});
+    el('text', {x:xc + 7, y:(yAlto + suelo) / 2, 'font-size':14, fill:'#16324f',
+                transform:'rotate(-90 ' + (xc + 7) + ' ' + ((yAlto + suelo) / 2) + ')'},
+       'h = ' + h.toFixed(1).replace('.', ',') + ' m');
+
+    // cotas horizontales
+    el('line', {x1:xCer, y1:suelo + 42, x2:xLej, y2:suelo + 42, stroke:'#8f2222', 'stroke-width':1});
+    el('line', {x1:xCer, y1:suelo + 38, x2:xCer, y2:suelo + 46, stroke:'#8f2222', 'stroke-width':1});
+    el('line', {x1:xLej, y1:suelo + 38, x2:xLej, y2:suelo + 46, stroke:'#8f2222', 'stroke-width':1});
+    el('text', {x:(xCer + xLej) / 2, y:suelo + 62, 'text-anchor':'middle', 'font-size':13,
+                fill:'#8f2222'}, 'd = ' + d.toFixed(0) + ' m');
+
+    el('line', {x1:xPie, y1:suelo + 76, x2:xLej, y2:suelo + 76, stroke:'#5b6875', 'stroke-width':1,
+                'stroke-dasharray':'4 3'});
+    el('text', {x:(xPie + xLej) / 2, y:suelo + 93, 'text-anchor':'middle', 'font-size':13,
+                fill:'#5b6875'}, 'D = ' + D.toFixed(2).replace('.', ',') + ' m  (D − d = ' +
+                (D - d).toFixed(2).replace('.', ',') + ' m)');
+  }
+
+  function actualiza(){
+    const alpha = parseFloat($('#al').value);
+    const beta  = parseFloat($('#be').value);
+    const d     = parseFloat($('#dd').value);
+    $('#alV').textContent = fmt(alpha, 1) + '°';
+    $('#beV').textContent = fmt(beta, 1) + '°';
+    $('#ddV').textContent = fmt(d, 0) + ' m';
+
+    if (beta <= alpha + 0.5){
+      $('#aviso').className = 'feedback fb-bad';
+      $('#aviso').innerHTML = 'β tiene que ser <strong>mayor</strong> que α. Si el punto más cercano no se ve bajo ' +
+        'un ángulo mayor, es que los puntos no están alineados con el objeto (o que están invertidos: el «lejano» ' +
+        'está en realidad más cerca). La fórmula daría una distancia negativa, que no tiene sentido.';
+      limpia();
+      return;
+    }
+    $('#aviso').className = 'feedback fb-neutral';
+    $('#aviso').innerHTML = '';
+
+    const D = d * T(beta) / (T(beta) - T(alpha));
+    const h1 = D * T(alpha);
+    const h2 = (D - d) * T(beta);
+    $('#oD').textContent  = fmt(D, 2) + ' m';
+    $('#oH1').textContent = fmt(h1, 2) + ' m';
+    $('#oH2').textContent = fmt(h2, 2) + ' m';
+    dibuja(alpha, beta, d, D, h1);
+  }
+  ['al','be','dd'].forEach(id => $('#' + id).addEventListener('input', actualiza));
+  actualiza();
+})();
+</script>
+
+<h2>5. Los tres problemas de la ficha, resueltos con el método</h2>
+<p>Los tres siguen exactamente la misma rutina. Antes de mirar los números, fíjate en que lo único que cambia es
+cuál de los datos es la distancia entre puntos y cuál el ángulo: la estructura es idéntica.</p>
+
+<h3>Problema 5 · El poste visto desde dos puntos separados 20 m</h3>
+<p>«Desde un punto A se observa la parte superior de un poste con un ángulo de 25°. Al acercarse 20 m, el ángulo pasa
+a 40°». Aquí A es el punto lejano; el segundo punto está 20 m más cerca. Datos: <span class="num">α = 25°</span>,
+<span class="num">β = 40°</span>, <span class="num">d = 20 m</span>.</p>
+<ol class="pasos">
+  <li><p>Distancia del punto lejano al pie:</p>
+  <div class="formula">D = 20 · tan 40° / (tan 40° − tan 25°)
+  = 20 · 0,8391 / (0,8391 − 0,4663)
+  = 16,782 / 0,3728 = <em>45,02 m</em></div></li>
+  <li><p>Altura, desde el punto lejano:</p>
+  <div class="formula">h = 45,02 · tan 25° = 45,02 · 0,4663 = <em>20,99 m</em></div></li>
+  <li><p>Comprobación, desde el punto cercano (a 45,02 − 20 = 25,02 m del pie):</p>
+  <div class="formula">25,02 · tan 40° = 25,02 · 0,8391 = 20,99 m  ✓</div></li>
+</ol>
+
+<h3>Problema 7 · El molino, con los datos en orden inverso</h3>
+<p>«Un molino se observa desde dos puntos alineados separados 50 m. Desde el punto más lejano el ángulo es 18° y
+desde el más cercano, 27°». Este enunciado da primero el ángulo del punto lejano, igual que los demás, pero
+conviene leerlo dos veces porque el orden de las frases invita a equivocarse. Datos:
+<span class="num">α = 18°</span>, <span class="num">β = 27°</span>, <span class="num">d = 50 m</span>.</p>
+<ol class="pasos">
+  <li><p>Distancia del lejano al pie:</p>
+  <div class="formula">D = 50 · 0,5095 / (0,5095 − 0,3249) = 25,476 / 0,1846 = <em>138,00 m</em></div></li>
+  <li><p>Altura:</p>
+  <div class="formula">h = 138,00 · tan 18° = 138,00 · 0,3249 = <em>44,84 m</em></div></li>
+  <li><p>Comprobación desde el cercano (138 − 50 = 88 m): <span class="num">88 · tan 27° = 44,84 m</span> ✓</p></li>
+</ol>
+<p class="tiny">Un detalle que vale la pena comentar en clase: con ángulos pequeños, un error de medio grado en la
+medida mueve la altura varios metros. Aquí los ángulos son de 18° y 27°, propios de un objeto lejano, y por eso el
+método se vuelve exigente con la precisión del instrumento.</p>
+
+<h3>Problema 10 · El edificio, 30 m entre posiciones</h3>
+<p>«Se mide el ángulo de elevación desde dos posiciones separadas 30 m. En la primera, 20°; en la segunda, 35°».
+Datos: <span class="num">α = 20°</span>, <span class="num">β = 35°</span>, <span class="num">d = 30 m</span>.</p>
+<ol class="pasos">
+  <li><p>Distancia del lejano al pie:</p>
+  <div class="formula">D = 30 · 0,7002 / (0,7002 − 0,3640) = 21,006 / 0,3362 = <em>62,47 m</em></div></li>
+  <li><p>Altura:</p>
+  <div class="formula">h = 62,47 · tan 20° = 62,47 · 0,3640 = <em>22,74 m</em></div></li>
+  <li><p>Comprobación desde el cercano (62,47 − 30 = 32,47 m): <span class="num">32,47 · tan 35° = 22,74 m</span> ✓</p></li>
+</ol>
+<div class="note">
+<p>En el problema 10, si se despeja primero la distancia <em>desde el punto cercano</em> (llamémosla
+<span class="num">D′ = D − d</span>) sale 32,47 m, y la altura es igual de correcta. Lo que no se puede hacer es
+mezclar las dos convenciones en el mismo cálculo. Elige una —recomiendo la del punto lejano— y escríbela en el
+croquis antes de tocar la calculadora.</p>
+</div>
+
+<h2>6. Las cuatro trampas</h2>
+<ol>
+  <li><p><strong>Invertir lejano y cercano.</strong> Si se toma β como el ángulo pequeño, el denominador
+  <span class="num">tan β − tan α</span> sale negativo y la distancia también. La regla mnemotécnica es
+  <em>«el grande va en el numerador y también el primero del paréntesis»</em>: β arriba, y β primero en la resta.</p></li>
+
+  <li><p><strong>Restar d en el sitio equivocado.</strong> La distancia <span class="num">d</span> se resta en el
+  segundo triángulo, no en el primero: el punto cercano está a <span class="num">D − d</span>, nunca a
+  <span class="num">D + d</span> (salvo que el segundo punto esté más lejos, cosa que no ocurre en estos problemas).</p></li>
+
+  <li><p><strong>Ángulos medidos desde la vertical.</strong> Los goniómetros y los clinómetros pueden dar el ángulo
+  desde la vertical (el <em>cenital</em>). Si el instrumento da 65° cenital, el de elevación es 25°, no 65°. Antes de
+  calcular hay que saber desde qué referencia se midió.</p></li>
+
+  <li><p><strong>Mezclar gonios y grados.</strong> Si la libreta trae 45 g y la calculadora está en grados, sale un
+  desastre silencioso. La lección 9 trata precisamente de esto, porque es el error más caro en la práctica real.</p></li>
+</ol>
+
+<h2>7. Cómo se escribe en el examen</h2>
+<p>Cinco líneas, en este orden. Con ellas el corrector ve el método completo aunque el número final esté mal, y eso
+suele valer más que el número:</p>
+<div class="formula">1)  Datos:  α = __°  (lejano)   β = __°  (cercano)   d = __ m
+2)  Altura igual desde los dos puntos:  D·tanα = (D−d)·tanβ
+3)  Despejo:  D = d·tanβ / (tanβ − tanα) = ____ m
+4)  Calculo:  h = D·tanα = ____ m
+5)  Compruebo:  (D−d)·tanβ = ____ m  ✓</div>
+
+<p>Cuando esta lámina esté clara, el <a href="gen_04_dos_posiciones.html">generador B3</a> produce ejercicios de
+este tipo con números nuevos y comprueba la respuesta. Conviene hacer cinco seguidos sin mirar la fórmula: si a la
+tercera ya sale el planteamiento sin pensarlo, el peldaño está superado.</p>
+</main>
+<nav class="pager"><a href="06_triangulo_rectangulo.html">&larr; El triángulo rectángulo en el campo</a><span class="sp"></span><a href="index.html">Índice</a><span class="sp"></span><a href="08_ley_del_coseno.html">Triángulos no rectángulos &rarr;</a></nav>
+</div>
+<script>refrescaSliders();</script>
+</body>
+</html>

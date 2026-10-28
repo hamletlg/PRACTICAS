@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Generador · Triángulo rectángulo</title>
+<style>
+:root{
+  --ink:#1b2530; --navy:#16324f; --navy2:#2c5a84; --line:#d3d9df; --bg:#f7f8f9;
+  --soft:#edf1f4; --ok:#1f6b3a; --bad:#8f2222; --warnc:#7a5a00;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:19px/1.62 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+.wrap{max-width:980px;margin:0 auto;padding:26px 26px 90px}
+header.top{border-bottom:2px solid var(--navy);padding-bottom:12px;margin-bottom:26px}
+.kicker{font-size:13.5px;letter-spacing:.14em;text-transform:uppercase;color:#5b6875;font-weight:600}
+h1{font-size:31px;line-height:1.22;margin:.22em 0 .28em;color:var(--navy);font-weight:660;letter-spacing:-.01em}
+.sub{font-size:19px;color:#3c4a58;margin:0}
+h2{font-size:22.5px;margin:2.1em 0 .45em;color:var(--navy);font-weight:650;
+   border-left:4px solid var(--navy);padding-left:11px;line-height:1.3}
+h2:first-of-type{margin-top:1.2em}
+h3{font-size:19.5px;margin:1.5em 0 .3em;font-weight:650;color:#22303d}
+h4{font-size:17px;margin:1.2em 0 .3em;font-weight:650;color:#22303d}
+p{margin:.62em 0}
+.lead{font-size:20px;color:#2c3a48}
+ul,ol{padding-left:1.4em;margin:.55em 0}
+li{margin:.3em 0}
+li>ul,li>ol{margin:.3em 0}
+a{color:var(--navy2)}
+strong{font-weight:660}
+.num{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.formula{
+  font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:17px;line-height:1.7;
+  background:var(--soft);border-left:3px solid var(--navy);padding:11px 15px;margin:1em 0;
+  overflow-x:auto;white-space:pre-wrap;
+}
+.formula em{font-style:normal;color:var(--navy);font-weight:600}
+.demo{background:#fff;border:1px solid var(--line);padding:16px 16px 18px;margin:1.3em 0}
+.demo .tat{font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:#5b6875;
+  font-weight:650;margin:0 0 12px}
+.ctrl{display:grid;grid-template-columns:165px 1fr 135px;gap:12px;align-items:center;margin:.55em 0}
+.ctrl label{font-size:17px}
+.ctrl .val{text-align:right;font-family:ui-monospace,monospace;font-size:18px;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:#16324f;height:22px}
+input[type=number],input[type=text],select{
+  font:inherit;font-size:18px;padding:6px 9px;border:1px solid #b7c0c9;background:#fff;
+  color:var(--ink);border-radius:0;width:100%
+}
+input:focus,select:focus,button:focus{outline:2px solid var(--navy2);outline-offset:1px}
+input.ok{border-color:var(--ok);background:#f1f7f3}
+input.bad{border-color:var(--bad);background:#fdf3f3}
+button{
+  font:inherit;font-size:16px;padding:7px 15px;border:1px solid var(--navy);border-radius:0;
+  background:var(--navy);color:#fff;cursor:pointer
+}
+button:hover{background:#1d4368}
+button.ghost{background:#fff;color:var(--navy)}
+button.ghost:hover{background:var(--soft)}
+.botones{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:9px;margin:12px 0 0}
+.readout div{background:var(--soft);padding:8px 11px}
+.readout b{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  color:#5b6875;font-weight:650;margin-bottom:2px}
+.readout span{font-family:ui-monospace,monospace;font-size:18px;font-variant-numeric:tabular-nums}
+.note{background:#fbfaf4;border-left:3px solid #b08a2e;padding:11px 15px;margin:1.1em 0}
+.warn{background:#fcf4f4;border-left:3px solid var(--bad);padding:11px 15px;margin:1.1em 0}
+.good{background:#f1f7f3;border-left:3px solid var(--ok);padding:11px 15px;margin:1.1em 0}
+.feedback{margin-top:11px;font-size:17.5px;line-height:1.55}
+.feedback.good::before{content:"";}
+.fb-good{color:var(--ok)}
+.fb-bad{color:var(--bad)}
+.fb-neutral{color:#3c4a58}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:17px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--soft);font-weight:650;font-size:16px}
+td.num,th.num{font-family:ui-monospace,monospace;font-variant-numeric:tabular-nums}
+nav.strip{display:flex;gap:15px;align-items:center;flex-wrap:wrap;font-size:15.5px;
+  border-bottom:1px solid var(--line);padding:0 0 10px;margin:-4px 0 24px;color:#5b6875}
+nav.strip a{color:var(--navy2);text-decoration:none;border-bottom:1px solid #c5d3e0}
+nav.strip a:hover{border-bottom-color:var(--navy2)}
+nav.strip .act{color:#5b6875;font-weight:650}
+nav.strip .sep{color:#ccd4db}
+nav.pager{display:flex;justify-content:space-between;gap:14px;margin-top:54px;padding-top:16px;
+  border-top:1px solid var(--line);font-size:16px}
+nav.pager a{color:var(--navy);text-decoration:none;border-bottom:1px solid #a9bdd0;padding-bottom:1px}
+nav.pager a:hover{border-bottom-color:var(--navy)}
+nav.pager .sp{flex:1}
+svg{display:block;max-width:100%;height:auto;font-family:ui-monospace,monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.tiny{font-size:15.5px;color:#5b6875;line-height:1.5}
+.pasos{counter-reset:p;list-style:none;padding-left:0}
+.pasos>li{counter-increment:p;position:relative;padding-left:42px;margin:.85em 0}
+.pasos>li::before{
+  content:counter(p);position:absolute;left:0;top:.05em;width:28px;height:28px;border:1.5px solid var(--navy);
+  color:var(--navy);font-size:15px;font-weight:700;text-align:center;line-height:25px;
+  font-family:ui-monospace,monospace
+}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin:1.2em 0}
+.card{background:#fff;border:1px solid var(--line);padding:14px 16px;display:block;
+  text-decoration:none;color:var(--ink)}
+.card:hover{border-color:var(--navy);background:#fbfcfd}
+.card .n{font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:#5b6875;font-weight:650}
+.card .t{font-size:19px;color:var(--navy);font-weight:650;margin:.15em 0 .25em;line-height:1.28;min-height:2.56em}
+.card .d{font-size:16px;color:#46545f;line-height:1.45}
+.tag{display:inline-block;font-size:13px;border:1px solid var(--line);background:var(--soft);
+  padding:1px 7px;margin:4px 4px 0 0;color:#46545f}
+kbd{font-family:ui-monospace,monospace;font-size:15px;border:1px solid #b7c0c9;border-bottom-width:2px;
+  padding:1px 5px;background:#fff}
+.checkline{display:flex;gap:10px;align-items:baseline;margin:.4em 0}
+.checkline input[type=checkbox]{width:18px;height:18px;accent-color:#16324f;flex:none}
+@media (max-width:740px){
+  body{font-size:18px}
+  .wrap{padding:18px 16px 70px}
+  h1{font-size:26px} h2{font-size:20.5px}
+  .ctrl{grid-template-columns:110px 1fr 105px;gap:8px}
+  .grid2{grid-template-columns:1fr}
+}
+@media print{
+  body{background:#fff}
+  .demo{break-inside:avoid}
+  nav.pager{display:none}
+}
+</style>
+
+<script>
+/* ---------- utilidades comunes (idénticas en todas las páginas) ---------- */
+const $  = (s, r) => (r||document).querySelector(s);
+const $$ = (s, r) => Array.from((r||document).querySelectorAll(s));
+
+/* Lee un número escrito por el alumno: admite coma o punto decimal,
+   espacios, el símbolo de grado y el sufijo de gonios. */
+function leerNum(v){
+  if (typeof v === 'number') return v;
+  let s = String(v == null ? '' : v).trim();
+  s = s.replace(/\s+/g,'').replace(/[°º]/g,'').replace(/(rad|gon|g|m|s)$/i,'');
+  if (s === '') return NaN;
+  if (s.includes(',') && s.includes('.')) s = s.replace(/\./g,'').replace(',', '.');
+  else if (s.includes(',')) s = s.replace(',', '.');
+  return parseFloat(s);
+}
+/* Formato español: coma decimal, cifras fijas. */
+function fmt(x, d){
+  d = (d === undefined) ? 2 : d;
+  if (!isFinite(x)) return '—';
+  return x.toFixed(d).replace('.', ',');
+}
+/* Sexagesimal: {g,m,s} a partir de grados decimales */
+function aSexa(x){
+  let neg = x < 0; x = Math.abs(x);
+  let g = Math.floor(x + 1e-12);
+  let mm = (x - g) * 60;
+  let m = Math.floor(mm + 1e-9);
+  let s = (mm - m) * 60;
+  if (s >= 59.9995){ s = 0; m += 1; }
+  if (m >= 60){ m -= 60; g += 1; }
+  return {g:(neg?-g:g), m:m, s:s};
+}
+/* Centesimal: {g,m,s} */
+function aCentes(x){
+  let neg = x < 0; x = Math.abs(x);
+  let g = Math.floor(x + 1e-12);
+  let mm = (x - g) * 100;
+  let m = Math.floor(mm + 1e-9);
+  let s = (mm - m) * 100;
+  if (s >= 99.995){ s = 0; m += 1; }
+  if (m >= 100){ m -= 100; g += 1; }
+  return {g:(neg?-g:g), m:m, s:s};
+}
+function txtSexa(x, ds){
+  ds = (ds === undefined) ? 1 : ds;
+  const f = Math.pow(10, ds);
+  let total = Math.round(Math.abs(x) * 3600 * f);
+  const g = Math.floor(total / (3600 * f));
+  let rem = total - g * 3600 * f;
+  const m = Math.floor(rem / (60 * f));
+  rem = rem - m * 60 * f;
+  const si = String(Math.floor(rem / f)).padStart(2, '0');
+  const dec = ds > 0 ? ',' + String(rem % f).padStart(ds, '0') : '';
+  return (x < 0 ? '−' : '') + g + '° ' + String(m).padStart(2, '0') + '\u2032 ' + si + dec + '\u2033';
+}
+function txtCentes(x, ds){
+  ds = (ds === undefined) ? 1 : ds;
+  const f = Math.pow(10, ds);
+  let total = Math.round(Math.abs(x) * 10000 * f);
+  const g = Math.floor(total / (10000 * f));
+  let rem = total - g * 10000 * f;
+  const m = Math.floor(rem / (100 * f));
+  rem = rem - m * 100 * f;
+  const si = String(Math.floor(rem / f)).padStart(2, '0');
+  const dec = ds > 0 ? ',' + String(rem % f).padStart(ds, '0') : '';
+  return (x < 0 ? '−' : '') + g + 'g ' + String(m).padStart(2, '0') + 'm ' + si + dec + 's';
+}
+/* Retorno de estado en un campo: ok / mal */
+function marcar(el, estado){
+  el.classList.remove('ok','bad');
+  if (estado === 1) el.classList.add('ok');
+  else if (estado === 0) el.classList.add('bad');
+}
+function fb(el, tipo, texto){
+  el.className = 'feedback ' + (tipo === 1 ? 'fb-good' : tipo === 0 ? 'fb-bad' : 'fb-neutral');
+  el.innerHTML = texto;
+  return tipo;
+}
+/* Formatea un ángulo en radianes como múltiplo exacto de π si el denominador es pequeño */
+function aPi(x){
+  const r = x / Math.PI;
+  for (let q = 1; q <= 24; q++){
+    const p = r * q;
+    if (Math.abs(p - Math.round(p)) < 1e-9){
+      const n = Math.round(p);
+      if (q === 1) return (n === 1 ? 'π' : n + 'π');
+      if (n === 1) return 'π/' + q;
+      return n + 'π/' + q;
+    }
+  }
+  return null;
+}
+/* Sincroniza el relleno visual de los sliders (solo estética) */
+function refrescaSliders(root){
+  $$('input[type=range]', root || document).forEach(function(r){
+    const p = (r.value - r.min) / (r.max - r.min) * 100;
+    r.style.background = 'linear-gradient(90deg,#16324f ' + p + '%,#cfd7de ' + p + '%)';
+    r.style.height = '6px';
+    r.style.borderRadius = '0';
+    r.style.appearance = 'none';
+    r.style.webkitAppearance = 'none';
+  });
+}
+</script>
+<style>
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:16px;height:16px;background:#16324f;border:2px solid #fff;
+  box-shadow:0 0 0 1px #16324f;cursor:pointer
+}
+input[type=range]::-moz-range-thumb{
+  width:14px;height:14px;background:#16324f;border:2px solid #fff;box-shadow:0 0 0 1px #16324f;cursor:pointer
+}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<header class="top"><div class="kicker">Día 2 · Generador B1</div><h1>Generador · Triángulo rectángulo</h1><p class="sub">Sombra, dron, colina y antena: una visual, una incógnita</p></header><nav class="strip"><a href="index.html">Índice</a><span class="sep">·</span><span class="act">Generador B1</span><span class="sep">·</span><a href="06_triangulo_rectangulo.html">Lección 6 &rarr;</a></nav>
+<main>
+<p class="lead">Cada vez que pulsas «Otro ejercicio» sale un problema distinto, con números nuevos, y el programa comprueba
+tu resultado en el acto. Son los cuatro casos que aparecen en la ficha cuando hay una sola visual: la sombra de un
+objeto, el ángulo de depresión medido desde un dron o desde una torre, el ángulo de elevación hasta lo alto de algo
+cuyo pie sí se alcanza, y el reparto entre distancia inclinada y distancia horizontal. En los cuatro hay un triángulo
+rectángulo, y en los cuatro cambia solo cuál de los elementos —ángulo, cateto vertical, cateto horizontal o
+hipotenusa— es el que falta.</p>
+
+<p>La ventaja frente a un listado de ejercicios de libro es que aquí el croquis se redibuja con los datos de cada
+problema, de modo que la figura que ves y los números del enunciado van siempre juntos. Antes de tocar la calculadora
+conviene mirarlo: si el lado que buscas es uno de los dos catetos y el otro cateto ya lo tienes, la razón que entra
+es la tangente; si en la cuenta aparece la hipotenusa, entran el seno o el coseno. Esa decisión, tomada en los
+primeros diez segundos, es la que separa un ejercicio resuelto con holgura de uno atascado a mitad.</p>
+
+<h2>Cómo se usa</h2>
+<ol>
+  <li>Elige el tipo de ejercicio con los botones de arriba. El último, <strong>Mezcla</strong>, saca los cuatro al azar
+  y es el que conviene usar cuando ya salgan dos seguidos sin fallos en cada bloque.</li>
+  <li>Lee el enunciado y mira el croquis. Anota en un papel qué lados conoces y cuál te piden antes de escribir nada.</li>
+  <li>Escribe el resultado en el campo. Se admite coma o punto decimal, y no hace falta poner la unidad.</li>
+  <li>Pulsa <strong>Comprobar</strong>. El campo se pone en verde o en rojo y el marcador cuenta el intento. A la
+  segunda vez que falles, abre <strong>Ver solución paso a paso</strong> en lugar de seguir probando números: casi
+  siempre el fallo no está en la cuenta sino en la razón elegida.</li>
+</ol>
+<p class="tiny">Las distancias se admiten con un margen de ±0,05 m y los ángulos con ±0,2°. Son los mismos márgenes
+que se aplicarían en el examen. Si tu resultado se aparta más, el error está en el planteamiento y no en el redondeo.</p>
+
+<h2>Practicar</h2>
+<div class="demo" id="maquina">
+  <p class="tat">Ejercicio <span id="numE">1</span> &nbsp;·&nbsp; <span id="tipoE">—</span></p>
+  <div class="botones" id="niveles" style="margin-bottom:6px">
+    <button class="ghost" data-n="1">Sombra</button>
+    <button class="ghost" data-n="2">Depresión</button>
+    <button class="ghost" data-n="3">Elevación</button>
+    <button class="ghost" data-n="4">Distancia inclinada</button>
+    <button class="ghost" data-n="5">Mezcla</button>
+  </div>
+  <div id="enun" style="margin:16px 0 4px;font-size:19.5px;line-height:1.55"></div>
+  <div id="croquis" style="margin:4px 0 0"></div>
+  <p class="tiny" id="piefig" style="margin:0 0 6px">Esquema sin escala: sirve para situar los datos, no para medir
+  sobre el dibujo.</p>
+  <div id="campos" style="margin:10px 0 4px"></div>
+  <div class="botones">
+    <button id="bCheck">Comprobar</button>
+    <button id="bOtro" class="ghost">Otro ejercicio</button>
+  </div>
+  <div class="feedback" id="fbk"></div>
+  <details id="soldet" style="margin-top:14px">
+    <summary style="cursor:pointer;font-size:16.5px;color:#16324f">Ver solución paso a paso</summary>
+    <div id="sol" style="margin-top:10px"></div>
+  </details>
+</div>
+
+<div class="readout" style="margin-top:-6px">
+  <div><b>Modo</b><span id="mMod">1</span></div>
+  <div><b>Aciertos</b><span id="mAci">0</span></div>
+  <div><b>Intentos</b><span id="mInt">0</span></div>
+  <div><b>Racha</b><span id="mRac">0</span></div>
+</div>
+
+<script>
+(function(){
+  const NL = String.fromCharCode(10);
+  const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  const RAD = g => g * Math.PI / 180;
+  const TAN = g => Math.tan(RAD(g));
+  const SIN = g => Math.sin(RAD(g));
+  const COS = g => Math.cos(RAD(g));
+  const ASEN = x => Math.asin(x) * 180 / Math.PI;
+
+  let modo = 1, nEjer = 0, aciertos = 0, intentos = 0, racha = 0, actual = null, ultimoEnun = '';
+
+  /* ---------- croquis: un triángulo rectángulo redibujado con los datos ---------- */
+  function croquis(c){
+    const W = 560, HH = 322, y0 = 252;
+    const rD = Math.max(0.16, Math.min(0.62, c.H / c.B));
+    const bw = 316, hh = Math.max(46, Math.round(bw * rD));
+    const izq = (c.lado === 'izq');
+    const F = izq ? [78, y0] : [78 + bw, y0];          /* pie de la vertical */
+    const T = [F[0], y0 - hh];                          /* cima */
+    const E = izq ? [78 + bw, y0] : [78, y0];           /* otro extremo sobre el suelo */
+    const th = Math.atan2(hh, bw);
+    const halo = 'style="paint-order:stroke" stroke="#ffffff" stroke-width="3.5"';
+    let s = '<svg viewBox="0 0 ' + W + ' ' + HH + '" width="' + W + '" height="' + HH + '" role="img">';
+
+    s += '<line x1="34" y1="' + y0 + '" x2="526" y2="' + y0 + '" stroke="#8a97a3" stroke-width="1.5"/>';
+    s += '<path d="M ' + F[0] + ' ' + T[1] + ' L ' + F[0] + ' ' + F[1] + ' L ' + E[0] + ' ' + E[1] +
+         '" fill="none" stroke="#16324f" stroke-width="2"/>';
+    s += '<line x1="' + E[0] + '" y1="' + E[1] + '" x2="' + T[0] + '" y2="' + T[1] +
+         '" stroke="#16324f" stroke-width="2" stroke-dasharray="' + (c.hip ? '0' : '5 4') + '"/>';
+
+    /* escuadra del ángulo recto */
+    const d = 14 * (izq ? 1 : -1);
+    s += '<path d="M ' + (F[0] + d) + ' ' + y0 + ' L ' + (F[0] + d) + ' ' + (y0 - 14) + ' L ' + F[0] + ' ' + (y0 - 14) +
+         '" fill="none" stroke="#16324f" stroke-width="1.5"/>';
+
+    function arco(cx, cy, r, a1, a2, sweep){
+      const x1 = cx + r * Math.cos(a1), y1 = cy - r * Math.sin(a1);
+      const x2 = cx + r * Math.cos(a2), y2 = cy - r * Math.sin(a2);
+      return '<path d="M ' + x1.toFixed(1) + ' ' + y1.toFixed(1) + ' A ' + r + ' ' + r + ' 0 0 ' + sweep + ' ' +
+             x2.toFixed(1) + ' ' + y2.toFixed(1) + '" fill="none" stroke="#8f2222" stroke-width="2"/>';
+    }
+
+    let a1, a2, sw, cx, cy;
+    if (c.marca === 'cima'){
+      /* ángulo de depresión: se mide en la cima, con la horizontal discontinua */
+      cx = T[0]; cy = T[1];
+      a1 = 0; a2 = -th; sw = 1;
+      s += '<line x1="' + T[0] + '" y1="' + T[1] + '" x2="' + (T[0] + Math.round(bw * 0.55)) + '" y2="' + T[1] +
+           '" stroke="#5b6875" stroke-width="1.5" stroke-dasharray="6 4"/>';
+    } else {
+      cx = E[0]; cy = E[1];
+      if (izq){ a1 = Math.PI; a2 = Math.PI - th; sw = 1; }
+      else { a1 = 0; a2 = th; sw = 0; }
+    }
+    const r0 = 52;
+    s += arco(cx, cy, r0, a1, a2, sw);
+    const bis = (a1 + a2) / 2;
+    const tx = cx + 78 * Math.cos(bis), ty = cy - 78 * Math.sin(bis);
+    s += '<text x="' + tx.toFixed(1) + '" y="' + (ty + 5).toFixed(1) + '" ' + halo +
+         ' fill="#8f2222" font-size="14.5" font-weight="700" text-anchor="middle">' + c.angTxt + '</text>';
+
+    /* rótulo de la vertical */
+    const vy = y0 - hh / 2 + 5;
+    if (izq){
+      s += '<text x="72" y="' + vy.toFixed(1) + '" ' + halo + ' fill="#16324f" font-size="13.5" text-anchor="middle" ' +
+           'transform="rotate(-90 72 ' + vy.toFixed(1) + ')">' + c.etV + '</text>';
+    } else {
+      s += '<text x="' + (F[0] + 12) + '" y="' + vy.toFixed(1) + '" ' + halo + ' fill="#16324f" font-size="13.5">' +
+           c.etV + '</text>';
+    }
+    /* rótulo del cateto horizontal */
+    s += '<text x="' + ((E[0] + F[0]) / 2) + '" y="' + (y0 + 26) + '" ' + halo + ' fill="#16324f" font-size="13.5" ' +
+         'text-anchor="middle">' + c.etB + '</text>';
+    /* rótulo de la hipotenusa, si interesa */
+    if (c.etH){
+      const mx = (E[0] + T[0]) / 2, my = (E[1] + T[1]) / 2;
+      const off = izq ? 1 : -1;
+      s += '<text x="' + (mx + 22 * off).toFixed(1) + '" y="' + (my - 16).toFixed(1) + '" ' + halo +
+           ' fill="#1f6b3a" font-size="13.5" text-anchor="' + (izq ? 'start' : 'end') + '">' + c.etH + '</text>';
+    }
+    /* marcas del objeto */
+    if (c.sol){
+      const ux = (T[0] - E[0]) / Math.hypot(T[0] - E[0], T[1] - E[1]);
+      const uy = (T[1] - E[1]) / Math.hypot(T[0] - E[0], T[1] - E[1]);
+      s += '<line x1="' + T[0] + '" y1="' + T[1] + '" x2="' + (T[0] + 52 * ux).toFixed(1) + '" y2="' +
+           (T[1] + 52 * uy).toFixed(1) + '" stroke="#b08a2e" stroke-width="1.5" stroke-dasharray="5 4"/>';
+      s += '<circle cx="' + (T[0] + 60 * ux).toFixed(1) + '" cy="' + (T[1] + 60 * uy).toFixed(1) +
+           '" r="8" fill="#b08a2e"/>';
+    }
+    if (c.dron){
+      s += '<circle cx="' + T[0] + '" cy="' + T[1] + '" r="5" fill="#16324f"/>';
+      s += '<line x1="' + (T[0] - 13) + '" y1="' + T[1] + '" x2="' + (T[0] + 13) + '" y2="' + T[1] +
+           '" stroke="#16324f" stroke-width="2"/>';
+    }
+    s += '</svg>';
+    return s;
+  }
+
+  /* ---------- generadores ---------- */
+  const COSAS = [{n:'poste', g:'m'}, {n:'árbol', g:'m'}, {n:'torreta de la linde', g:'f'},
+                 {n:'pértiga de la parcela', g:'f'}];
+
+  function gSombra(){
+    for (let k = 0; k < 400; k++){
+      const ang = rnd(120, 700) / 10;
+      const s = rnd(800, 30000) / 100;
+      const h = s * TAN(ang);
+      if (h < 2 || h > 120) continue;
+      const cosa = pick(COSAS);
+      const un = (cosa.g === 'm' ? 'un ' : 'una ');
+      const el = (cosa.g === 'm' ? 'el ' : 'la ');
+      return {
+        titulo: 'Altura por la sombra',
+        enun: 'En un terreno llano, ' + un + cosa.n + ' proyecta sobre el suelo una sombra de ' +
+              '<span class="num">' + fmt(s, 2) + ' m</span>. En ese momento el sol está a ' +
+              '<span class="num">' + fmt(ang, 1) + '°</span> sobre el horizonte, medido desde el extremo de la ' +
+              'sombra. ¿Qué altura tiene ' + el + cosa.n + '?',
+        campos: [{et:'Altura', suf:'m', tol:0.05, val:h}],
+        pista: 'En este caso los dos datos son catetos, no hay hipotenusa medida: la razón que relaciona la altura ' +
+               'con la sombra es la tangente. Y la cuenta es una multiplicación, no una división.',
+        svg: croquis({B:s, H:h, lado:'der', marca:'suelo', angTxt: fmt(ang, 1) + '°',
+                      etV:'altura', etB:'sombra ' + fmt(s, 2) + ' m', sol:true}),
+        sol: '<p>El rayo de sol que pasa por la punta del objeto y llega al suelo forma, con el objeto y con su ' +
+             'sombra, un triángulo rectángulo. El ángulo recto está en el pie: la sombra es horizontal y el objeto ' +
+             'es vertical.</p>' +
+             '<div class="formula">' + [
+               'tan α = cateto opuesto / cateto contiguo = altura / sombra',
+               '',
+               'altura = sombra × tan α',
+               '       = ' + fmt(s, 2) + ' × tan ' + fmt(ang, 1) + '°',
+               'tan ' + fmt(ang, 1) + '° = ' + fmt(TAN(ang), 5),
+               '       = ' + fmt(s, 2) + ' × ' + fmt(TAN(ang), 5),
+               '       = ' + fmt(h, 2) + ' m'
+             ].join(NL) + '</div>' +
+             '<p>La hipotenusa del croquis es el rayo de sol, y no se mide nunca: por eso el seno y el coseno no ' +
+             'sirven en este problema.</p>' +
+             '<p>Comprobación: ' + fmt(h, 2) + ' / ' + fmt(s, 2) + ' = ' + fmt(h / s, 5) + ', que es exactamente la ' +
+             'tangente de ' + fmt(ang, 1) + '°. ' +
+             (ang < 45
+               ? 'Además el sol está por debajo de los 45°, así que el objeto tiene que ser más bajo que su sombra, y ' +
+                 'así resulta: ' + fmt(h, 2) + ' es menor que ' + fmt(s, 2) + '.'
+               : 'Además el sol está por encima de los 45°, así que el objeto tiene que ser más alto que su sombra, y ' +
+                 'así resulta: ' + fmt(h, 2) + ' es mayor que ' + fmt(s, 2) + '.') + '</p>'
+      };
+    }
+    return null;
+  }
+
+  function gDepresion(){
+    for (let k = 0; k < 400; k++){
+      const ang = rnd(120, 700) / 10;
+      const h = rnd(200, 1200) / 10;
+      const d = h / TAN(ang);
+      if (d < 8 || d > 300) continue;
+      const esDron = Math.random() < 0.55;
+      return {
+        titulo: 'Ángulo de depresión: distancia horizontal',
+        enun: (esDron
+                ? 'Un dron se mantiene a <span class="num">' + fmt(h, 1) + ' m</span> sobre un punto del terreno y ' +
+                  'desde su cámara mide un ángulo de depresión de <span class="num">' + fmt(ang, 1) + '°</span> ' +
+                  'hasta una estaquilla clavada en el suelo.'
+                : 'Desde la galería de una torre de vigilancia, a <span class="num">' + fmt(h, 1) + ' m</span> sobre ' +
+                  'el suelo, se apunta con la brújula a una señal: el ángulo de depresión medido es de ' +
+                  '<span class="num">' + fmt(ang, 1) + '°</span>.') +
+              ' ¿A qué distancia horizontal de la vertical del punto de observación está la señal?',
+        campos: [{et:'Distancia', suf:'m', tol:0.05, val:d}],
+        pista: 'Aquí la altura es el cateto opuesto y la distancia horizontal el contiguo, así que la distancia sale ' +
+               'de dividir la altura entre la tangente. Si has multiplicado, has despejado al revés.',
+        svg: croquis({B:d, H:h, lado:'izq', marca:'cima', angTxt: fmt(ang, 1) + '°',
+                      etV:'altura ' + fmt(h, 1) + ' m', etB:'horizontal', dron: esDron}),
+        sol: '<p>El ángulo de depresión se mide desde la horizontal del observador hacia abajo. Ese ángulo y el de ' +
+             'elevación desde la señal son iguales, porque son alternos internos entre dos horizontales paralelas: ' +
+             'el triángulo del croquis tiene el mismo ángulo en la cima que tendría medido desde el suelo.</p>' +
+             '<div class="formula">' + [
+               'tan β = altura / distancia horizontal',
+               '',
+               'distancia = altura / tan β',
+               '          = ' + fmt(h, 1) + ' / tan ' + fmt(ang, 1) + '°',
+               'tan ' + fmt(ang, 1) + '° = ' + fmt(TAN(ang), 5),
+               '          = ' + fmt(h, 1) + ' / ' + fmt(TAN(ang), 5),
+               '          = ' + fmt(d, 2) + ' m'
+             ].join(NL) + '</div>' +
+             '<p>Comprobación: ' + fmt(d, 2) + ' × ' + fmt(TAN(ang), 5) + ' = ' + fmt(d * TAN(ang), 2) + ' m de ' +
+             'altura, que es el dato de partida. ' +
+             (ang < 45
+               ? 'Con un ángulo menor de 45° la distancia horizontal tiene que superar a la altura, y ' + fmt(d, 2) +
+                 ' supera a ' + fmt(h, 1) + '.'
+               : 'Con un ángulo mayor de 45° la señal está más cerca que alta, y ' + fmt(d, 2) + ' es menor que ' +
+                 fmt(h, 1) + '.') + '</p>'
+      };
+    }
+    return null;
+  }
+
+  function gElevacion(){
+    for (let k = 0; k < 400; k++){
+      const ang = rnd(100, 720) / 10;
+      const d = rnd(800, 30000) / 100;
+      const h = d * TAN(ang);
+      if (h < 2 || h > 120) continue;
+      const cosa = pick(['una antena de telefonía', 'un depósito de agua', 'un pino de la linde', 'un poste de la línea']);
+      return {
+        titulo: 'Ángulo de elevación: altura del objeto',
+        enun: 'Estacionado con la estación total a <span class="num">' + fmt(d, 2) + ' m</span> del pie de ' + cosa +
+              ', se mide un ángulo de elevación de <span class="num">' + fmt(ang, 1) + '°</span> hasta su punto más ' +
+              'alto. La altura del instrumento ya está descontada y el terreno es llano. ¿Cuánto se eleva el objeto ' +
+              'por encima del instrumento?',
+        campos: [{et:'Altura', suf:'m', tol:0.05, val:h}],
+        pista: 'La distancia al pie es el cateto contiguo y la altura el opuesto: hay que multiplicar por la ' +
+               'tangente. Si te sale una altura mayor que la distancia con un ángulo pequeño, has usado el seno o ' +
+               'has invertido la fracción.',
+        svg: croquis({B:d, H:h, lado:'der', marca:'suelo', angTxt: fmt(ang, 1) + '°',
+                      etV:'altura', etB:'distancia al pie ' + fmt(d, 2) + ' m'}),
+        sol: '<p>La visual forma con la horizontal un ángulo que se mide en la estación, y la distancia al pie se ' +
+             'mide sobre el suelo. Otra vez los dos catetos, y la hipotenusa —la visual— no se necesita.</p>' +
+             '<div class="formula">' + [
+               'tan α = altura / distancia al pie',
+               '',
+               'altura = distancia × tan α',
+               '       = ' + fmt(d, 2) + ' × tan ' + fmt(ang, 1) + '°',
+               'tan ' + fmt(ang, 1) + '° = ' + fmt(TAN(ang), 5),
+               '       = ' + fmt(d, 2) + ' × ' + fmt(TAN(ang), 5),
+               '       = ' + fmt(h, 2) + ' m'
+             ].join(NL) + '</div>' +
+             '<p>Comprobación por la vía larga: la visual mide ' + fmt(d / COS(ang), 2) + ' m, y esa visual ' +
+             'multiplicada por el seno del ángulo da ' + fmt(d / COS(ang) * SIN(ang), 2) + ' m de altura, lo mismo ' +
+             'que antes. ' +
+             (ang < 45
+               ? 'Y como el ángulo no llega a 45°, la altura queda por debajo de la distancia: ' + fmt(h, 2) + ' menor ' +
+                 'que ' + fmt(d, 2) + '.'
+               : 'Y como el ángulo pasa de 45°, la altura supera la distancia: ' + fmt(h, 2) + ' mayor que ' +
+                 fmt(d, 2) + '.') + '</p>'
+      };
+    }
+    return null;
+  }
+
+  function gInclinada(){
+    for (let k = 0; k < 400; k++){
+      const ang = rnd(100, 750) / 10;
+      const L = rnd(800, 30000) / 100;
+      /* el desnivel se redondea a centímetros antes de usarlo: así el alumno y la solución
+         parten exactamente de los mismos números que se ven en el enunciado */
+      const h = Math.round(L * SIN(ang) * 100) / 100;
+      if (h < 2 || h > 120) continue;
+      const b = Math.sqrt(L * L - h * h);
+      const angReal = ASEN(h / L);
+      const pedirAngulo = Math.random() < 0.5;
+      const ctx = pick(['el cable de un teleférico', 'una pista de desembosque', 'un camino de saca']);
+      if (pedirAngulo){
+        return {
+          titulo: 'Distancia inclinada: hallar el ángulo',
+          enun: 'Entre la estación baja y la alta, ' + ctx + ' mide <span class="num">' + fmt(L, 2) + ' m</span> ' +
+                'a lo largo del tendido, y la estación alta está <span class="num">' + fmt(h, 2) + ' m</span> por ' +
+                'encima de la baja. ¿Qué ángulo forma el tendido con la horizontal?',
+          campos: [{et:'Ángulo', suf:'°', tol:0.2, val:angReal}],
+          pista: 'Aquí la hipotenusa es la distancia inclinada y el cateto opuesto es el desnivel: la razón es el ' +
+                 'seno, no la tangente. Y la cuenta se despeja con el arcoseno.',
+          svg: croquis({B:b, H:h, lado:'der', marca:'suelo', angTxt:'α', hip:true,
+                        etV:'desnivel ' + fmt(h, 2) + ' m', etB:'horizontal',
+                        etH:'inclinada ' + fmt(L, 2) + ' m'}),
+          sol: '<p>El tendido no es un cateto: es la hipotenusa del triángulo, porque va de un extremo al otro en ' +
+               'diagonal. El desnivel sí es un cateto, el opuesto al ángulo que se pide. La razón que relaciona los ' +
+               'dos es el <strong>seno</strong>.</p>' +
+               '<div class="formula">' + [
+                 'sen α = desnivel / distancia inclinada',
+                 '      = ' + fmt(h, 2) + ' / ' + fmt(L, 2),
+                 '      = ' + fmt(h / L, 5),
+                 '',
+                 'α = arcsen(' + fmt(h / L, 5) + ') = ' + fmt(angReal, 2) + '°'
+               ].join(NL) + '</div>' +
+               '<p>Con la tangente saldría mal, porque la tangente compara el desnivel con la distancia horizontal ' +
+               '(' + fmt(b, 2) + ' m), no con el tendido: daría ' + fmt(Math.atan(h / b) * 180 / Math.PI, 2) + '°, ' +
+               'un poco más de lo correcto.</p>' +
+               '<p>Comprobación: ' + fmt(L, 2) + ' × sen ' + fmt(angReal, 2) + '° = ' + fmt(L * SIN(angReal), 2) +
+               ' m de desnivel. Y el desnivel siempre tiene que ser menor que la distancia inclinada: ' + fmt(h, 2) +
+               ' es menor que ' + fmt(L, 2) + ', como corresponde.</p>'
+        };
+      }
+      return {
+        titulo: 'Distancia inclinada: hallar la horizontal',
+        enun: 'Entre la estación baja y la alta, ' + ctx + ' mide <span class="num">' + fmt(L, 2) + ' m</span> ' +
+              'a lo largo del tendido, y la estación alta está <span class="num">' + fmt(h, 2) + ' m</span> por ' +
+              'encima de la baja. ¿Qué distancia horizontal separa las dos estaciones?',
+        campos: [{et:'Horizontal', suf:'m', tol:0.05, val:b}],
+        pista: 'La horizontal es el cateto que falta de un triángulo del que conoces la hipotenusa y el otro cateto: ' +
+               'Pitágoras. Restar la inclinada menos el desnivel no da ninguna distancia del croquis.',
+        svg: croquis({B:b, H:h, lado:'der', marca:'suelo', angTxt: fmt(angReal, 1) + '°', hip:true,
+                      etV:'desnivel ' + fmt(h, 2) + ' m', etB:'horizontal ?',
+                      etH:'inclinada ' + fmt(L, 2) + ' m'}),
+        sol: '<p>El tendido es la hipotenusa y la proyección sobre el plano horizontal es el cateto que falta. Se ' +
+             'obtiene con Pitágoras, despejando el cateto:</p>' +
+             '<div class="formula">' + [
+               'inclinada² = desnivel² + horizontal²',
+               '',
+               'horizontal = raíz(inclinada² − desnivel²)',
+               '           = raíz(' + fmt(L, 2) + '² − ' + fmt(h, 2) + '²)',
+               '           = raíz(' + fmt(L * L, 2) + ' − ' + fmt(h * h, 2) + ')',
+               '           = raíz(' + fmt(L * L - h * h, 2) + ')',
+               '           = ' + fmt(b, 2) + ' m'
+             ].join(NL) + '</div>' +
+             '<p>Vía del ángulo, como comprobación: arcsen(' + fmt(h / L, 5) + ') = ' + fmt(angReal, 2) + '°, y ' +
+             fmt(L, 2) + ' × cos ' + fmt(angReal, 2) + '° = ' + fmt(L * COS(angReal), 2) + ' m. Las dos vías coinciden.</p>' +
+             '<p>Y el error que hay que descartar: ' + fmt(L, 2) + ' − ' + fmt(h, 2) + ' = ' + fmt(L - h, 2) +
+             ' m no es la distancia horizontal, es un segmento que no existe en el dibujo.</p>'
+      };
+    }
+    return null;
+  }
+
+  const TIPOS = {sombra:gSombra, depresion:gDepresion, elevacion:gElevacion, inclinada:gInclinada};
+  const POR_MODO = {
+    1: ['sombra'],
+    2: ['depresion'],
+    3: ['elevacion'],
+    4: ['inclinada'],
+    5: ['sombra', 'depresion', 'elevacion', 'inclinada', 'inclinada']
+  };
+
+  /* ---------- interfaz ---------- */
+  function nuevo(){
+    let cand = null;
+    for (let k = 0; k < 40; k++){
+      const o = TIPOS[pick(POR_MODO[modo])]();
+      if (!o) continue;
+      cand = o;
+      if (o.enun === ultimoEnun && k < 35) continue;
+      break;
+    }
+    if (!cand){
+      /* red de seguridad: nunca debería hacer falta */
+      modo = 1;
+      cand = TIPOS.sombra();
+    }
+    actual = cand;
+    ultimoEnun = cand.enun;
+    nEjer++;
+    $('#numE').textContent = nEjer;
+    $('#tipoE').textContent = actual.titulo;
+    $('#enun').innerHTML = actual.enun;
+    $('#croquis').innerHTML = actual.svg;
+    $('#fbk').className = 'feedback';
+    $('#fbk').innerHTML = '';
+    $('#soldet').open = false;
+    const cont = $('#campos');
+    cont.innerHTML = '';
+    actual.campos.forEach(function(c, i){
+      const fila = document.createElement('div');
+      fila.style.cssText = 'display:flex;gap:10px;align-items:center;margin:8px 0;flex-wrap:wrap';
+      const lab = document.createElement('span');
+      lab.textContent = c.et;
+      lab.style.cssText = 'min-width:96px;font-size:17px;color:#3c4a58';
+      const inp = document.createElement('input');
+      inp.type = 'text';
+      inp.inputMode = 'decimal';
+      inp.id = 'c' + i;
+      inp.style.width = '150px';
+      inp.addEventListener('keydown', function(e){ if (e.key === 'Enter') comprobar(); });
+      const suf = document.createElement('span');
+      suf.className = 'num';
+      suf.textContent = c.suf;
+      suf.style.cssText = 'font-size:18px;color:#3c4a58';
+      fila.appendChild(lab); fila.appendChild(inp); fila.appendChild(suf);
+      cont.appendChild(fila);
+    });
+    $('#sol').innerHTML = actual.sol;
+    const primero = $('#c0');
+    if (primero) primero.focus();
+  }
+
+  function comprobar(){
+    intentos++;
+    $('#mInt').textContent = intentos;
+    let todoBien = true, vacio = false;
+    actual.campos.forEach(function(c, i){
+      const inp = $('#c' + i);
+      if (inp.value.trim() === '') vacio = true;
+      const v = leerNum(inp.value);
+      const bien = isFinite(v) && Math.abs(v - c.val) <= c.tol;
+      marcar(inp, bien ? 1 : 0);
+      if (!bien) todoBien = false;
+    });
+    if (vacio){
+      fb($('#fbk'), null, 'El campo está vacío. Escribe el número antes de comprobar: si dudas, abre la solución.');
+      return;
+    }
+    if (todoBien){
+      aciertos++; racha++;
+      $('#mAci').textContent = aciertos;
+      $('#mRac').textContent = racha;
+      fb($('#fbk'), 1, 'Correcto: ' + (racha >= 3
+        ? 'tres seguidas. Pasa al modo Mezcla o cambia de botón para no mecanizar un solo caso.'
+        : 'el croquis y el número cuadran. Pulsa Otro ejercicio.'));
+    } else {
+      racha = 0;
+      $('#mRac').textContent = 0;
+      fb($('#fbk'), 0, 'Todavía no. ' + actual.pista);
+    }
+  }
+
+  $$('#niveles button').forEach(function(b){
+    b.addEventListener('click', function(){
+      modo = parseInt(b.dataset.n, 10);
+      $('#mMod').textContent = modo;
+      $$('#niveles button').forEach(function(o){ o.classList.add('ghost'); });
+      b.classList.remove('ghost');
+      nuevo();
+    });
+  });
+  $('#bCheck').addEventListener('click', comprobar);
+  $('#bOtro').addEventListener('click', nuevo);
+
+  /* gancho de depuración: permite leer el ejercicio desde fuera sin mostrarlo */
+  window.__topoDebug = function(){
+    return {titulo: $('#tipoE').textContent, enunciado: $('#enun').textContent,
+            respuestas: actual.campos.map(function(c){ return c.val; }),
+            tolerancias: actual.campos.map(function(c){ return c.tol; })};
+  };
+  nuevo();
+})();
+</script>
+
+<h2>Los cuatro tipos de ejercicio</h2>
+<table>
+  <tr><th style="width:20%">Botón</th><th>Qué te dan</th><th>Qué te piden</th><th style="width:17%">Razón</th></tr>
+  <tr><td>Sombra</td><td>El ángulo del sol y la longitud de la sombra</td><td>La altura del objeto</td>
+      <td>Tangente</td></tr>
+  <tr><td>Depresión</td><td>La altura del observador y el ángulo medido hacia abajo</td>
+      <td>La distancia horizontal hasta la señal</td><td>Tangente</td></tr>
+  <tr><td>Elevación</td><td>La distancia al pie y el ángulo medido hacia arriba</td><td>La altura del objeto</td>
+      <td>Tangente</td></tr>
+  <tr><td>Distancia inclinada</td><td>El desnivel y el tendido en diagonal</td>
+      <td>El ángulo, o la proyección horizontal</td><td>Seno o coseno</td></tr>
+</table>
+
+<h2>La decisión que resuelve el ejercicio: qué razón usar</h2>
+<p>En un triángulo rectángulo hay tres lados y solo tres razones trigonométricas útiles, y cada una empareja el
+ángulo recto con dos lados concretos. La <strong>tangente</strong> compara los dos catetos entre sí; el seno compara
+el cateto opuesto con la hipotenusa; el coseno compara el cateto contiguo con la hipotenusa. Por eso el primer gesto
+del ejercicio no es coger la calculadora, sino mirar el croquis y preguntarse: ¿el lado que me falta es un cateto o
+es la hipotenusa?</p>
+
+<p>Si los dos lados que manejo son catetos —altura y sombra, altura y distancia al pie, altura y distancia
+horizontal— la respuesta es tangente, y da igual que el ángulo esté arriba o abajo. Si en cambio uno de los dos lados
+es la visual o el tendido, es decir, la diagonal que une los dos extremos, entonces la razón es seno o coseno según
+que ese lado sea la hipotenusa que se conoce o la que se busca.</p>
+
+<p>El ángulo de depresión merece un comentario aparte porque es donde más gente se atasca. Se mide desde la
+horizontal del observador hacia abajo, no desde la vertical. Y como la horizontal de arriba y la del suelo son
+paralelas, el ángulo de depresión y el de elevación medido desde la señal son iguales: son alternos internos. Eso
+significa que el triángulo del dron se resuelve con las mismas cuentas que el del observador en el suelo, sin
+cambiar nada. Lo que sí es un error frecuente es usar el complementario, 90° menos el ángulo, y quedarse tan
+tranquilo.</p>
+
+<p>Por último, la comprobación de sentido que se puede hacer sin calculadora: por debajo de 45° el cateto vertical es
+más corto que el horizontal; por encima, al revés; y a 45° son iguales. Si tu resultado contradice esa regla, no hace
+falta revisar los decimales, hay un planteamiento mal hecho detrás.</p>
+
+<h2>Los errores que se repiten</h2>
+<ol>
+  <li><p><strong>Cambiar la tangente por el seno.</strong> Aparece cuando se toma la visual por un cateto. En la
+  sombra y en la elevación la visual no se mide: si en tu cuenta aparece un seno, casi seguro que has metido una
+  hipotenusa que el enunciado no daba.</p></li>
+  <li><p><strong>Despejar al revés.</strong> Con la tangente, la altura es sombra por tangente (multiplicar) y la
+  distancia horizontal es altura entre tangente (dividir). Multiplicar cuando tocaba dividir da un resultado del
+  orden de decenas de veces mayor, y eso se ve de un vistazo.</p></li>
+  <li><p><strong>Restar la inclinada menos el desnivel.</strong> La diferencia entre los dos lados de un triángulo no
+  es el tercer lado. La proyección horizontal se saca con Pitágoras o con el coseno, nunca restando.</p></li>
+  <li><p><strong>Usar el ángulo complementario en la depresión.</strong> Si el ángulo medido es 62° y en la cuenta
+  aparece un 28°, el resultado se dispara. El croquis lo delata: el ángulo marcado en rojo es el que entra.</p></li>
+</ol>
+
+<p>Si algún paso no te cuadra, vuelve a la lección <a href="06_triangulo_rectangulo.html">El triángulo rectángulo en
+el campo</a>: allí están dibujadas las tres razones sobre el mismo triángulo, el porqué del ángulo de depresión y la
+comprobación de los 45°. Cuando los cuatro modos te salgan con soltura, el siguiente peldaño es el generador de dos
+posiciones, donde la altura se mide sin poder acercarse al pie.</p>
+</main>
+<nav class="pager"><a href="10_calculadora_y_errores.html">&larr; Calculadora, redondeo y comprobación</a><span class="sp"></span><a href="index.html">Índice</a><span class="sp"></span><a href="gen_03_angulo_y_pendiente.html">Generador · Ángulo y pendiente &rarr;</a></nav>
+</div>
+<script>refrescaSliders();</script>
+</body>
+</html>

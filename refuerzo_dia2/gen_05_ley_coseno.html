@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Generador · Ley del coseno</title>
+<style>
+:root{
+  --ink:#1b2530; --navy:#16324f; --navy2:#2c5a84; --line:#d3d9df; --bg:#f7f8f9;
+  --soft:#edf1f4; --ok:#1f6b3a; --bad:#8f2222; --warnc:#7a5a00;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:19px/1.62 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+.wrap{max-width:980px;margin:0 auto;padding:26px 26px 90px}
+header.top{border-bottom:2px solid var(--navy);padding-bottom:12px;margin-bottom:26px}
+.kicker{font-size:13.5px;letter-spacing:.14em;text-transform:uppercase;color:#5b6875;font-weight:600}
+h1{font-size:31px;line-height:1.22;margin:.22em 0 .28em;color:var(--navy);font-weight:660;letter-spacing:-.01em}
+.sub{font-size:19px;color:#3c4a58;margin:0}
+h2{font-size:22.5px;margin:2.1em 0 .45em;color:var(--navy);font-weight:650;
+   border-left:4px solid var(--navy);padding-left:11px;line-height:1.3}
+h2:first-of-type{margin-top:1.2em}
+h3{font-size:19.5px;margin:1.5em 0 .3em;font-weight:650;color:#22303d}
+h4{font-size:17px;margin:1.2em 0 .3em;font-weight:650;color:#22303d}
+p{margin:.62em 0}
+.lead{font-size:20px;color:#2c3a48}
+ul,ol{padding-left:1.4em;margin:.55em 0}
+li{margin:.3em 0}
+li>ul,li>ol{margin:.3em 0}
+a{color:var(--navy2)}
+strong{font-weight:660}
+.num{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.formula{
+  font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:17px;line-height:1.7;
+  background:var(--soft);border-left:3px solid var(--navy);padding:11px 15px;margin:1em 0;
+  overflow-x:auto;white-space:pre-wrap;
+}
+.formula em{font-style:normal;color:var(--navy);font-weight:600}
+.demo{background:#fff;border:1px solid var(--line);padding:16px 16px 18px;margin:1.3em 0}
+.demo .tat{font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:#5b6875;
+  font-weight:650;margin:0 0 12px}
+.ctrl{display:grid;grid-template-columns:165px 1fr 135px;gap:12px;align-items:center;margin:.55em 0}
+.ctrl label{font-size:17px}
+.ctrl .val{text-align:right;font-family:ui-monospace,monospace;font-size:18px;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:#16324f;height:22px}
+input[type=number],input[type=text],select{
+  font:inherit;font-size:18px;padding:6px 9px;border:1px solid #b7c0c9;background:#fff;
+  color:var(--ink);border-radius:0;width:100%
+}
+input:focus,select:focus,button:focus{outline:2px solid var(--navy2);outline-offset:1px}
+input.ok{border-color:var(--ok);background:#f1f7f3}
+input.bad{border-color:var(--bad);background:#fdf3f3}
+button{
+  font:inherit;font-size:16px;padding:7px 15px;border:1px solid var(--navy);border-radius:0;
+  background:var(--navy);color:#fff;cursor:pointer
+}
+button:hover{background:#1d4368}
+button.ghost{background:#fff;color:var(--navy)}
+button.ghost:hover{background:var(--soft)}
+.botones{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:9px;margin:12px 0 0}
+.readout div{background:var(--soft);padding:8px 11px}
+.readout b{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  color:#5b6875;font-weight:650;margin-bottom:2px}
+.readout span{font-family:ui-monospace,monospace;font-size:18px;font-variant-numeric:tabular-nums}
+.note{background:#fbfaf4;border-left:3px solid #b08a2e;padding:11px 15px;margin:1.1em 0}
+.warn{background:#fcf4f4;border-left:3px solid var(--bad);padding:11px 15px;margin:1.1em 0}
+.good{background:#f1f7f3;border-left:3px solid var(--ok);padding:11px 15px;margin:1.1em 0}
+.feedback{margin-top:11px;font-size:17.5px;line-height:1.55}
+.feedback.good::before{content:"";}
+.fb-good{color:var(--ok)}
+.fb-bad{color:var(--bad)}
+.fb-neutral{color:#3c4a58}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:17px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--soft);font-weight:650;font-size:16px}
+td.num,th.num{font-family:ui-monospace,monospace;font-variant-numeric:tabular-nums}
+nav.strip{display:flex;gap:15px;align-items:center;flex-wrap:wrap;font-size:15.5px;
+  border-bottom:1px solid var(--line);padding:0 0 10px;margin:-4px 0 24px;color:#5b6875}
+nav.strip a{color:var(--navy2);text-decoration:none;border-bottom:1px solid #c5d3e0}
+nav.strip a:hover{border-bottom-color:var(--navy2)}
+nav.strip .act{color:#5b6875;font-weight:650}
+nav.strip .sep{color:#ccd4db}
+nav.pager{display:flex;justify-content:space-between;gap:14px;margin-top:54px;padding-top:16px;
+  border-top:1px solid var(--line);font-size:16px}
+nav.pager a{color:var(--navy);text-decoration:none;border-bottom:1px solid #a9bdd0;padding-bottom:1px}
+nav.pager a:hover{border-bottom-color:var(--navy)}
+nav.pager .sp{flex:1}
+svg{display:block;max-width:100%;height:auto;font-family:ui-monospace,monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.tiny{font-size:15.5px;color:#5b6875;line-height:1.5}
+.pasos{counter-reset:p;list-style:none;padding-left:0}
+.pasos>li{counter-increment:p;position:relative;padding-left:42px;margin:.85em 0}
+.pasos>li::before{
+  content:counter(p);position:absolute;left:0;top:.05em;width:28px;height:28px;border:1.5px solid var(--navy);
+  color:var(--navy);font-size:15px;font-weight:700;text-align:center;line-height:25px;
+  font-family:ui-monospace,monospace
+}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin:1.2em 0}
+.card{background:#fff;border:1px solid var(--line);padding:14px 16px;display:block;
+  text-decoration:none;color:var(--ink)}
+.card:hover{border-color:var(--navy);background:#fbfcfd}
+.card .n{font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:#5b6875;font-weight:650}
+.card .t{font-size:19px;color:var(--navy);font-weight:650;margin:.15em 0 .25em;line-height:1.28;min-height:2.56em}
+.card .d{font-size:16px;color:#46545f;line-height:1.45}
+.tag{display:inline-block;font-size:13px;border:1px solid var(--line);background:var(--soft);
+  padding:1px 7px;margin:4px 4px 0 0;color:#46545f}
+kbd{font-family:ui-monospace,monospace;font-size:15px;border:1px solid #b7c0c9;border-bottom-width:2px;
+  padding:1px 5px;background:#fff}
+.checkline{display:flex;gap:10px;align-items:baseline;margin:.4em 0}
+.checkline input[type=checkbox]{width:18px;height:18px;accent-color:#16324f;flex:none}
+@media (max-width:740px){
+  body{font-size:18px}
+  .wrap{padding:18px 16px 70px}
+  h1{font-size:26px} h2{font-size:20.5px}
+  .ctrl{grid-template-columns:110px 1fr 105px;gap:8px}
+  .grid2{grid-template-columns:1fr}
+}
+@media print{
+  body{background:#fff}
+  .demo{break-inside:avoid}
+  nav.pager{display:none}
+}
+</style>
+
+<script>
+/* ---------- utilidades comunes (idénticas en todas las páginas) ---------- */
+const $  = (s, r) => (r||document).querySelector(s);
+const $$ = (s, r) => Array.from((r||document).querySelectorAll(s));
+
+/* Lee un número escrito por el alumno: admite coma o punto decimal,
+   espacios, el símbolo de grado y el sufijo de gonios. */
+function leerNum(v){
+  if (typeof v === 'number') return v;
+  let s = String(v == null ? '' : v).trim();
+  s = s.replace(/\s+/g,'').replace(/[°º]/g,'').replace(/(rad|gon|g|m|s)$/i,'');
+  if (s === '') return NaN;
+  if (s.includes(',') && s.includes('.')) s = s.replace(/\./g,'').replace(',', '.');
+  else if (s.includes(',')) s = s.replace(',', '.');
+  return parseFloat(s);
+}
+/* Formato español: coma decimal, cifras fijas. */
+function fmt(x, d){
+  d = (d === undefined) ? 2 : d;
+  if (!isFinite(x)) return '—';
+  return x.toFixed(d).replace('.', ',');
+}
+/* Sexagesimal: {g,m,s} a partir de grados decimales */
+function aSexa(x){
+  let neg = x < 0; x = Math.abs(x);
+  let g = Math.floor(x + 1e-12);
+  let mm = (x - g) * 60;
+  let m = Math.floor(mm + 1e-9);
+  let s = (mm - m) * 60;
+  if (s >= 59.9995){ s = 0; m += 1; }
+  if (m >= 60){ m -= 60; g += 1; }
+  return {g:(neg?-g:g), m:m, s:s};
+}
+/* Centesimal: {g,m,s} */
+function aCentes(x){
+  let neg = x < 0; x = Math.abs(x);
+  let g = Math.floor(x + 1e-12);
+  let mm = (x - g) * 100;
+  let m = Math.floor(mm + 1e-9);
+  let s = (mm - m) * 100;
+  if (s >= 99.995){ s = 0; m += 1; }
+  if (m >= 100){ m -= 100; g += 1; }
+  return {g:(neg?-g:g), m:m, s:s};
+}
+function txtSexa(x, ds){
+  ds = (ds === undefined) ? 1 : ds;
+  const f = Math.pow(10, ds);
+  let total = Math.round(Math.abs(x) * 3600 * f);
+  const g = Math.floor(total / (3600 * f));
+  let rem = total - g * 3600 * f;
+  const m = Math.floor(rem / (60 * f));
+  rem = rem - m * 60 * f;
+  const si = String(Math.floor(rem / f)).padStart(2, '0');
+  const dec = ds > 0 ? ',' + String(rem % f).padStart(ds, '0') : '';
+  return (x < 0 ? '−' : '') + g + '° ' + String(m).padStart(2, '0') + '\u2032 ' + si + dec + '\u2033';
+}
+function txtCentes(x, ds){
+  ds = (ds === undefined) ? 1 : ds;
+  const f = Math.pow(10, ds);
+  let total = Math.round(Math.abs(x) * 10000 * f);
+  const g = Math.floor(total / (10000 * f));
+  let rem = total - g * 10000 * f;
+  const m = Math.floor(rem / (100 * f));
+  rem = rem - m * 100 * f;
+  const si = String(Math.floor(rem / f)).padStart(2, '0');
+  const dec = ds > 0 ? ',' + String(rem % f).padStart(ds, '0') : '';
+  return (x < 0 ? '−' : '') + g + 'g ' + String(m).padStart(2, '0') + 'm ' + si + dec + 's';
+}
+/* Retorno de estado en un campo: ok / mal */
+function marcar(el, estado){
+  el.classList.remove('ok','bad');
+  if (estado === 1) el.classList.add('ok');
+  else if (estado === 0) el.classList.add('bad');
+}
+function fb(el, tipo, texto){
+  el.className = 'feedback ' + (tipo === 1 ? 'fb-good' : tipo === 0 ? 'fb-bad' : 'fb-neutral');
+  el.innerHTML = texto;
+  return tipo;
+}
+/* Formatea un ángulo en radianes como múltiplo exacto de π si el denominador es pequeño */
+function aPi(x){
+  const r = x / Math.PI;
+  for (let q = 1; q <= 24; q++){
+    const p = r * q;
+    if (Math.abs(p - Math.round(p)) < 1e-9){
+      const n = Math.round(p);
+      if (q === 1) return (n === 1 ? 'π' : n + 'π');
+      if (n === 1) return 'π/' + q;
+      return n + 'π/' + q;
+    }
+  }
+  return null;
+}
+/* Sincroniza el relleno visual de los sliders (solo estética) */
+function refrescaSliders(root){
+  $$('input[type=range]', root || document).forEach(function(r){
+    const p = (r.value - r.min) / (r.max - r.min) * 100;
+    r.style.background = 'linear-gradient(90deg,#16324f ' + p + '%,#cfd7de ' + p + '%)';
+    r.style.height = '6px';
+    r.style.borderRadius = '0';
+    r.style.appearance = 'none';
+    r.style.webkitAppearance = 'none';
+  });
+}
+</script>
+<style>
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:16px;height:16px;background:#16324f;border:2px solid #fff;
+  box-shadow:0 0 0 1px #16324f;cursor:pointer
+}
+input[type=range]::-moz-range-thumb{
+  width:14px;height:14px;background:#16324f;border:2px solid #fff;box-shadow:0 0 0 1px #16324f;cursor:pointer
+}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<header class="top"><div class="kicker">Día 2 · Generador B4</div><h1>Generador · Ley del coseno</h1><p class="sub">Dos lados y el ángulo entre ellos: el tercer lado</p></header><nav class="strip"><a href="index.html">Índice</a><span class="sep">·</span><span class="act">Generador B4</span><span class="sep">·</span><a href="08_ley_del_coseno.html">Lección 8 &rarr;</a></nav>
+<main>
+<p class="lead">Cuando un triángulo no tiene ningún ángulo recto, el teorema de Pitágoras deja de valer y entra la ley del
+coseno. Este generador la practica en las dos direcciones en que aparece en los problemas de campo: con dos lados y el
+ángulo comprendido se obtiene el tercer lado, y con los tres lados se obtiene cualquier ángulo. Cada pulsación trae
+números nuevos y un croquis a escala aproximada del triángulo que hay que resolver.</p>
+
+<h2>Cómo se usa</h2>
+<ol>
+  <li><p>Elige el modo. El modo A da dos lados y el ángulo que forman y pide el tercer lado; el modo B da los tres
+  lados y pide el ángulo opuesto a uno de ellos.</p></li>
+  <li><p>Mira el croquis antes de calcular: en él están marcados los datos del ejercicio y, con un signo de
+  interrogación, lo que se pide. Sirve para comprobar que has identificado bien el ángulo comprendido.</p></li>
+  <li><p>Escribe el resultado con coma o punto decimal, sin la unidad. En el modo A se admiten cinco centésimas de
+  metro; en el modo B, tres décimas de grado.</p></li>
+  <li><p>Pulsa <strong>Comprobar</strong>. Si falla, la corrección te dice si el problema es el planteamiento o el
+  despeje, porque los dos errores se distinguen bien por el orden de magnitud del resultado.</p></li>
+</ol>
+<p class="tiny">El margen del modo A es de cinco centésimas de metro, más estrecho que en otros ejercicios, porque la
+ley del coseno es una fórmula cerrada: no hay ninguna medición de campo que justifique un error mayor. En el modo B el
+margen es de tres décimas de grado, que es lo que produce redondear el arco coseno a dos decimales.</p>
+
+<h2>Los dos modos</h2>
+<table>
+  <tr><th style="width:16%">Modo</th><th>Datos y pregunta</th><th style="width:30%">La forma de la fórmula</th></tr>
+  <tr><td>A · el tercer lado</td>
+      <td>Se dan <span class="num">b</span>, <span class="num">c</span> y el ángulo <span class="num">A</span> entre
+      ellos. Se pide <span class="num">a</span>, el lado opuesto a ese ángulo.</td>
+      <td><span class="num">a² = b² + c² − 2·b·c·cos A</span>, y después raíz cuadrada.</td></tr>
+  <tr><td>B · el ángulo</td>
+      <td>Se dan los tres lados. Se pide el ángulo <span class="num">A</span>, opuesto al lado
+      <span class="num">a</span>.</td>
+      <td>La misma igualdad, despejando <span class="num">cos A</span> y aplicando el arco coseno.</td></tr>
+</table>
+
+<h2>Practicar</h2>
+<div class="demo" id="maquina">
+  <p class="tat">Ejercicio <span id="numE">1</span> &nbsp;·&nbsp; <span id="tipoE">—</span></p>
+  <div class="botones" id="modos" style="margin-bottom:6px">
+    <button data-m="A">Modo A · dos lados y el ángulo</button>
+    <button class="ghost" data-m="B">Modo B · los tres lados</button>
+  </div>
+  <div id="enun" style="margin:16px 0 4px;font-size:19px;line-height:1.55"></div>
+  <svg id="cro" viewBox="0 0 560 330" width="560" height="330" role="img"
+       aria-label="Croquis del triángulo con el ángulo comprendido marcado"></svg>
+  <p class="tiny" style="margin:2px 0 6px">El dibujo está a escala aproximada. El ángulo marcado con el arco es el que
+  forman los lados <span class="num">b</span> y <span class="num">c</span> en el vértice A, y es el único que puede
+  entrar en la fórmula como ángulo comprendido.</p>
+  <div id="campos" style="margin:10px 0 4px"></div>
+  <div class="botones">
+    <button id="bCheck">Comprobar</button>
+    <button id="bOtro" class="ghost">Otro ejercicio</button>
+  </div>
+  <div class="feedback" id="fbk"></div>
+  <details id="soldet" style="margin-top:14px">
+    <summary style="cursor:pointer;font-size:16.5px;color:#16324f">Ver solución paso a paso</summary>
+    <div id="sol" style="margin-top:10px"></div>
+  </details>
+</div>
+
+<div class="readout" style="margin-top:-6px">
+  <div><b>Modo</b><span id="mMod">A</span></div>
+  <div><b>Aciertos</b><span id="mAci">0</span></div>
+  <div><b>Intentos</b><span id="mInt">0</span></div>
+  <div><b>Racha</b><span id="mRac">0</span></div>
+</div>
+
+<h2>Por qué aparece un coseno</h2>
+<p>Si el ángulo <span class="num">A</span> fuese recto, el término <span class="num">cos A</span> valdría cero y la
+ley del coseno se quedaría en <span class="num">a² = b² + c²</span>: exactamente Pitágoras. Eso dice mucho de la
+fórmula; no es una regla nueva, es Pitágoras corregido por cuánto se ha abierto o cerrado el ángulo. Cuando
+<span class="num">A</span> es agudo, el coseno es positivo y el lado <span class="num">a</span> sale menor que en el
+caso recto; cuando es obtuso, el coseno es negativo, el término se suma y el lado sale mayor. La corrección tiene
+signo, y por eso el ángulo de 130° no se puede tratar como si fuese de 50°.</p>
+<div class="formula">a² = b² + c² − 2·b·c·cos A
+
+y despejando el ángulo:      b² + c² − a²
+                        cos A = ─────────────
+                                  2·b·c</div>
+<p>La simetría de la fórmula es lo que la hace cómoda: cada lado se puede poner en el papel de
+<span class="num">a</span>, y entonces el ángulo del segundo miembro es el que queda enfrente. Lo único que no se
+puede cambiar es la pareja: el ángulo y el lado opuesto tienen que ser los de la misma esquina del triángulo.</p>
+
+<h2>Las tres trampas</h2>
+<ol>
+  <li><p><strong>Usar un ángulo que no es el comprendido.</strong> Si los lados dados son <span class="num">b</span>
+  y <span class="num">c</span>, el ángulo que entra en la fórmula es el del vértice A, el que está entre ellos. Meter
+  el ángulo B, que es el que forma <span class="num">a</span> con <span class="num">c</span>, da un número
+  creíble y equivocado. Antes de calcular, marca en el croquis los dos lados que te dan y mira qué ángulo queda
+  en medio.</p></li>
+  <li><p><strong>Olvidar la raíz cuadrada.</strong> La fórmula da <span class="num">a²</span>, no
+  <span class="num">a</span>. Es un despiste que se detecta en seguida: un lado de 2 500 m en una parcela no tiene
+  sentido, y el número que ha salido es en realidad el cuadrado.</p></li>
+  <li><p><strong>Invertir la calculadora.</strong> El arco coseno se calcula con la tecla <kbd>cos⁻¹</kbd> o
+  <kbd>acos</kbd>, no con <kbd>cos</kbd>. Si al pedir un ángulo el resultado es un número entre −1 y 1, es que se ha
+  vuelto a aplicar el coseno en lugar de deshacerlo.</p></li>
+</ol>
+
+<p>La deducción de la ley del coseno, el problema 2 de la ficha resuelto paso a paso y la comparación con la ley del
+seno están en la lección <a href="08_ley_del_coseno.html">Triángulos no rectángulos</a>. Este generador solo sirve
+para automatizar lo que allí se entiende.</p>
+
+<script>
+(function(){
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = $('#cro');
+  const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+  const COS = g => Math.cos(g * Math.PI / 180);
+  const num = (x, d) => (x < 0 ? '\u2212' + fmt(Math.abs(x), d) : fmt(x, d));
+
+  let modo = 'A', nEjer = 0, aciertos = 0, intentos = 0, racha = 0, actual = null, firma = '';
+
+  /* ---------- generación de datos ---------- */
+  function genera(){
+    let b, c, A, a, f, n = 0;
+    do {
+      b = rnd(14, 90);
+      c = rnd(14, 90);
+      A = rnd(20, 150);
+      a = Math.sqrt(b * b + c * c - 2 * b * c * COS(A));
+      f = b + '|' + c + '|' + A;
+      n++;
+    } while ((a < 10 || b === c || f === firma) && n < 600);
+    firma = f;
+    const ar = Math.round(a * 100) / 100;
+    const cosAr = (b * b + c * c - ar * ar) / (2 * b * c);
+    const Aref = Math.acos(Math.max(-1, Math.min(1, cosAr))) * 180 / Math.PI;
+    return {b:b, c:c, A:A, a:a, aRed:ar, Aref:Aref, cosAr:cosAr};
+  }
+
+  /* ---------- croquis ---------- */
+  function limpia(){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function el(tag, attrs, txt){
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (txt !== undefined) e.textContent = txt;
+    svg.appendChild(e); return e;
+  }
+
+  function dibuja(g, pideLado){
+    limpia();
+    const W = 560, H = 330;
+    const ax = 0, ay = 0;
+    const bx = g.c, by = 0;
+    const cx = g.b * COS(g.A), cy = g.b * Math.sin(g.A);
+    const minX = Math.min(ax, bx, cx), maxX = Math.max(ax, bx, cx);
+    const minY = Math.min(ay, by, cy), maxY = Math.max(ay, by, cy);
+    const ancho = Math.max(maxX - minX, 1), alto = Math.max(maxY - minY, 1);
+    const s = Math.min((W - 130) / ancho, (H - 110) / alto);
+    const offX = 80 - minX * s + ((W - 130) - ancho * s) / 2;
+    const offY = H - 65 + minY * s - ((H - 110) - alto * s) / 2;
+    const P = function(x, y){ return [offX + x * s, offY - y * s]; };
+    const PA = P(ax, ay), PB = P(bx, by), PC = P(cx, cy);
+
+    el('polygon', {points:[PA, PB, PC].map(function(p){ return p[0] + ',' + p[1]; }).join(' '),
+                   fill:'#edf1f4', stroke:'#16324f', 'stroke-width':1.8});
+
+    /* arco del ángulo A */
+    const r = Math.min(52, 0.34 * Math.min(g.b, g.c) * s);
+    const pts = [];
+    const paso = Math.max(0.5, g.A / 30);
+    for (let t = 0; t <= g.A; t += paso){
+      const p = P(r / s * Math.cos(t * Math.PI / 180), r / s * Math.sin(t * Math.PI / 180));
+      pts.push(p[0] + ',' + p[1]);
+    }
+    const pe = P(r / s * COS(g.A), r / s * Math.sin(g.A * Math.PI / 180));
+    pts.push(pe[0] + ',' + pe[1]);
+    el('polyline', {points:pts.join(' '), fill:'none', stroke:'#8f2222', 'stroke-width':2});
+
+    const pm = P((r + 22) / s * COS(g.A / 2), (r + 22) / s * Math.sin(g.A / 2 * Math.PI / 180));
+    el('text', {x:pm[0], y:pm[1], 'text-anchor':'middle', 'font-size':14, fill:'#8f2222',
+                'font-weight':'600'}, pideLado ? 'A = ' + fmt(g.A, 0) + '°' : 'A = ?');
+
+    /* vértices */
+    [[PA, 'A', -14, 18], [PB, 'B', 12, 18], [PC, 'C', 0, -14]].forEach(function(v){
+      el('circle', {cx:v[0][0], cy:v[0][1], r:4, fill:'#16324f'});
+      el('text', {x:v[0][0] + v[2], y:v[0][1] + v[3], 'text-anchor':'middle', 'font-size':14,
+                  fill:'#16324f', 'font-weight':'650'}, v[0] === PA ? 'A' : v[0] === PB ? 'B' : 'C');
+    });
+
+    /* etiquetas de los lados, desplazadas hacia el exterior */
+    const cen = [(PA[0] + PB[0] + PC[0]) / 3, (PA[1] + PB[1] + PC[1]) / 3];
+    function rotula(p, q, texto, color){
+      const mx = (p[0] + q[0]) / 2, my = (p[1] + q[1]) / 2;
+      let dx = mx - cen[0], dy = my - cen[1];
+      const m = Math.sqrt(dx * dx + dy * dy) || 1;
+      el('text', {x:mx + dx / m * 20, y:my + dy / m * 20 + 5, 'text-anchor':'middle',
+                  'font-size':14, fill:color, 'font-weight':'600'}, texto);
+    }
+    rotula(PA, PB, 'c = ' + fmt(g.c, 0) + ' m', '#16324f');
+    rotula(PA, PC, 'b = ' + fmt(g.b, 0) + ' m', '#16324f');
+    rotula(PB, PC, pideLado ? 'a = ?' : 'a = ' + fmt(g.aRed, 2) + ' m',
+           pideLado ? '#8f2222' : '#16324f');
+  }
+
+  /* ---------- ejercicio ---------- */
+  function nuevo(){
+    const g = genera();
+    nEjer++;
+    $('#numE').textContent = nEjer;
+    $('#tipoE').textContent = (modo === 'A' ? 'Modo A · el tercer lado' : 'Modo B · el ángulo');
+
+    if (modo === 'A'){
+      $('#enun').innerHTML = 'De una parcela triangular se conocen dos lados que salen del mismo vértice: ' +
+        '<span class="num">b = ' + fmt(g.b, 0) + ' m</span> y <span class="num">c = ' + fmt(g.c, 0) +
+        ' m</span>, y el ángulo que forman entre ellos es <span class="num">A = ' + fmt(g.A, 0) +
+        '°</span>. Calcula el tercer lado <span class="num">a</span>, el opuesto a ese ángulo.';
+      actual = {datos:g, campos:[{et:'a (tercer lado)', suf:'m', tol:0.05, val:g.a}]};
+    } else {
+      $('#enun').innerHTML = 'De un triángulo se conocen los tres lados: <span class="num">a = ' +
+        fmt(g.aRed, 2) + ' m</span>, <span class="num">b = ' + fmt(g.b, 0) + ' m</span> y ' +
+        '<span class="num">c = ' + fmt(g.c, 0) + ' m</span>. Calcula el ángulo <span class="num">A</span>, el ' +
+        'que es opuesto al lado <span class="num">a</span> y está comprendido entre <span class="num">b</span> y ' +
+        '<span class="num">c</span>.';
+      actual = {datos:g, campos:[{et:'A (ángulo en °)', suf:'°', tol:0.3, val:g.Aref}]};
+    }
+
+    $('#fbk').className = 'feedback';
+    $('#fbk').innerHTML = '';
+    $('#soldet').open = false;
+
+    const cont = $('#campos');
+    cont.innerHTML = '';
+    actual.campos.forEach(function(c, i){
+      const fila = document.createElement('div');
+      fila.style.cssText = 'display:flex;gap:10px;align-items:center;margin:8px 0;flex-wrap:wrap';
+      const lab = document.createElement('span');
+      lab.textContent = c.et;
+      lab.style.cssText = 'min-width:170px;font-size:17px;color:#3c4a58';
+      const inp = document.createElement('input');
+      inp.type = 'text';
+      inp.inputMode = 'decimal';
+      inp.id = 'c' + i;
+      inp.style.width = '140px';
+      inp.addEventListener('keydown', function(e){ if (e.key === 'Enter') comprobar(); });
+      const suf = document.createElement('span');
+      suf.className = 'num';
+      suf.textContent = c.suf;
+      suf.style.cssText = 'font-size:18px;color:#3c4a58';
+      fila.appendChild(lab); fila.appendChild(inp); fila.appendChild(suf);
+      cont.appendChild(fila);
+    });
+
+    $('#sol').innerHTML = solucion(g);
+    dibuja(g, modo === 'A');
+    if ($('#c0')) $('#c0').focus();
+  }
+
+  function solucion(g){
+    const b2 = g.b * g.b, c2 = g.c * g.c, bc2 = 2 * g.b * g.c;
+    if (modo === 'A'){
+      const co = COS(g.A), obtuso = co < 0;
+      return '<div class="formula">1)  Datos:  b = ' + fmt(g.b, 0) + ' m      c = ' + fmt(g.c, 0) +
+        ' m      A = ' + fmt(g.A, 0) + '°  (el ángulo entre b y c)\n\n' +
+        '2)  Ley del coseno:\n' +
+        '    a² = b² + c² − 2·b·c·cos A\n\n' +
+        '3)  Sustituyo:\n' +
+        '    cos ' + fmt(g.A, 0) + '° = ' + num(co, 5) + '\n' +
+        '    a² = ' + fmt(g.b, 0) + '² + ' + fmt(g.c, 0) + '² − 2·' + fmt(g.b, 0) + '·' + fmt(g.c, 0) +
+        '·(' + num(co, 5) + ')\n' +
+        '       = ' + fmt(b2, 0) + ' + ' + fmt(c2, 0) + ' − ' + fmt(bc2, 0) + ' · (' + num(co, 5) + ')\n' +
+        '       = ' + fmt(b2 + c2, 0) + ' − (' + num(bc2 * co, 2) + ')\n' +
+        (obtuso ? '       = ' + fmt(b2 + c2, 0) + ' + ' + fmt(-bc2 * co, 2) + '\n' : '') +
+        '       = ' + fmt(g.a * g.a, 2) + '\n\n' +
+        '4)  a = √' + fmt(g.a * g.a, 2) + ' = ' + fmt(g.a, 2) + ' m</div>' +
+        (obtuso ? '<p>El ángulo es obtuso, así que su coseno es negativo y por eso el término del coseno <em>suma</em> ' +
+        'en lugar de restar: el lado <span class="num">a</span> sale mayor que en un triángulo rectángulo con los ' +
+        'mismos dos lados.</p>' : '') +
+        '<p>Desigualdad triangular, que en un triángulo siempre se cumple y aquí sirve de control: ' +
+        '<span class="num">b + c = ' + fmt(g.b + g.c, 0) + ' m</span> tiene que ser mayor que ' +
+        '<span class="num">a = ' + fmt(g.a, 2) + ' m</span>, y <span class="num">|c − b| = ' +
+        fmt(Math.abs(g.c - g.b), 0) + ' m</span> tiene que ser menor. Se cumple: ' + fmt(g.b + g.c, 0) + ' &gt; ' +
+        fmt(g.a, 2) + ' &gt; ' + fmt(Math.abs(g.c - g.b), 0) + '. Si al hacer el cálculo no se cumple, el error está ' +
+        'en el signo del término del coseno, no en la aritmética.</p>';
+    }
+    const a2 = g.aRed * g.aRed;
+    return '<div class="formula">1)  Datos:  a = ' + fmt(g.aRed, 2) + ' m     b = ' + fmt(g.b, 0) +
+      ' m     c = ' + fmt(g.c, 0) + ' m\n\n' +
+      '2)  Ley del coseno, despejando el coseno:\n' +
+      '    a² = b² + c² − 2·b·c·cos A\n' +
+      '    cos A = (b² + c² − a²) / (2·b·c)\n\n' +
+      '3)  Sustituyo:\n' +
+      '    cos A = (' + fmt(b2, 0) + ' + ' + fmt(c2, 0) + ' − ' + fmt(a2, 2) + ') / (' + fmt(bc2, 0) + ')\n' +
+      '          = ' + num(b2 + c2 - a2, 2) + ' / ' + fmt(bc2, 0) + '\n' +
+      '          = ' + num(g.cosAr, 5) + '\n\n' +
+      '4)  A = arccos(' + num(g.cosAr, 5) + ') = ' + fmt(g.Aref, 2) + '°</div>' +
+      '<p>Comprobación: con ese ángulo, <span class="num">b² + c² − 2·b·c·cos A</span> tiene que devolver ' +
+      fmt(a2, 2) + ', el cuadrado del lado de partida. Da ' +
+      fmt(b2 + c2 - bc2 * COS(g.Aref), 2) + '.</p>' +
+      '<p>Ojo con el signo del coseno: aquí ha salido ' + (g.cosAr < 0 ? 'negativo, y eso significa que el ángulo ' +
+      'es obtuso (mayor de 90°), no que el cálculo esté mal' : 'positivo, así que el ángulo es agudo y el lado a es ' +
+      'el más corto de los tres') + '.</p>';
+  }
+
+  /* ---------- corrección ---------- */
+  function comprobar(){
+    intentos++;
+    const c = actual.campos[0];
+    const inp = $('#c0');
+    const v = leerNum(inp.value);
+    if (inp.value.trim() === ''){
+      fb($('#fbk'), null, 'Escribe el resultado antes de comprobar. Admite coma o punto decimal y no hace falta ' +
+        'la unidad.');
+      return;
+    }
+    const bien = isFinite(v) && Math.abs(v - c.val) <= c.tol;
+    marcar(inp, bien ? 1 : 0);
+    if (bien){
+      aciertos++; racha++;
+      fb($('#fbk'), 1, 'Correcto: ' + fmt(c.val, modo === 'A' ? 2 : 2) + ' ' + c.suf + ' dentro del margen. ' +
+        (racha >= 3 ? 'Tres seguidas; cambia de modo para practicar la dirección contraria.'
+                    : 'Sigue con otro ejercicio.'));
+    } else {
+      racha = 0;
+      if (modo === 'A'){
+        const cuadrado = Math.abs(v - actual.datos.a * actual.datos.a) <= 0.05 * actual.datos.a * actual.datos.a;
+        fb($('#fbk'), 0, cuadrado
+          ? 'Ese número es el cuadrado del lado, no el lado: falta la raíz cuadrada. a² = ' +
+            fmt(actual.datos.a * actual.datos.a, 2) + ', de donde a = ' + fmt(actual.datos.a, 2) + ' m.'
+          : 'Todavía no. Repasa dos cosas: que el ángulo usado sea el comprendido entre b y c, y que el término ' +
+            'del coseno vaya restado (si el ángulo es obtuso, el coseno es negativo y el término suma). Con el ' +
+            'resultado que has escrito, vuelve a comprobar que b + c sea mayor que a.');
+      } else {
+        fb($('#fbk'), 0, 'Todavía no. En el modo B, el numerador es b² + c² − a² y lleva el lado opuesto al ' +
+          'ángulo, elevado al cuadrado. Después hay que dividir por 2·b·c y aplicar el arco coseno, no el coseno. ' +
+          'Si tu resultado está entre −1 y 1, te has quedado en el coseno.');
+      }
+    }
+    $('#mAci').textContent = aciertos;
+    $('#mInt').textContent = intentos;
+    $('#mRac').textContent = racha;
+  }
+
+  $$('#modos button').forEach(function(b){
+    b.addEventListener('click', function(){
+      modo = b.dataset.m;
+      $('#mMod').textContent = modo;
+      $$('#modos button').forEach(function(o){ o.classList.add('ghost'); });
+      b.classList.remove('ghost');
+      nuevo();
+    });
+  });
+  $('#bCheck').addEventListener('click', comprobar);
+  $('#bOtro').addEventListener('click', nuevo);
+
+  /* gancho de depuración: permite comprobar el ejercicio desde fuera sin mostrarlo */
+  window.__topoDebug = function(){
+    return {titulo: $('#tipoE').textContent, enunciado: $('#enun').textContent,
+            respuestas: actual.campos.map(function(c){ return c.val; }),
+            tolerancias: actual.campos.map(function(c){ return c.tol; }),
+            datos: {b:actual.datos.b, c:actual.datos.c, A:actual.datos.A, a:actual.datos.a,
+                    aRed:actual.datos.aRed, Aref:actual.datos.Aref}};
+  };
+  nuevo();
+})();
+</script>
+</main>
+<nav class="pager"><a href="gen_04_dos_posiciones.html">&larr; Generador · Dos posiciones</a><span class="sp"></span><a href="index.html">Índice</a><span class="sp"></span><a href="gen_06_conceptos.html">Generador · Conceptos básicos &rarr;</a></nav>
+</div>
+<script>refrescaSliders();</script>
+</body>
+</html>

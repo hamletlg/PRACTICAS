@@ -1,0 +1,88 @@
+TOPOGRAFÍA AGRARIA — REFUERZO · DÍA 2
+Trigonometría aplicada: triángulo rectángulo, dos posiciones, ley del coseno y coordenadas
+1.º CFGS Técnico Superior en Gestión Forestal
+
+
+CÓMO SE ABRE
+------------
+Descomprime la carpeta y haz doble clic en "index.html". Se abre en el navegador que
+tengas (Firefox, Chrome, Edge). No hace falta internet, ni instalar nada, ni registrarse:
+todo —textos, dibujos y ejercicios— va dentro de los propios ficheros. Tampoco se envía
+ningún dato a ninguna parte.
+
+Si al descomprimir se pierden los nombres de los ficheros, no pasa nada: basta con abrir
+"index.html" y navegar desde ahí.
+
+
+QUÉ HAY EN ESTE BLOQUE
+----------------------
+Es el material del segundo día. Doce páginas: cinco láminas y siete generadores.
+
+  06_triangulo_rectangulo.html .... Elevación, depresión, sombras y pendientes.
+  07_dos_posiciones.html .......... La altura inaccesible: el núcleo del módulo.
+  08_ley_del_coseno.html .......... Triángulos que no son rectángulos.
+  09_de_gonios_a_coordenadas.html . De gonios a ΔX, ΔY y azimut; cierre de poligonal.
+  10_calculadora_y_errores.html ... Modo de la calculadora, redondeo y comprobación.
+
+  gen_02_triangulo_rectangulo.html . Una visual, una incógnita. Practica la lámina 6.
+  gen_03_angulo_y_pendiente.html .. De dos lados al ángulo, en grados y en porcentaje.
+  gen_04_dos_posiciones.html ...... El ejercicio núcleo, con comprobación cruzada.
+  gen_05_ley_coseno.html .......... Ley del coseno en los dos sentidos.
+  gen_07_enunciados.html .......... Interpretar enunciados ambiguos: decidir la figura.
+  gen_06_conceptos.html ........... Preguntas cortas de concepto.
+  gen_08_coordenadas.html ......... Gonios → ΔX, ΔY, azimut.
+
+En el índice están los mismos enlaces, con la lámina y el generador que la practica.
+
+
+CÓMO SE TRABAJA
+---------------
+1. Lámina 6 y generador B1 en la misma sesión. Lo importante no es acertar el número,
+   sino dibujar el croquis antes de operar. Sin croquis, el fallo es de planteamiento.
+
+2. Lámina 7 y generador B3 son el núcleo del módulo: los tres problemas de altura
+   inaccesible de la ficha son este mismo problema con otros números. No pases a la
+   lámina 8 sin resolver cinco del B3 sin mirar la fórmula.
+
+3. Lámina 8 y generador B4 cierran la trigonometría de triángulos. Después, el generador
+   B5 trabaja lo que ninguno de los otros: leer el enunciado y decidir qué figura es.
+
+4. Lámina 9 y generador D conectan el cálculo con el plano: de gonios a coordenadas.
+
+5. Cierra el día con la lámina 10 y diez preguntas del generador C. Los errores de
+   calculadora y de redondeo se penalizan siempre, aunque el número sea correcto.
+
+
+CÓMO FUNCIONA EL GENERADOR
+--------------------------
+Cada vez que pulsas "Otro ejercicio" aparece un ejercicio nuevo, con números distintos.
+Escribes el resultado en la casilla (vale coma o punto decimal) y pulsas "Comprobar":
+
+  - el campo se pone verde y el mensaje confirma el acierto;
+  - o se pone rojo y el mensaje te dice QUÉ revisar, no solo que está mal.
+
+Si no sale, abre el desplegable "Ver solución paso a paso": está el desarrollo completo
+con tus números ya sustituidos. Después de dos intentos fallidos, mírala: seguir probando
+a ciegas no enseña nada.
+
+Los márgenes con los que se corrige están ajustados a lo que es cada magnitud: son
+estrechos en los ángulos y en los grados decimales, y algo más anchos en las distancias
+en metros, porque de eso depende que un buen resultado con el redondeo normal no salga
+marcado en rojo. Sirven para absorber el redondeo, no para perdonar un error de método:
+si el número se va más allá, vuelve a la lámina.
+
+En el generador B3, la comprobación cruzada (calcular la altura desde las dos posiciones)
+es lo que demuestra que el resultado está bien. Si las dos vías no coinciden, el error
+está en el planteamiento, no en la cuenta.
+
+
+EL DÍA 1
+--------
+Este bloque empieza suponiendo sabido el día 1: los tres sistemas de notación angular, el
+reparto por 60 y por 100, los radianes y las tres razones trigonométricas. Ese material va
+en un paquete aparte, con su propio "index.html".
+
+Si al empezar la lámina 6 notas que una conversión de ángulos no sale, para y recupera
+primero el día 1: son cinco láminas cortas y sin ellas la trigonometría no se sostiene.
+Todo lo necesario para resolver lo de hoy está explicado en estas páginas; las menciones
+al día 1 son solo para situarte.

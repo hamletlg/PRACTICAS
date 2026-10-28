@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Generador · Conceptos básicos</title>
+<style>
+:root{
+  --ink:#1b2530; --navy:#16324f; --navy2:#2c5a84; --line:#d3d9df; --bg:#f7f8f9;
+  --soft:#edf1f4; --ok:#1f6b3a; --bad:#8f2222; --warnc:#7a5a00;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:19px/1.62 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+.wrap{max-width:980px;margin:0 auto;padding:26px 26px 90px}
+header.top{border-bottom:2px solid var(--navy);padding-bottom:12px;margin-bottom:26px}
+.kicker{font-size:13.5px;letter-spacing:.14em;text-transform:uppercase;color:#5b6875;font-weight:600}
+h1{font-size:31px;line-height:1.22;margin:.22em 0 .28em;color:var(--navy);font-weight:660;letter-spacing:-.01em}
+.sub{font-size:19px;color:#3c4a58;margin:0}
+h2{font-size:22.5px;margin:2.1em 0 .45em;color:var(--navy);font-weight:650;
+   border-left:4px solid var(--navy);padding-left:11px;line-height:1.3}
+h2:first-of-type{margin-top:1.2em}
+h3{font-size:19.5px;margin:1.5em 0 .3em;font-weight:650;color:#22303d}
+h4{font-size:17px;margin:1.2em 0 .3em;font-weight:650;color:#22303d}
+p{margin:.62em 0}
+.lead{font-size:20px;color:#2c3a48}
+ul,ol{padding-left:1.4em;margin:.55em 0}
+li{margin:.3em 0}
+li>ul,li>ol{margin:.3em 0}
+a{color:var(--navy2)}
+strong{font-weight:660}
+.num{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.formula{
+  font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:17px;line-height:1.7;
+  background:var(--soft);border-left:3px solid var(--navy);padding:11px 15px;margin:1em 0;
+  overflow-x:auto;white-space:pre-wrap;
+}
+.formula em{font-style:normal;color:var(--navy);font-weight:600}
+.demo{background:#fff;border:1px solid var(--line);padding:16px 16px 18px;margin:1.3em 0}
+.demo .tat{font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:#5b6875;
+  font-weight:650;margin:0 0 12px}
+.ctrl{display:grid;grid-template-columns:165px 1fr 135px;gap:12px;align-items:center;margin:.55em 0}
+.ctrl label{font-size:17px}
+.ctrl .val{text-align:right;font-family:ui-monospace,monospace;font-size:18px;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:#16324f;height:22px}
+input[type=number],input[type=text],select{
+  font:inherit;font-size:18px;padding:6px 9px;border:1px solid #b7c0c9;background:#fff;
+  color:var(--ink);border-radius:0;width:100%
+}
+input:focus,select:focus,button:focus{outline:2px solid var(--navy2);outline-offset:1px}
+input.ok{border-color:var(--ok);background:#f1f7f3}
+input.bad{border-color:var(--bad);background:#fdf3f3}
+button{
+  font:inherit;font-size:16px;padding:7px 15px;border:1px solid var(--navy);border-radius:0;
+  background:var(--navy);color:#fff;cursor:pointer
+}
+button:hover{background:#1d4368}
+button.ghost{background:#fff;color:var(--navy)}
+button.ghost:hover{background:var(--soft)}
+.botones{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:9px;margin:12px 0 0}
+.readout div{background:var(--soft);padding:8px 11px}
+.readout b{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  color:#5b6875;font-weight:650;margin-bottom:2px}
+.readout span{font-family:ui-monospace,monospace;font-size:18px;font-variant-numeric:tabular-nums}
+.note{background:#fbfaf4;border-left:3px solid #b08a2e;padding:11px 15px;margin:1.1em 0}
+.warn{background:#fcf4f4;border-left:3px solid var(--bad);padding:11px 15px;margin:1.1em 0}
+.good{background:#f1f7f3;border-left:3px solid var(--ok);padding:11px 15px;margin:1.1em 0}
+.feedback{margin-top:11px;font-size:17.5px;line-height:1.55}
+.feedback.good::before{content:"";}
+.fb-good{color:var(--ok)}
+.fb-bad{color:var(--bad)}
+.fb-neutral{color:#3c4a58}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:17px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--soft);font-weight:650;font-size:16px}
+td.num,th.num{font-family:ui-monospace,monospace;font-variant-numeric:tabular-nums}
+nav.strip{display:flex;gap:15px;align-items:center;flex-wrap:wrap;font-size:15.5px;
+  border-bottom:1px solid var(--line);padding:0 0 10px;margin:-4px 0 24px;color:#5b6875}
+nav.strip a{color:var(--navy2);text-decoration:none;border-bottom:1px solid #c5d3e0}
+nav.strip a:hover{border-bottom-color:var(--navy2)}
+nav.strip .act{color:#5b6875;font-weight:650}
+nav.strip .sep{color:#ccd4db}
+nav.pager{display:flex;justify-content:space-between;gap:14px;margin-top:54px;padding-top:16px;
+  border-top:1px solid var(--line);font-size:16px}
+nav.pager a{color:var(--navy);text-decoration:none;border-bottom:1px solid #a9bdd0;padding-bottom:1px}
+nav.pager a:hover{border-bottom-color:var(--navy)}
+nav.pager .sp{flex:1}
+svg{display:block;max-width:100%;height:auto;font-family:ui-monospace,monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.tiny{font-size:15.5px;color:#5b6875;line-height:1.5}
+.pasos{counter-reset:p;list-style:none;padding-left:0}
+.pasos>li{counter-increment:p;position:relative;padding-left:42px;margin:.85em 0}
+.pasos>li::before{
+  content:counter(p);position:absolute;left:0;top:.05em;width:28px;height:28px;border:1.5px solid var(--navy);
+  color:var(--navy);font-size:15px;font-weight:700;text-align:center;line-height:25px;
+  font-family:ui-monospace,monospace
+}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin:1.2em 0}
+.card{background:#fff;border:1px solid var(--line);padding:14px 16px;display:block;
+  text-decoration:none;color:var(--ink)}
+.card:hover{border-color:var(--navy);background:#fbfcfd}
+.card .n{font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:#5b6875;font-weight:650}
+.card .t{font-size:19px;color:var(--navy);font-weight:650;margin:.15em 0 .25em;line-height:1.28;min-height:2.56em}
+.card .d{font-size:16px;color:#46545f;line-height:1.45}
+.tag{display:inline-block;font-size:13px;border:1px solid var(--line);background:var(--soft);
+  padding:1px 7px;margin:4px 4px 0 0;color:#46545f}
+kbd{font-family:ui-monospace,monospace;font-size:15px;border:1px solid #b7c0c9;border-bottom-width:2px;
+  padding:1px 5px;background:#fff}
+.checkline{display:flex;gap:10px;align-items:baseline;margin:.4em 0}
+.checkline input[type=checkbox]{width:18px;height:18px;accent-color:#16324f;flex:none}
+@media (max-width:740px){
+  body{font-size:18px}
+  .wrap{padding:18px 16px 70px}
+  h1{font-size:26px} h2{font-size:20.5px}
+  .ctrl{grid-template-columns:110px 1fr 105px;gap:8px}
+  .grid2{grid-template-columns:1fr}
+}
+@media print{
+  body{background:#fff}
+  .demo{break-inside:avoid}
+  nav.pager{display:none}
+}
+</style>
+
+<script>
+/* ---------- utilidades comunes (idénticas en todas las páginas) ---------- */
+const $  = (s, r) => (r||document).querySelector(s);
+const $$ = (s, r) => Array.from((r||document).querySelectorAll(s));
+
+/* Lee un número escrito por el alumno: admite coma o punto decimal,
+   espacios, el símbolo de grado y el sufijo de gonios. */
+function leerNum(v){
+  if (typeof v === 'number') return v;
+  let s = String(v == null ? '' : v).trim();
+  s = s.replace(/\s+/g,'').replace(/[°º]/g,'').replace(/(rad|gon|g|m|s)$/i,'');
+  if (s === '') return NaN;
+  if (s.includes(',') && s.includes('.')) s = s.replace(/\./g,'').replace(',', '.');
+  else if (s.includes(',')) s = s.replace(',', '.');
+  return parseFloat(s);
+}
+/* Formato español: coma decimal, cifras fijas. */
+function fmt(x, d){
+  d = (d === undefined) ? 2 : d;
+  if (!isFinite(x)) return '—';
+  return x.toFixed(d).replace('.', ',');
+}
+/* Sexagesimal: {g,m,s} a partir de grados decimales */
+function aSexa(x){
+  let neg = x < 0; x = Math.abs(x);
+  let g = Math.floor(x + 1e-12);
+  let mm = (x - g) * 60;
+  let m = Math.floor(mm + 1e-9);
+  let s = (mm - m) * 60;
+  if (s >= 59.9995){ s = 0; m += 1; }
+  if (m >= 60){ m -= 60; g += 1; }
+  return {g:(neg?-g:g), m:m, s:s};
+}
+/* Centesimal: {g,m,s} */
+function aCentes(x){
+  let neg = x < 0; x = Math.abs(x);
+  let g = Math.floor(x + 1e-12);
+  let mm = (x - g) * 100;
+  let m = Math.floor(mm + 1e-9);
+  let s = (mm - m) * 100;
+  if (s >= 99.995){ s = 0; m += 1; }
+  if (m >= 100){ m -= 100; g += 1; }
+  return {g:(neg?-g:g), m:m, s:s};
+}
+function txtSexa(x, ds){
+  ds = (ds === undefined) ? 1 : ds;
+  const f = Math.pow(10, ds);
+  let total = Math.round(Math.abs(x) * 3600 * f);
+  const g = Math.floor(total / (3600 * f));
+  let rem = total - g * 3600 * f;
+  const m = Math.floor(rem / (60 * f));
+  rem = rem - m * 60 * f;
+  const si = String(Math.floor(rem / f)).padStart(2, '0');
+  const dec = ds > 0 ? ',' + String(rem % f).padStart(ds, '0') : '';
+  return (x < 0 ? '−' : '') + g + '° ' + String(m).padStart(2, '0') + '\u2032 ' + si + dec + '\u2033';
+}
+function txtCentes(x, ds){
+  ds = (ds === undefined) ? 1 : ds;
+  const f = Math.pow(10, ds);
+  let total = Math.round(Math.abs(x) * 10000 * f);
+  const g = Math.floor(total / (10000 * f));
+  let rem = total - g * 10000 * f;
+  const m = Math.floor(rem / (100 * f));
+  rem = rem - m * 100 * f;
+  const si = String(Math.floor(rem / f)).padStart(2, '0');
+  const dec = ds > 0 ? ',' + String(rem % f).padStart(ds, '0') : '';
+  return (x < 0 ? '−' : '') + g + 'g ' + String(m).padStart(2, '0') + 'm ' + si + dec + 's';
+}
+/* Retorno de estado en un campo: ok / mal */
+function marcar(el, estado){
+  el.classList.remove('ok','bad');
+  if (estado === 1) el.classList.add('ok');
+  else if (estado === 0) el.classList.add('bad');
+}
+function fb(el, tipo, texto){
+  el.className = 'feedback ' + (tipo === 1 ? 'fb-good' : tipo === 0 ? 'fb-bad' : 'fb-neutral');
+  el.innerHTML = texto;
+  return tipo;
+}
+/* Formatea un ángulo en radianes como múltiplo exacto de π si el denominador es pequeño */
+function aPi(x){
+  const r = x / Math.PI;
+  for (let q = 1; q <= 24; q++){
+    const p = r * q;
+    if (Math.abs(p - Math.round(p)) < 1e-9){
+      const n = Math.round(p);
+      if (q === 1) return (n === 1 ? 'π' : n + 'π');
+      if (n === 1) return 'π/' + q;
+      return n + 'π/' + q;
+    }
+  }
+  return null;
+}
+/* Sincroniza el relleno visual de los sliders (solo estética) */
+function refrescaSliders(root){
+  $$('input[type=range]', root || document).forEach(function(r){
+    const p = (r.value - r.min) / (r.max - r.min) * 100;
+    r.style.background = 'linear-gradient(90deg,#16324f ' + p + '%,#cfd7de ' + p + '%)';
+    r.style.height = '6px';
+    r.style.borderRadius = '0';
+    r.style.appearance = 'none';
+    r.style.webkitAppearance = 'none';
+  });
+}
+</script>
+<style>
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:16px;height:16px;background:#16324f;border:2px solid #fff;
+  box-shadow:0 0 0 1px #16324f;cursor:pointer
+}
+input[type=range]::-moz-range-thumb{
+  width:14px;height:14px;background:#16324f;border:2px solid #fff;box-shadow:0 0 0 1px #16324f;cursor:pointer
+}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<header class="top"><div class="kicker">Día 2 · Generador C</div><h1>Generador · Conceptos básicos</h1><p class="sub">Batería de preguntas cortas sobre bases, unidades, ángulos y errores</p></header><nav class="strip"><a href="index.html">Índice</a><span class="sep">·</span><span class="act">Generador C</span><span class="sep">·</span><a href="10_calculadora_y_errores.html">Lección 10 &rarr;</a></nav>
+<main>
+<p class="lead">Este banco reúne treinta y una preguntas cortas sobre las ideas que sostienen toda la ficha: qué sistemas angulares
+existen, en cuántas partes se parte una vuelta en cada uno, qué significa cada subíndice, en qué dirección se aplica
+cada factor y cuándo una fórmula es la que toca. No hay cuentas largas: cada pregunta se contesta en diez segundos,
+y lo que se entrena aquí es el criterio, no la aritmética.</p>
+
+<p>Las preguntas salen de una en una y al azar, sin repetirse hasta que se agota el banco. Al fallar no basta con ver
+cuál era la buena: cada opción lleva su explicación, incluida la de las que fallan, porque casi siempre el error que
+cometes es el mismo que comete todo el mundo en el examen. Cuando entiendas por qué la opción descartada era
+tentadora, esa pregunta ya no vuelve a costarte.</p>
+
+<h2>Cómo se usa</h2>
+<ol>
+  <li>Lee la pregunta y las opciones. Señala la que creas correcta y pulsa <strong>Comprobar</strong>. El orden de
+  las opciones cambia en cada vuelta, así que no sirve aprenderse la letra: hay que leer el contenido.</li>
+  <li>Si aciertas, el marcador suma un acierto y la explicación confirma por qué. Si fallas, suma un intento y te
+  dice qué tiene de tentadora la opción que elegiste y por qué no vale. Puedes volver a intentarlo con otra opción
+  antes de pasar.</li>
+  <li>Abre siempre la explicación completa de las opciones descartadas. Un banco de preguntas se aprovecha por las
+  opciones malas, no por la buena.</li>
+  <li>Pulsa <strong>Otra pregunta</strong>. El banco lleva la cuenta de las que has visto y, cuando se agotan las
+  treinta y una, se baraja otra vez y vuelve a empezar sin repetir hasta el final.</li>
+</ol>
+
+<h2>Practicar</h2>
+
+<div class="demo" id="banco">
+  <p class="tat">Pregunta <span id="numP">1</span> &nbsp;·&nbsp; banco de <span id="totP">31</span> &nbsp;·&nbsp;
+     <span id="etiquetaT">—</span></p>
+  <div id="enun" style="margin:14px 0 4px;font-size:20px;line-height:1.5"></div>
+  <div id="opciones" style="display:grid;gap:8px;margin:16px 0 6px"></div>
+  <div class="botones">
+    <button id="bCheck">Comprobar</button>
+    <button id="bOtro" class="ghost">Otra pregunta</button>
+  </div>
+  <div class="feedback" id="fbk"></div>
+  <details id="soldet" style="margin-top:14px">
+    <summary style="cursor:pointer;font-size:16.5px;color:#16324f">Ver la explicación de todas las opciones</summary>
+    <div id="sol" style="margin-top:10px"></div>
+  </details>
+</div>
+
+<div class="readout" style="margin-top:-6px">
+  <div><b>Resueltas</b><span id="mVistas">0 / 31</span></div>
+  <div><b>Aciertos</b><span id="mAci">0</span></div>
+  <div><b>Intentos</b><span id="mInt">0</span></div>
+  <div><b>Aciertos seguidos</b><span id="mRac">0</span></div>
+  <div><b>Vueltas al banco</b><span id="mVueltas">1</span></div>
+</div>
+
+<script>
+(function(){
+  /* ---------- banco de preguntas ----------
+     o: opciones en orden fijo; ok: índice de la correcta en ese orden;
+     w: una explicación por opción, en el mismo orden. */
+  const PREGUNTAS = [
+  {tema:'Sistemas', q:'¿Cuántos grados sexagesimales tiene una vuelta completa?',
+   o:['360°', '400 g', '180°', '6,2832°'], ok:0,
+   w:['La vuelta se parte en 360 partes iguales y cada una es un grado sexagesimal. Es la herencia babilónica que compartimos con el reloj.',
+      'El 400 es la vuelta en el sistema centesimal, y su unidad es el gonio, no el grado sexagesimal. Confundir la unidad es el primer error de la ficha.',
+      '180° es media vuelta: el ángulo llano, el que separa dos direcciones opuestas.',
+      '6,2832 es la vuelta medida en radianes, es decir 2π. El número es correcto, la unidad no.']},
+
+  {tema:'Sistemas', q:'¿Y cuántos grados centesimales tiene una vuelta completa?',
+   o:['400 g', '360 g', '200 g', '100 g'], ok:0,
+   w:['En el sistema centesimal la vuelta son 400 gonios, cada uno de ellos algo más pequeño que un grado sexagesimal.',
+      '360 es la vuelta en grados sexagesimales; en gonios son 400. Si escribes 360 g estás mezclando los dos sistemas en la misma frase.',
+      '200 g es media vuelta, el ángulo llano en centesimal.',
+      '100 g es un cuadrante: el ángulo recto expresado en gonios.']},
+
+  {tema:'Sistemas', q:'En la expresión 42 g 35 m, ¿qué es esa m?',
+   o:['Un minuto centesimal: la centésima parte de un gonio',
+      'Un metro, o sea una longitud',
+      'Un minuto sexagesimal: la sesentava parte de un grado',
+      'Una milésima de gonio'], ok:0,
+   w:['Es el minuto centesimal, y el gonio se parte en 100: 42 g 35 m son 42,35 gonios. La letra se repite por comodidad, pero no es una unidad de longitud.',
+      'Ese es el error clásico: la m pegada a un número con g al lado no mide metros. Un ángulo no tiene longitud; si ahí hubiera metros el 42 g no significaría nada.',
+      'En centesimal el reparto es por 100, no por 60. El minuto sexagesimal es la sesentava parte de un grado sexagesimal y se escribe con prima.',
+      'La milésima no se usa en ninguno de los dos sistemas: los órdenes son g, m y s, y cada uno es cien veces el siguiente.']},
+
+  {tema:'Sistemas', q:'¿Y la s de 42 g 35 m 20 s?',
+   o:['Un segundo centesimal: la diezmilésima parte de un gonio',
+      'Un segundo de tiempo',
+      'Un segundo sexagesimal: la sexagésima parte de un minuto',
+      'Un submúltiplo del metro'], ok:0,
+   w:['Cada gonio son 10 000 segundos centesimales, así que ese 20 s es la diezmilésima parte de un gonio. Es una medida angular, no temporal.',
+      'No es tiempo. Que se llame segundo, como el del reloj, es solo una coincidencia de nombres.',
+      'El segundo sexagesimal es la sesentava parte de un minuto sexagesimal y va con doble prima. Aquí el reparto es por 100 en cada escalón.',
+      'El metro no se subdivide en segundos. Si el número lleva g al lado, todo lo que viene detrás es angular.']},
+
+  {tema:'Sistemas', q:'Un grado centesimal, ¿en cuántos minutos centesimales se parte?',
+   o:['100', '60', '10', '1 000'], ok:0,
+   w:['Es la razón de ser del sistema: base 100 en todos los escalones, para poder sumar y restar como con decimales.',
+      '60 es el reparto del sistema sexagesimal. Mezclar los dos repartos es el error que más notas cuesta en la ficha de conversiones.',
+      '10 sería un reparto en décimas, que no existe en ningún sistema angular.',
+      '1 000 no corresponde a ningún orden: un gonio tiene 100 minutos y 10 000 segundos, no 1 000 minutos.']},
+
+  {tema:'Factores', q:'Para pasar grados sexagesimales a gonios, ¿por qué factor se multiplica?',
+   o:['10/9, y el número sube', '9/10, y el número baja', '100/60, y el número sube', 'π/180, y el número baja'], ok:0,
+   w:['360° son 400 g, así que 1° = 400/360 = 10/9 g. El número de gonios es mayor que el de grados porque el gonio es más pequeño.',
+      'Ese es el factor inverso, el que sirve para pasar de gonios a grados. Si lo aplicas aquí el número baja y el resultado queda por debajo de lo que debería.',
+      '100/60 mezcla el reparto del gonio con el del minuto sexagesimal; no es una relación entre sistemas.',
+      'π/180 lleva a radianes, no a gonios. Sirve para el sistema radial.']},
+
+  {tema:'Factores', q:'Y para pasar gonios a grados sexagesimales, ¿qué se hace?',
+   o:['Multiplicar por 9/10, y el número baja', 'Multiplicar por 10/9, y el número sube',
+      'Multiplicar por 400/360, y el número sube', 'Dividir entre π y multiplicar por 200'], ok:0,
+   w:['400 g son 360°, luego 1 g = 360/400 = 9/10 de grado. El número baja siempre, porque hay menos grados que gonios para el mismo giro.',
+      '10/9 es el factor de ida, de grados a gonios. Con él el resultado sale mayor que el de partida, y eso no puede ser al revés.',
+      '400/360 es 10/9 otra vez, con la fracción sin simplificar. Es el mismo error con otra cara.',
+      'Esa combinación no corresponde a ninguna conversión: para ir de gonios a radianes se multiplica por π/200.']},
+
+  {tema:'Radianes', q:'Un radián, ¿cuántos grados son?',
+   o:['57,30°', '60°', '6,28°', '3,14°'], ok:0,
+   w:['Un radián son 180/π = 57,2958°, casi 57 grados y medio. Es la regla de control para pasar de radianes a grados de cabeza.',
+      '60° es un valor de comodidad que no corresponde a ningún radián exacto. El radián no es la sexta parte de la vuelta.',
+      '6,28 es la vuelta completa en radianes, no un radián en grados. Ahí has convertido al revés.',
+      '3,14 es medio π: el número de radianes que hay en 180°, no los grados que hay en un radián.']},
+
+  {tema:'Radianes', q:'¿Cuántos radianes son 400 g?',
+   o:['6,2832 rad', '3,1416 rad', '4 rad', '6,9813 rad'], ok:0,
+   w:['400 g son una vuelta completa, y una vuelta son 2π radianes: 6,2832. La equivalencia 400 g = 2π rad cierra el círculo de los tres sistemas.',
+      '3,1416 es π, o sea media vuelta: 200 g, no 400 g.',
+      '4 radianes serían unos 229°: no llegan ni a dos tercios de vuelta.',
+      '6,9813 sale de usar π/180 en lugar de π/200. Con el divisor equivocado, el resultado se pasa de la vuelta entera, y eso ya avisa.']},
+
+  {tema:'Sistemas', q:'Un ángulo de 200 g, ¿es mayor o menor que 180°?',
+   o:['Ni mayor ni menor: 200 g son exactamente 180°, el mismo giro',
+      'Es mayor, porque 200 es más que 180',
+      'Es menor, porque un gonio es más pequeño que un grado',
+      'Depende del instrumento con el que se mida'], ok:0,
+   w:['200 × 9/10 = 180. Los dos números describen el mismo ángulo llano en sistemas distintos. Comparar los números sin convertir es el error de fondo.',
+      'Comparar 200 con 180 sin pasar de sistema no significa nada: son números en unidades distintas. 200 g no es mayor que 180°, es igual.',
+      'El razonamiento de que el gonio es más pequeño es cierto, pero no basta: hay que hacer la cuenta. 200 g equivalen justo a 180°.',
+      'El instrumento no cambia el ángulo. El giro es el mismo se mida como se mida.']},
+
+  {tema:'Trigonometría', q:'¿Cuánto vale el seno de 30°?',
+   o:['0,5', '0,866', '0,577', '1'], ok:0,
+   w:['El seno de 30° es exactamente 0,5: el cateto opuesto es la mitad de la hipotenusa. Es el valor que se usa para comprobar que la calculadora está en grados.',
+      '0,866 es el coseno de 30° (y el seno de 60°). Confundir seno y coseno en los ángulos notables es lo que más veces arruina un ejercicio bien planteado.',
+      '0,577 es la tangente de 30°, es decir 1/√3. La tangente es la razón entre los dos catetos.',
+      '1 es el seno de 90°, el máximo. En un triángulo rectángulo el seno de un ángulo agudo siempre es menor que 1.']},
+
+  {tema:'Trigonometría', q:'¿Y el coseno de 30°?',
+   o:['0,866', '0,5', '0,577', '0'], ok:0,
+   w:['El coseno de 30° es 0,866, igual que el seno de 60°: las razones de ángulos complementarios se intercambian.',
+      '0,5 es el seno de 30°. Al pasar de 30° a 90° el seno sube y el coseno baja; en 45° se igualan los dos en 0,707.',
+      '0,577 es la tangente de 30°. Otra razón distinta.',
+      '0 es el coseno de 90°. Un coseno nulo significa que el cateto adyacente mide cero.']},
+
+  {tema:'Ángulos verticales', q:'El ángulo de depresión se mide desde...',
+   o:['La horizontal del observador, hacia abajo',
+      'La vertical del observador, hacia abajo',
+      'El suelo, en el punto donde está el objeto observado',
+      'La altura del objeto dividida entre la distancia'], ok:0,
+   w:['Se traza una horizontal por el ojo o por el instrumento y se mide hacia abajo desde ella. Su valor está entre 0° y 90°.',
+      'Desde la vertical sería un ángulo cenital, que es otra cosa. Con la vertical el valor sería el complementario del de depresión.',
+      'El ángulo se mide en el observador, no en el objeto. En el objeto el ángulo que aparece es el de elevación, y además no es el mismo vértice.',
+      'Eso es la tangente del ángulo, no el ángulo. La confusión entre razón y ángulo es habitual cuando se trabaja rápido.']},
+
+  {tema:'Ángulos verticales', q:'¿Puede un ángulo de elevación valer 120°?',
+   o:['No: si pasas de la vertical ya miras hacia atrás, y la elevación va de 0° a 90°',
+      'Sí, si el objeto está muy alto',
+      'Sí, hasta 180°, porque los ángulos pueden ser obtusos',
+      'Sí, pero solo expresado en gonios'], ok:0,
+   w:['La elevación se mide desde la horizontal hacia arriba y se detiene en la vertical: 90° es mirar justo encima de la cabeza. Más allá, la visual ya baja por detrás.',
+      'La altura del objeto no agranda el ángulo por encima de 90°: lo que hace es acercarlo a 90° sin pasarlo.',
+      'Un ángulo puede ser obtuso, sí, pero no como ángulo de elevación: ese está acotado entre 0° y 90° por la propia definición.',
+      'El sistema de medida no cambia el límite: en gonios el máximo son 100 g, que es lo mismo que 90°.']},
+
+  {tema:'Notación', q:'¿Qué es la forma compleja de un ángulo?',
+   o:['La que lo escribe con sus órdenes: grados, minutos y segundos',
+      'La que lo escribe como un solo número con decimales',
+      'La que lo expresa en gonios',
+      'La que lleva el signo del ángulo'], ok:0,
+   w:['Compleja porque tiene varias unidades a la vez: 37° 30′ 00″. Cada orden va con su símbolo y no pasa de su base.',
+      'Esa es la forma decimal o incompleja: 37,5°. Un solo número, con parte entera y parte decimal.',
+      'El sistema de medida es independiente de la forma: hay forma compleja en gonios (42 g 35 m) y forma decimal en gonios (42,35 g).',
+      'El signo indica el sentido del giro, no el tipo de notación.']},
+
+  {tema:'Notación', q:'24,36° y 24° 36′, ¿son lo mismo?',
+   o:['No: 24° 36′ son 24,6°, porque los 36 minutos son 36/60 de grado',
+      'Sí, es la misma cantidad escrita de dos maneras',
+      'No: 24° 36′ son 24,036°',
+      'Sí, pero solo si el ángulo está en gonios'], ok:0,
+   w:['36/60 = 0,6, así que 24° 36′ son 24,6°. Los minutos no son centésimas de grado: son sesentavas partes.',
+      'Es el error más caro de toda la ficha. Pegar las cifras detrás de la coma cambia el ángulo en casi un cuarto de grado y arruina el resultado final.',
+      'Tampoco es eso: 0,036 saldría de dividir los minutos entre 1 000, que no es el reparto de ningún sistema.',
+      'El sistema no cambia la regla: en gonios los minutos también se dividen por su base, solo que la base es 100.']},
+
+  {tema:'Pendientes', q:'La pendiente en porcentaje de una rampa es...',
+   o:['La tangente del ángulo de inclinación multiplicada por 100',
+      'El seno del ángulo multiplicado por 100',
+      'El ángulo en grados multiplicado por 100',
+      'El desnivel dividido entre la longitud de la rampa, multiplicado por 100'], ok:0,
+   w:['Es desnivel entre distancia horizontal, que es exactamente la tangente, multiplicada por 100. Una pendiente del 15 % es tan α = 0,15.',
+      'El seno usa la hipotenusa, es decir la longitud de la rampa. Sobre una ladera suave la diferencia es pequeña, pero en pendientes fuertes el valor se queda corto.',
+      'El porcentaje no se obtiene del ángulo: hace falta la tangente. 15° de inclinación son un 26,8 % de pendiente, no un 1 500 %.',
+      'La longitud de la rampa es la hipotenusa, no el cateto horizontal. Dividir entre ella da el seno disfrazado de pendiente, y es el error típico al medir con cinta sobre el terreno.']},
+
+  {tema:'Ley del coseno', q:'¿Cuándo hay que usar la ley del coseno?',
+   o:['Cuando el triángulo no es rectángulo y conoces dos lados y el ángulo que forman',
+      'Cuando el triángulo es rectángulo y conoces un cateto y la hipotenusa',
+      'Cuando conoces los tres ángulos y ningún lado',
+      'Cuando quieres calcular un ángulo de elevación'], ok:0,
+   w:['La ley del coseno generaliza a Pitágoras: a² = b² + c² − 2bc·cos A. Sirve con dos lados y el ángulo entre ellos, o con los tres lados para sacar un ángulo.',
+      'Con un triángulo rectángulo basta Pitágoras o las razones trigonométricas. La ley del coseno también valdría, pero sobra trabajo.',
+      'Con tres ángulos no se puede: hay infinitos triángulos semejantes con los mismos ángulos. Hace falta al menos un lado.',
+      'Un ángulo de elevación se obtiene con la tangente en un triángulo rectángulo. La ley del coseno es para triángulos que no tienen ángulo recto.']},
+
+  {tema:'Dos posiciones', q:'En h = d·tan β·tan α / (tan β − tan α) el denominador sale negativo. ¿Qué ha pasado?',
+   o:['Que he restado los ángulos al revés: β tiene que ser el mayor, el de la posición cercana',
+      'Que la distancia entre las dos posiciones está mal medida',
+      'Que la calculadora está en radianes',
+      'Nada: un denominador negativo es normal y el resultado vale igual'], ok:0,
+   w:['Al acercarse, el ángulo crece: β, la posición cercana, es siempre el mayor. Restar el mayor menos el menor da positivo; al revés sale negativo y la altura también.',
+      'Una distancia mal medida da un número más grande o más pequeño, pero no cambia el signo del denominador.',
+      'Si la calculadora estuviera en radianes los valores de la tangente serían absurdos, pero el signo seguiría siendo positivo al restar en el orden correcto.',
+      'Un denominador negativo produce una altura negativa, y una altura negativa no significa nada. Es una señal de que el planteamiento está invertido.']},
+
+  {tema:'Errores', q:'Si la calculadora está en RAD y escribes sen 30, ¿qué obtienes?',
+   o:['Un valor absurdo de alrededor de −0,988, porque calcula el seno de 30 radianes',
+      '0,5, porque la calculadora convierte sola a grados',
+      '0,5 igual, solo cambia el número de decimales',
+      'Un mensaje de error en la pantalla'], ok:0,
+   w:['30 radianes son casi cinco vueltas, así que el seno cae donde caiga, y en este caso da negativo. Ninguna calculadora avisa: hay que mirar el resultado.',
+      'No convierte nada. La calculadora aplica la función al número que le das, en la unidad que tenga configurada.',
+      'El valor cambia por completo: 0,5 frente a −0,988. Ese es justo el motivo de que este error no se detecte hasta el final.',
+      'No da error. Devuelve un número válido, y por eso es un error silencioso: hay que comprobarlo con un valor conocido como sen 30 = 0,5.']},
+
+  {tema:'Ángulos verticales', q:'Un ángulo de elevación se mide...',
+   o:['Desde la horizontal del observador hacia arriba',
+      'Desde la vertical del observador hacia arriba',
+      'Desde el suelo, en la base del objeto',
+      'Desde la visual más baja que se pueda tomar'], ok:0,
+   w:['Se traza una horizontal a la altura del ojo o del instrumento y se sube desde ahí. Su valor está entre 0° y 90°.',
+      'Desde la vertical se mide el ángulo cenital, que es el complementario. Confundirlos cambia el resultado por completo.',
+      'En la base del objeto el ángulo que aparece es el de elevación visto desde allí, con otro vértice y otro valor. El ángulo se define en el observador.',
+      'No hay una visual más baja: la referencia es siempre la horizontal del observador.']},
+
+  {tema:'Orientación', q:'El acimut de una visual es...',
+   o:['El ángulo que forma con el norte, contado en sentido horario de 0° a 360°',
+      'El ángulo que forma con la horizontal',
+      'El ángulo entre dos visuales tomadas desde la misma estación',
+      'La distancia reducida al horizonte'], ok:0,
+   w:['El acimut se cuenta desde el norte y siempre en el mismo sentido, el de las agujas del reloj, de 0° a 360°. Por eso no necesita signo.',
+      'Ese es un ángulo vertical, de elevación o depresión, que se mide respecto a la horizontal.',
+      'Ese es el ángulo horizontal entre dos direcciones, y se obtiene restando dos acimuts. Por sí solo no orienta nada.',
+      'La distancia reducida es una longitud, no un ángulo. Son magnitudes de naturaleza distinta.']},
+
+  {tema:'Trigonometría', q:'En un triángulo rectángulo, la tangente de un ángulo agudo es...',
+   o:['Cateto opuesto dividido entre cateto adyacente',
+      'Cateto adyacente dividido entre cateto opuesto',
+      'Cateto opuesto dividido entre hipotenusa',
+      'Hipotenusa dividida entre cateto opuesto'], ok:0,
+   w:['Es la razón entre los dos catetos, y por eso es la que relaciona la altura con la distancia horizontal en casi todos los problemas de la ficha.',
+      'Esa es la inversa de la tangente, la cotangente. Da el ángulo complementario si la confundes.',
+      'Eso es el seno. La hipotenusa no aparece en la tangente.',
+      'Eso es la cosecante, la inversa del seno.']},
+
+  {tema:'Trigonometría', q:'Un compañero obtiene sen α = 1,4. ¿Qué ha pasado?',
+   o:['Es imposible: el seno nunca pasa de 1, así que ha dividido mal o ha puesto una razón en el sitio de otra',
+      'Es normal en ángulos mayores de 90°',
+      'Está bien si el ángulo se mide en gonios',
+      'Significa que el cateto opuesto es mayor que la hipotenusa, como pasa en los triángulos muy agudos'], ok:0,
+   w:['El seno es cateto entre hipotenusa, y la hipotenusa es siempre el lado más largo: el cociente no puede pasar de 1. Un valor mayor delata un error de planteamiento.',
+      'El seno de cualquier ángulo, también de los mayores de 90°, está entre −1 y 1. Nunca llega a 1,4.',
+      'El sistema de medida no cambia el rango de la función: el seno sigue acotado entre −1 y 1.',
+      'En un triángulo rectángulo la hipotenusa es siempre el lado mayor, de modo que el cateto opuesto nunca la supera. Si la supera, el triángulo no es rectángulo o los datos están mal.']},
+
+  {tema:'Dos posiciones', q:'Para que la fórmula de las dos posiciones funcione, los dos puntos de observación tienen que estar...',
+   o:['Alineados con la base del objeto, los tres en el mismo plano vertical',
+      'En dos calles distintas, para ver el objeto desde dos lados',
+      'Uno más alto que el otro, para tener dos horizontes',
+      'Separados al menos 100 m'], ok:0,
+   w:['El método supone que el observador se acerca o se aleja en línea recta hacia la base. Si te sales de esa línea, el triángulo no es el que resuelve la fórmula.',
+      'Verlo desde dos lados es otra técnica, la intersección, y necesita más datos: dos acimuts o dos distancias.',
+      'La fórmula supone los dos horizontes a la misma altura. Si cambias la altura del instrumento, la diferencia de ángulos ya no mide lo mismo.',
+      'La separación depende de la altura del objeto y de los ángulos. Lo que importa es que β − α sea apreciable, unos 5° como mínimo; 100 m no es una regla.']},
+
+  {tema:'Factores', q:'45° sexagesimales, ¿cuántos gonios son?',
+   o:['50 g', '45 g', '40,5 g', '55 g'], ok:0,
+   w:['45 × 10/9 = 50. Es el medio ángulo recto en centesimal, y sirve de comprobación rápida del factor: los números redondos se redondean en los dos sistemas.',
+      '45 g serían 40,5°, un ángulo menor. El número de gonios siempre es mayor que el de grados.',
+      '40,5 g sale de multiplicar por 0,9, es decir con el factor invertido. Ese resultado es menor que 45, y no puede ser.',
+      '55 g serían 49,5°: se ha ido por encima sin razón. El factor es 10/9, no 11/9.']},
+
+  {tema:'Sistemas', q:'¿Cuántos segundos centesimales tiene un gonio?',
+   o:['10 000', '3 600', '100', '60'], ok:0,
+   w:['100 minutos por 100 segundos: 10 000. Ese es el reparto del sistema centesimal, y explica por qué la forma decimal es tan cómoda en él.',
+      '3 600 es el número de segundos sexagesimales de un grado sexagesimal. Otro reparto, otra base.',
+      '100 son los minutos centesimales de un gonio, no los segundos. Falta un escalón.',
+      '60 no aparece en el sistema centesimal más que como casualidad: el reparto es por 100 en todos los escalones.']},
+
+  {tema:'Errores', q:'En el examen escribes 37,5 y no pones unidad. ¿Qué falta?',
+   o:['La unidad: sin ella no se sabe si son grados, gonios o radianes, y el resultado se considera incompleto',
+      'Nada: el número ya está completo',
+      'Solo el signo del giro',
+      'El redondeo a dos cifras decimales'], ok:0,
+   w:['37,5 no significa nada por sí solo: un ángulo siempre lleva su unidad, y sin ella la respuesta se considera incompleta aunque el número sea correcto.',
+      'El número sin unidad es ambiguo: 37,5 g son 33,75°, y 37,5 rad no tienen sentido físico como ángulo de campo.',
+      'El signo indica el sentido del giro y solo hace falta en algunos convenios. La unidad no es opcional nunca.',
+      'El número de decimales es una cuestión de presentación. La unidad es parte del resultado.']},
+
+  {tema:'Dos posiciones', q:'En la fórmula de las dos posiciones, la distancia d entre los puntos es...',
+   o:['La distancia horizontal entre ellos, medida sobre el terreno llano',
+      'La distancia inclinada medida con cinta sobre una ladera',
+      'La altura del objeto',
+      'La distancia del punto cercano a la base del objeto'], ok:0,
+   w:['La fórmula trabaja con proyecciones horizontales. Si el terreno sube entre las dos posiciones, d es la distancia reducida, no lo que marca la cinta.',
+      'La distancia inclinada es más larga que su proyección y falsea el resultado. En una ladera del 20 % el error es de un 2 %: suficiente para suspender.',
+      'La altura es lo que se busca. Confundir la incógnita con un dato es el error más difícil de detectar uno mismo.',
+      'Esa es justo la incógnita intermedia del método, la que se calcula en el primer paso. No es un dato del enunciado.']},
+
+  {tema:'Sistemas', q:'¿Por qué el sistema centesimal facilita las cuentas?',
+   o:['Porque el reparto es por 100 y suma, resta y paso a decimal se hacen como con números corrientes, sin acarreos de 60',
+      'Porque sus ángulos son más pequeños',
+      'Porque no necesita calculadora',
+      'Porque es el sistema del Sistema Internacional'], ok:0,
+   w:['Con base 100 pasar de 42 g 35 m a 42,35 g es mover la coma, mientras que en sexagesimal hay que dividir entre 60. En una libreta con cientos de ángulos eso ahorra horas.',
+      'Los gonios son más pequeños que los grados, sí, pero eso no simplifica ninguna cuenta: lo que simplifica es la base.',
+      'Necesita calculadora igual que los demás. Lo que ahorra es el trabajo de conversión a mano.',
+      'El Sistema Internacional no adopta el gonio: la unidad angular del SI es el radián. El gonio es una unidad técnica de topografía.']},
+
+  {tema:'Errores', q:'Un resultado de altura te sale negativo. ¿Qué significa?',
+   o:['Que has intercambiado los ángulos o has restado al revés: una altura no puede ser negativa',
+      'Que la distancia entre las posiciones era negativa',
+      'Que el objeto está al otro lado del río',
+      'Nada: se toma el valor absoluto y se sigue'], ok:0,
+   w:['Una altura negativa indica que el planteamiento está invertido, casi siempre porque β y α se han cambiado de sitio. No se arregla con un valor absoluto.',
+      'Las distancias se toman siempre en positivo. Un signo negativo en una distancia es otra señal del mismo problema.',
+      'La orilla del río no cambia el signo. El desnivel sí puede serlo, pero la altura de un objeto sobre su base no.',
+      'Tomar el valor absoluto tapa el error sin corregirlo, y el resultado seguirá siendo incorrecto. Hay que volver a plantear.']}
+  ];
+
+  let orden = [], pos = 0, sel = -1, mapa = [], qAct = null;
+  let aciertos = 0, intentos = 0, racha = 0, vistas = 0, vueltas = 1, resuelta = false;
+  const TOTAL = PREGUNTAS.length;
+
+  function baraja(a){
+    for (let i = a.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      const t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function nuevaRonda(){
+    orden = baraja(PREGUNTAS.map(function(_, i){ return i; }));
+    pos = 0;
+  }
+
+  function pintaOpciones(){
+    const cont = $('#opciones');
+    cont.innerHTML = '';
+    mapa.forEach(function(idx, j){
+      const b = document.createElement('button');
+      b.className = 'ghost';
+      b.type = 'button';
+      b.textContent = qAct.o[idx];
+      b.style.cssText = 'text-align:left;width:100%;padding:11px 14px;font-size:17.5px;line-height:1.45';
+      if (j === sel){ b.style.borderColor = '#16324f'; b.style.boxShadow = 'inset 0 0 0 1px #16324f'; }
+      b.addEventListener('click', function(){
+        if (resuelta) return;
+        sel = j;
+        pintaOpciones();
+      });
+      cont.appendChild(b);
+    });
+  }
+
+  function explicacion(){
+    let h = '<p><strong>Correcta:</strong> ' + qAct.o[qAct.ok] + '. ' + qAct.w[qAct.ok] + '</p>';
+    let malas = '';
+    qAct.o.forEach(function(t, i){
+      if (i !== qAct.ok) malas += '<li>' + t + ': ' + qAct.w[i] + '</li>';
+    });
+    if (malas) h += '<p style="margin-top:.6em"><strong>Por qué fallan las otras:</strong></p><ul>' + malas + '</ul>';
+    return h;
+  }
+
+  function nuevo(){
+    if (pos >= orden.length){ nuevaRonda(); vueltas++; $('#mVueltas').textContent = vueltas; }
+    qAct = PREGUNTAS[orden[pos]];
+    pos++;
+    sel = -1; resuelta = false;
+    mapa = baraja(qAct.o.map(function(_, i){ return i; }));
+    $('#numP').textContent = pos;
+    $('#etiquetaT').textContent = qAct.tema;
+    $('#enun').innerHTML = qAct.q;
+    $('#fbk').className = 'feedback';
+    $('#fbk').innerHTML = '';
+    $('#soldet').open = false;
+    $('#sol').innerHTML = explicacion();
+    pintaOpciones();
+  }
+
+  function comprobar(){
+    if (resuelta){
+      fb($('#fbk'), 1, 'Ya está resuelta. Pulsa «Otra pregunta» para seguir con la siguiente del banco.');
+      return;
+    }
+    if (sel < 0){
+      fb($('#fbk'), null, 'Señala primero una de las opciones y luego pulsa Comprobar.');
+      return;
+    }
+    intentos++;
+    const elegida = mapa[sel];
+    if (elegida === qAct.ok){
+      aciertos++; racha++; resuelta = true;
+      vistas = Math.min(TOTAL, vistas + 1);
+      $('#mVistas').textContent = vistas + ' / ' + TOTAL;
+      fb($('#fbk'), 1, 'Correcto. ' + qAct.w[elegida] + (racha >= 5 ? ' Cinco seguidas: el bloque lo tienes.' : ''));
+      $('#soldet').open = false;
+    } else {
+      racha = 0;
+      fb($('#fbk'), 0, 'Todavía no. Elegiste «' + qAct.o[elegida] + '», y esa opción falla porque ' +
+        qAct.w[elegida].charAt(0).toLowerCase() + qAct.w[elegida].slice(1) +
+        ' Lee la explicación completa antes de volver a intentarlo.');
+    }
+    $('#mAci').textContent = aciertos;
+    $('#mInt').textContent = intentos;
+    $('#mRac').textContent = racha;
+  }
+
+  $('#bCheck').addEventListener('click', comprobar);
+  $('#bOtro').addEventListener('click', nuevo);
+  $('#totP').textContent = TOTAL;
+
+  window.__topoDebug = function(){
+    return {titulo: 'Conceptos básicos · ' + qAct.tema,
+            enunciado: qAct.q,
+            respuestas: [qAct.o[qAct.ok]],
+            tolerancias: [],
+            banco: TOTAL, opciones: qAct.o.length};
+  };
+
+  nuevaRonda();
+  nuevo();
+})();
+</script>
+
+<h2>Lo que hay detrás de cada pregunta</h2>
+<p>Las treinta y una preguntas no están puestas al azar: cada una ataca una decisión que hay que tomar antes de
+escribir el primer número. Esta tabla resume qué se entrena en cada bloque y a qué lámina volver cuando falles varias
+seguidas en uno de ellos.</p>
+
+<table>
+  <tr><th style="width:24%">Bloque</th><th>Qué se pregunta</th><th style="width:30%">Dónde se explica</th></tr>
+  <tr><td>Sistemas</td><td>Cuántas partes tiene la vuelta en cada sistema, qué es cada subíndice y por qué la
+      <span class="num">m</span> no es un metro</td><td>Lección 01 · Notación angular</td></tr>
+  <tr><td>Factores</td><td>En qué dirección se aplica 10/9 y en cuál 9/10, y cómo detectar que has usado el
+      inverso</td><td>Lección 03 · Grados centesimales</td></tr>
+  <tr><td>Radianes</td><td>Cuánto vale un radián en grados, cuántos radianes son 400 g y por qué 2π cierra la
+      vuelta</td><td>Lección 04 · Radianes</td></tr>
+  <tr><td>Trigonometría</td><td>Los valores de seno, coseno y tangente en 30°, 45° y 60°, y el rango de cada
+      razón</td><td>Lección 05 · Razones trigonométricas</td></tr>
+  <tr><td>Ángulos verticales</td><td>Desde dónde se mide la elevación y la depresión, y hasta dónde pueden
+      llegar</td><td>Lección 06 · El triángulo rectángulo</td></tr>
+  <tr><td>Dos posiciones</td><td>Qué distancia entra en la fórmula, qué ángulo es el mayor y qué significa un
+      denominador negativo</td><td>Lección 07 · Dos posiciones</td></tr>
+  <tr><td>Errores</td><td>Calculadora en radianes, resultados imposibles y unidades que faltan</td>
+      <td>Lección 10 · Calculadora y errores</td></tr>
+</table>
+
+<h2>Las cuatro trampas que el banco repite a propósito</h2>
+<p>Si fallas siempre en las mismas, no es mala suerte: son las cuatro confusiones que arrastra casi todo el grupo, y
+cada una tiene una comprobación de una línea que la desmonta.</p>
+<ol>
+  <li><p><strong>Comparar números de sistemas distintos.</strong> Preguntar si 200 g es más o menos que 180° no se
+  contesta mirando las cifras, se contesta convirtiendo: 200 × 9/10 = 180. La comprobación de sentido es siempre la
+  misma: el número de gonios tiene que ser mayor que el de grados para el mismo giro, y esa proporción es 400/360.</p></li>
+  <li><p><strong>Pegar los minutos detrás de la coma.</strong> 24° 36′ no son 24,36°, son 24,6°. Cada vez que aparezca
+  una forma compleja, la pregunta mental es en cuántas partes está partido el grado: si es 60, se divide entre 60; si
+  es 100, entre 100. Con base 60 y base 100 en la misma libreta, esa pregunta hay que hacerla siempre.</p></li>
+  <li><p><strong>Leer la letra de la unidad en lugar del sistema.</strong> La <span class="num">m</span> de
+  «42 g 35 m» y la <span class="num">s</span> de «42 g 35 m 20 s» son minutos y segundos angulares centesimales, no
+  metros ni segundos de tiempo. El aviso es inmediato: si el número lleva g al lado, todo lo que venga detrás es
+  angular.</p></li>
+  <li><p><strong>Olvidar en qué modo está la calculadora.</strong> En modo RAD, sen 30 da −0,988 y ninguna calculadora
+  avisa. La comprobación cuesta dos segundos: sen 30 tiene que dar 0,5. Si no lo da, la calculadora está en radianes y
+  todos los resultados de la sesión están mal.</p></li>
+</ol>
+
+<h2>Antes de seguir</h2>
+<p>Este banco no sustituye a los ejercicios: los prepara. Si aciertas el factor y sabes en cuántas partes se parte la
+vuelta, la conversión ya es solo aritmética, y las cuentas se entrenan con el generador de conversiones. Si lo que
+falla es leer el enunciado y decidir qué figura hay que resolver, el sitio es el generador de interpretación de
+enunciados.</p>
+<p>La teoría que hay detrás de las preguntas de ángulos verticales, depresiones y pendientes está en la
+<a href="06_triangulo_rectangulo.html">lección 06, el triángulo rectángulo en el campo</a>. Y la lista completa de
+errores de calculadora, redondeo y comprobación, con el modo de detectar cada uno antes de entregar el examen, está
+en la <a href="10_calculadora_y_errores.html">lección 10</a>.</p>
+</main>
+<nav class="pager"><a href="gen_05_ley_coseno.html">&larr; Generador · Ley del coseno</a><span class="sp"></span><a href="index.html">Índice</a><span class="sp"></span><a href="gen_07_enunciados.html">Generador · Interpretar el enunciado &rarr;</a></nav>
+</div>
+<script>refrescaSliders();</script>
+</body>
+</html>

@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Triángulos no rectángulos</title>
+<style>
+:root{
+  --ink:#1b2530; --navy:#16324f; --navy2:#2c5a84; --line:#d3d9df; --bg:#f7f8f9;
+  --soft:#edf1f4; --ok:#1f6b3a; --bad:#8f2222; --warnc:#7a5a00;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:19px/1.62 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+.wrap{max-width:980px;margin:0 auto;padding:26px 26px 90px}
+header.top{border-bottom:2px solid var(--navy);padding-bottom:12px;margin-bottom:26px}
+.kicker{font-size:13.5px;letter-spacing:.14em;text-transform:uppercase;color:#5b6875;font-weight:600}
+h1{font-size:31px;line-height:1.22;margin:.22em 0 .28em;color:var(--navy);font-weight:660;letter-spacing:-.01em}
+.sub{font-size:19px;color:#3c4a58;margin:0}
+h2{font-size:22.5px;margin:2.1em 0 .45em;color:var(--navy);font-weight:650;
+   border-left:4px solid var(--navy);padding-left:11px;line-height:1.3}
+h2:first-of-type{margin-top:1.2em}
+h3{font-size:19.5px;margin:1.5em 0 .3em;font-weight:650;color:#22303d}
+h4{font-size:17px;margin:1.2em 0 .3em;font-weight:650;color:#22303d}
+p{margin:.62em 0}
+.lead{font-size:20px;color:#2c3a48}
+ul,ol{padding-left:1.4em;margin:.55em 0}
+li{margin:.3em 0}
+li>ul,li>ol{margin:.3em 0}
+a{color:var(--navy2)}
+strong{font-weight:660}
+.num{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.formula{
+  font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:17px;line-height:1.7;
+  background:var(--soft);border-left:3px solid var(--navy);padding:11px 15px;margin:1em 0;
+  overflow-x:auto;white-space:pre-wrap;
+}
+.formula em{font-style:normal;color:var(--navy);font-weight:600}
+.demo{background:#fff;border:1px solid var(--line);padding:16px 16px 18px;margin:1.3em 0}
+.demo .tat{font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:#5b6875;
+  font-weight:650;margin:0 0 12px}
+.ctrl{display:grid;grid-template-columns:165px 1fr 135px;gap:12px;align-items:center;margin:.55em 0}
+.ctrl label{font-size:17px}
+.ctrl .val{text-align:right;font-family:ui-monospace,monospace;font-size:18px;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:#16324f;height:22px}
+input[type=number],input[type=text],select{
+  font:inherit;font-size:18px;padding:6px 9px;border:1px solid #b7c0c9;background:#fff;
+  color:var(--ink);border-radius:0;width:100%
+}
+input:focus,select:focus,button:focus{outline:2px solid var(--navy2);outline-offset:1px}
+input.ok{border-color:var(--ok);background:#f1f7f3}
+input.bad{border-color:var(--bad);background:#fdf3f3}
+button{
+  font:inherit;font-size:16px;padding:7px 15px;border:1px solid var(--navy);border-radius:0;
+  background:var(--navy);color:#fff;cursor:pointer
+}
+button:hover{background:#1d4368}
+button.ghost{background:#fff;color:var(--navy)}
+button.ghost:hover{background:var(--soft)}
+.botones{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:9px;margin:12px 0 0}
+.readout div{background:var(--soft);padding:8px 11px}
+.readout b{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  color:#5b6875;font-weight:650;margin-bottom:2px}
+.readout span{font-family:ui-monospace,monospace;font-size:18px;font-variant-numeric:tabular-nums}
+.note{background:#fbfaf4;border-left:3px solid #b08a2e;padding:11px 15px;margin:1.1em 0}
+.warn{background:#fcf4f4;border-left:3px solid var(--bad);padding:11px 15px;margin:1.1em 0}
+.good{background:#f1f7f3;border-left:3px solid var(--ok);padding:11px 15px;margin:1.1em 0}
+.feedback{margin-top:11px;font-size:17.5px;line-height:1.55}
+.feedback.good::before{content:"";}
+.fb-good{color:var(--ok)}
+.fb-bad{color:var(--bad)}
+.fb-neutral{color:#3c4a58}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:17px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--soft);font-weight:650;font-size:16px}
+td.num,th.num{font-family:ui-monospace,monospace;font-variant-numeric:tabular-nums}
+nav.strip{display:flex;gap:15px;align-items:center;flex-wrap:wrap;font-size:15.5px;
+  border-bottom:1px solid var(--line);padding:0 0 10px;margin:-4px 0 24px;color:#5b6875}
+nav.strip a{color:var(--navy2);text-decoration:none;border-bottom:1px solid #c5d3e0}
+nav.strip a:hover{border-bottom-color:var(--navy2)}
+nav.strip .act{color:#5b6875;font-weight:650}
+nav.strip .sep{color:#ccd4db}
+nav.pager{display:flex;justify-content:space-between;gap:14px;margin-top:54px;padding-top:16px;
+  border-top:1px solid var(--line);font-size:16px}
+nav.pager a{color:var(--navy);text-decoration:none;border-bottom:1px solid #a9bdd0;padding-bottom:1px}
+nav.pager a:hover{border-bottom-color:var(--navy)}
+nav.pager .sp{flex:1}
+svg{display:block;max-width:100%;height:auto;font-family:ui-monospace,monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.tiny{font-size:15.5px;color:#5b6875;line-height:1.5}
+.pasos{counter-reset:p;list-style:none;padding-left:0}
+.pasos>li{counter-increment:p;position:relative;padding-left:42px;margin:.85em 0}
+.pasos>li::before{
+  content:counter(p);position:absolute;left:0;top:.05em;width:28px;height:28px;border:1.5px solid var(--navy);
+  color:var(--navy);font-size:15px;font-weight:700;text-align:center;line-height:25px;
+  font-family:ui-monospace,monospace
+}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin:1.2em 0}
+.card{background:#fff;border:1px solid var(--line);padding:14px 16px;display:block;
+  text-decoration:none;color:var(--ink)}
+.card:hover{border-color:var(--navy);background:#fbfcfd}
+.card .n{font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:#5b6875;font-weight:650}
+.card .t{font-size:19px;color:var(--navy);font-weight:650;margin:.15em 0 .25em;line-height:1.28;min-height:2.56em}
+.card .d{font-size:16px;color:#46545f;line-height:1.45}
+.tag{display:inline-block;font-size:13px;border:1px solid var(--line);background:var(--soft);
+  padding:1px 7px;margin:4px 4px 0 0;color:#46545f}
+kbd{font-family:ui-monospace,monospace;font-size:15px;border:1px solid #b7c0c9;border-bottom-width:2px;
+  padding:1px 5px;background:#fff}
+.checkline{display:flex;gap:10px;align-items:baseline;margin:.4em 0}
+.checkline input[type=checkbox]{width:18px;height:18px;accent-color:#16324f;flex:none}
+@media (max-width:740px){
+  body{font-size:18px}
+  .wrap{padding:18px 16px 70px}
+  h1{font-size:26px} h2{font-size:20.5px}
+  .ctrl{grid-template-columns:110px 1fr 105px;gap:8px}
+  .grid2{grid-template-columns:1fr}
+}
+@media print{
+  body{background:#fff}
+  .demo{break-inside:avoid}
+  nav.pager{display:none}
+}
+</style>
+
+<script>
+/* ---------- utilidades comunes (idénticas en todas las páginas) ---------- */
+const $  = (s, r) => (r||document).querySelector(s);
+const $$ = (s, r) => Array.from((r||document).querySelectorAll(s));
+
+/* Lee un número escrito por el alumno: admite coma o punto decimal,
+   espacios, el símbolo de grado y el sufijo de gonios. */
+function leerNum(v){
+  if (typeof v === 'number') return v;
+  let s = String(v == null ? '' : v).trim();
+  s = s.replace(/\s+/g,'').replace(/[°º]/g,'').replace(/(rad|gon|g|m|s)$/i,'');
+  if (s === '') return NaN;
+  if (s.includes(',') && s.includes('.')) s = s.replace(/\./g,'').replace(',', '.');
+  else if (s.includes(',')) s = s.replace(',', '.');
+  return parseFloat(s);
+}
+/* Formato español: coma decimal, cifras fijas. */
+function fmt(x, d){
+  d = (d === undefined) ? 2 : d;
+  if (!isFinite(x)) return '—';
+  return x.toFixed(d).replace('.', ',');
+}
+/* Sexagesimal: {g,m,s} a partir de grados decimales */
+function aSexa(x){
+  let neg = x < 0; x = Math.abs(x);
+  let g = Math.floor(x + 1e-12);
+  let mm = (x - g) * 60;
+  let m = Math.floor(mm + 1e-9);
+  let s = (mm - m) * 60;
+  if (s >= 59.9995){ s = 0; m += 1; }
+  if (m >= 60){ m -= 60; g += 1; }
+  return {g:(neg?-g:g), m:m, s:s};
+}
+/* Centesimal: {g,m,s} */
+function aCentes(x){
+  let neg = x < 0; x = Math.abs(x);
+  let g = Math.floor(x + 1e-12);
+  let mm = (x - g) * 100;
+  let m = Math.floor(mm + 1e-9);
+  let s = (mm - m) * 100;
+  if (s >= 99.995){ s = 0; m += 1; }
+  if (m >= 100){ m -= 100; g += 1; }
+  return {g:(neg?-g:g), m:m, s:s};
+}
+function txtSexa(x, ds){
+  ds = (ds === undefined) ? 1 : ds;
+  const f = Math.pow(10, ds);
+  let total = Math.round(Math.abs(x) * 3600 * f);
+  const g = Math.floor(total / (3600 * f));
+  let rem = total - g * 3600 * f;
+  const m = Math.floor(rem / (60 * f));
+  rem = rem - m * 60 * f;
+  const si = String(Math.floor(rem / f)).padStart(2, '0');
+  const dec = ds > 0 ? ',' + String(rem % f).padStart(ds, '0') : '';
+  return (x < 0 ? '−' : '') + g + '° ' + String(m).padStart(2, '0') + '\u2032 ' + si + dec + '\u2033';
+}
+function txtCentes(x, ds){
+  ds = (ds === undefined) ? 1 : ds;
+  const f = Math.pow(10, ds);
+  let total = Math.round(Math.abs(x) * 10000 * f);
+  const g = Math.floor(total / (10000 * f));
+  let rem = total - g * 10000 * f;
+  const m = Math.floor(rem / (100 * f));
+  rem = rem - m * 100 * f;
+  const si = String(Math.floor(rem / f)).padStart(2, '0');
+  const dec = ds > 0 ? ',' + String(rem % f).padStart(ds, '0') : '';
+  return (x < 0 ? '−' : '') + g + 'g ' + String(m).padStart(2, '0') + 'm ' + si + dec + 's';
+}
+/* Retorno de estado en un campo: ok / mal */
+function marcar(el, estado){
+  el.classList.remove('ok','bad');
+  if (estado === 1) el.classList.add('ok');
+  else if (estado === 0) el.classList.add('bad');
+}
+function fb(el, tipo, texto){
+  el.className = 'feedback ' + (tipo === 1 ? 'fb-good' : tipo === 0 ? 'fb-bad' : 'fb-neutral');
+  el.innerHTML = texto;
+  return tipo;
+}
+/* Formatea un ángulo en radianes como múltiplo exacto de π si el denominador es pequeño */
+function aPi(x){
+  const r = x / Math.PI;
+  for (let q = 1; q <= 24; q++){
+    const p = r * q;
+    if (Math.abs(p - Math.round(p)) < 1e-9){
+      const n = Math.round(p);
+      if (q === 1) return (n === 1 ? 'π' : n + 'π');
+      if (n === 1) return 'π/' + q;
+      return n + 'π/' + q;
+    }
+  }
+  return null;
+}
+/* Sincroniza el relleno visual de los sliders (solo estética) */
+function refrescaSliders(root){
+  $$('input[type=range]', root || document).forEach(function(r){
+    const p = (r.value - r.min) / (r.max - r.min) * 100;
+    r.style.background = 'linear-gradient(90deg,#16324f ' + p + '%,#cfd7de ' + p + '%)';
+    r.style.height = '6px';
+    r.style.borderRadius = '0';
+    r.style.appearance = 'none';
+    r.style.webkitAppearance = 'none';
+  });
+}
+</script>
+<style>
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:16px;height:16px;background:#16324f;border:2px solid #fff;
+  box-shadow:0 0 0 1px #16324f;cursor:pointer
+}
+input[type=range]::-moz-range-thumb{
+  width:14px;height:14px;background:#16324f;border:2px solid #fff;box-shadow:0 0 0 1px #16324f;cursor:pointer
+}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<header class="top"><div class="kicker">Día 2 · Peldaño 8</div><h1>Triángulos no rectángulos</h1><p class="sub">Ley del coseno y ley del seno, con el problema 2 resuelto paso a paso</p></header><nav class="strip"><a href="index.html">Índice</a><span class="sep">·</span><span class="act">Lección 8</span><span class="sep">·</span><a href="gen_05_ley_coseno.html">Generador B4 &rarr;</a></nav>
+<main>
+<p class="lead">El teorema de Pitágoras es una herramienta magnífica y muy estrecha: solo funciona si el triángulo tiene
+un ángulo recto. En el campo, la mayoría de los triángulos no lo tienen, porque no hay ninguna pared ni ninguna
+vertical que lo imponga. El problema 2 de la ficha es el caso típico: desde una estación se visan dos puntos y se
+mide el ángulo entre las dos visuales, que resulta ser de 50°. Con eso y dos distancias hay que calcular la
+distancia entre esos dos puntos, y ahí Pitágoras no sirve. Esta lámina presenta las dos leyes que sí sirven, y las
+aplica al problema entero.</p>
+
+<h2>1. Cuándo se acaba el ángulo recto</h2>
+<p>En la lección anterior el ángulo recto lo construía el propio campo: la vertical del poste contra la horizontal
+del suelo. Aquí no hay nada que lo construya. Si dos visuales salen de la misma estación hacia dos puntos
+distintos, el ángulo entre ellas es el que es —50°, 73°, 118°— y no hay forma de elegirlo. Tampoco se puede
+«arreglar» bajando una perpendicular desde un vértice al lado opuesto, porque para eso habría que ir hasta el
+punto lejano, que es justo el que no se puede pisar.</p>
+<p>Conviene ver el tamaño del error que se comete al ignorar esto. En el problema 2, los lados conocidos son 40 m y
+60 m y el ángulo entre ellos es de 50°. Si se aplicara Pitágoras a ciegas saldría
+<span class="num">√(40² + 60²) = 72,11 m</span>. El lado verdadero mide 45,98 m. La diferencia es de más de
+26 metros, un 57 % de error, y el número de Pitágoras no tiene nada de absurdo a primera vista: es exactamente el
+tipo de resultado que se entrega en un examen sin sospechar nada.</p>
+<p>La razón geométrica es sencilla: cuanto más cerrado es el ángulo entre los dos lados, más cerca están sus
+extremos. Con 50° los dos puntos están bastante juntos. Con 90° estarían a la máxima distancia posible para esos
+dos lados. Con 120°, todavía más lejos, porque el triángulo se abre hacia el otro lado. La ley del coseno no es
+más que la manera de meter ese efecto en una fórmula.</p>
+
+<h2>2. La ley del coseno</h2>
+<p>La ley del coseno relaciona los tres lados de un triángulo cualquiera con uno de sus ángulos. Se escribe para el
+ángulo <span class="num">Â</span> y su lado opuesto <span class="num">a</span>:</p>
+<div class="formula">a² = b² + c² − 2 · b · c · cos Â</div>
+<p>Es imprescindible respetar la convención de nombres, porque es lo que hace que la fórmula no tenga ambigüedad:
+cada lado se llama con la minúscula del vértice al que <em>no</em> toca. El lado <span class="num">a</span> es el
+opuesto al vértice A, el <span class="num">b</span> el opuesto a B y el <span class="num">c</span> el opuesto a C.
+Por tanto el ángulo que aparece en la fórmula es siempre el <strong>comprendido entre los dos lados que se
+conocen</strong>, y el lado que se calcula es siempre el que cierra el triángulo frente a ese ángulo.</p>
+<p>La forma de leerla es lo que hay que retener, porque así no hace falta memorizarla. Los dos primeros términos,
+<span class="num">b² + c²</span>, son Pitágoras tal cual. El tercero, <span class="num">2·b·c·cos Â</span>, es un
+<strong>término corrector</strong> que mide cuánto se aparta el triángulo de ser rectángulo. Su valor depende del
+coseno, y el coseno tiene el signo justo para cada caso:</p>
+<table>
+  <tr><th style="width:16%">Ángulo Â</th><th style="width:26%">Corrector</th><th>Qué significa</th></tr>
+  <tr><td class="num">90°</td><td class="num">2·b·c·0 = 0</td>
+      <td>El corrector desaparece: queda Pitágoras puro. La ley general contiene al teorema como caso particular.</td></tr>
+  <tr><td class="num">menos de 90°</td><td class="num">positivo</td>
+      <td>Se resta algo: el lado sale <em>menor</em> que el de Pitágoras, porque el triángulo está «cerrado».</td></tr>
+  <tr><td class="num">más de 90°</td><td class="num">negativo</td>
+      <td>Restar un negativo es sumar: el lado sale <em>mayor</em> que el de Pitágoras, porque el triángulo se abre.</td></tr>
+</table>
+<p>Con los dos lados de la ficha (<span class="num">b = 60</span>, <span class="num">c = 40</span>) se ve el
+efecto con números. A 50° el corrector vale <span class="num">2 · 60 · 40 · 0,6428 = 3 085,38</span> y el lado
+resulta 45,98 m. A 90° el corrector vale 0 y el lado es 72,11 m. A 120° el corrector vale
+<span class="num">−2 400</span> y el lado sube a <span class="num">87,18 m</span>. Y en los dos extremos
+degenerados la fórmula sigue siendo coherente, lo cual es una comprobación excelente de que se ha entendido: con
+Â = 0° el corrector vale <span class="num">+4 800</span> y el lado sale 20 m, que es exactamente la diferencia
+entre los dos lados; con Â = 180° vale <span class="num">−4 800</span> y sale 100 m, la suma de los dos. El
+triángulo se ha aplastado hasta ser una línea, y la fórmula lo admite sin protestar.</p>
+<div class="note">
+<p><strong>Comprobación de sentido.</strong> El lado que se calcula con la ley del coseno tiene que quedar siempre
+entre la diferencia y la suma de los otros dos, y nunca por debajo de cero. Si sale 0, 20 o 100 exactos, el ángulo
+comprendido es 180°, 0° o el triángulo está degenerado: hay un dato mal copiado.</p>
+</div>
+
+<h2>3. Demostración interactiva</h2>
+<p>Los dos lados están fijos —60 m y 40 m, los del problema 2— y lo único que se mueve es el ángulo que forman.
+Fíjate en tres cosas mientras arrastras. Primera: el lado desconocido crece con el ángulo hasta 90° y luego sigue
+creciendo, pero el término corrector cambia de signo al pasar por el recto. Segunda: en el punto exacto de 90° el
+corrector vale cero, y el valor del lado coincide con el de Pitágoras, que aparece en la última casilla para poder
+compararlos. Tercera: el lado nunca sale mayor que la suma de los dos ni menor que su diferencia.</p>
+
+<div class="demo">
+<p class="tat">Demostración 3 · Dos lados fijos y un ángulo que cambia</p>
+<div class="ctrl">
+  <label for="tAng">Ángulo Â entre b y c</label>
+  <input id="tAng" type="range" min="20" max="150" step="1" value="50">
+  <span class="val" id="tAngV">50°</span>
+</div>
+<svg id="tri" viewBox="0 0 620 360" width="620" height="360" role="img"
+     aria-label="Triángulo con dos lados fijos y el ángulo comprendido variable"></svg>
+<div class="readout">
+  <div><b>Lado a (opuesto a Â)</b><span id="oA">—</span></div>
+  <div><b>a²</b><span id="oA2">—</span></div>
+  <div><b>b² + c²</b><span id="oSum">—</span></div>
+  <div><b>Corrector 2·b·c·cos Â</b><span id="oCor">—</span></div>
+  <div><b>√(b² + c²) (Pitágoras)</b><span id="oPit">—</span></div>
+</div>
+<div class="feedback" id="tEstado"></div>
+<div class="botones"><button class="ghost" id="btn90">Llevar Â a 90°</button></div>
+<p class="tiny">Con Â por encima de 90° el origen del triángulo se abre hacia la izquierda y el dibujo se reescala
+para que quepa: no es que los lados cambien, es que la figura ocupa más. Los lados b y c miden siempre 60 y 40
+metros.</p>
+</div>
+
+<script>
+(function(){
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = $('#tri');
+  const RAD = Math.PI / 180;
+  const b = 60, c = 40;
+
+  function limpia(){ while (svg.firstChild) svg.removeChild(svg.firstChild); }
+  function el(tag, attrs, txt){
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (txt !== undefined) e.textContent = txt;
+    svg.appendChild(e); return e;
+  }
+
+  function dibuja(A){
+    limpia();
+    const rad = A * RAD;
+    const O = [0, 0];
+    const C = [b, 0];
+    const B = [c * Math.cos(rad), c * Math.sin(rad)];
+    const a = Math.sqrt(b * b + c * c - 2 * b * c * Math.cos(rad));
+
+    const minX = Math.min(0, B[0], C[0]), maxX = Math.max(0, B[0], C[0]);
+    const minY = Math.min(0, B[1], C[1]), maxY = Math.max(0, B[1], C[1]);
+    const s = Math.min(500 / Math.max(maxX - minX, 1), 250 / Math.max(maxY - minY, 1e-6), 9);
+    const ox = 55 + (500 - (maxX - minX) * s) / 2;
+    const P = function(p){ return [ox + (p[0] - minX) * s, 300 - (p[1] - minY) * s]; };
+
+    const pO = P(O), pC = P(C), pB = P(B);
+    const G = P([(O[0] + C[0] + B[0]) / 3, (O[1] + C[1] + B[1]) / 3]);
+
+    el('path', {d:'M ' + pO[0] + ' ' + pO[1] + ' L ' + pB[0] + ' ' + pB[1] + ' L ' + pC[0] + ' ' +
+                pC[1] + ' Z', fill:'#16324f', opacity:'0.07'});
+    el('line', {x1:pO[0], y1:pO[1], x2:pC[0], y2:pC[1], stroke:'#16324f', 'stroke-width':2.4});
+    el('line', {x1:pO[0], y1:pO[1], x2:pB[0], y2:pB[1], stroke:'#16324f', 'stroke-width':2.4});
+    el('line', {x1:pB[0], y1:pB[1], x2:pC[0], y2:pC[1], stroke:'#8f2222', 'stroke-width':2.8});
+
+    const r = 52;
+    const ax = pO[0] + r, ay = pO[1];
+    const bx = pO[0] + r * Math.cos(rad), by = pO[1] - r * Math.sin(rad);
+    el('path', {d:'M ' + ax + ' ' + ay + ' A ' + r + ' ' + r + ' 0 0 0 ' + bx + ' ' + by,
+                fill:'none', stroke:'#1f6b3a', 'stroke-width':2});
+    el('text', {x:pO[0] + 78 * Math.cos(rad / 2), y:pO[1] - 78 * Math.sin(rad / 2) + 5,
+                'text-anchor':'middle', 'font-size':14, fill:'#1f6b3a', 'font-weight':'600'},
+       'Â = ' + fmt(A, 0) + '°');
+
+    if (Math.abs(A - 90) < 0.6){
+      const q = 15;
+      el('path', {d:'M ' + (pO[0] + q) + ' ' + pO[1] + ' L ' + (pO[0] + q) + ' ' + (pO[1] - q) +
+                  ' L ' + pO[0] + ' ' + (pO[1] - q), fill:'none', stroke:'#1f6b3a', 'stroke-width':1.4});
+    }
+
+    function rotulo(pm, txt, color){
+      const dx = pm[0] - G[0], dy = pm[1] - G[1];
+      const n = Math.sqrt(dx * dx + dy * dy) || 1;
+      el('text', {x:pm[0] + 20 * dx / n, y:pm[1] + 20 * dy / n + 4, 'text-anchor':'middle',
+                  'font-size':13, fill:color}, txt);
+    }
+    rotulo([(pO[0] + pC[0]) / 2, (pO[1] + pC[1]) / 2], 'b = 60 m', '#16324f');
+    rotulo([(pO[0] + pB[0]) / 2, (pO[1] + pB[1]) / 2], 'c = 40 m', '#16324f');
+    rotulo([(pB[0] + pC[0]) / 2, (pB[1] + pC[1]) / 2], 'a = ' + fmt(a, 2) + ' m', '#8f2222');
+
+    el('circle', {cx:pO[0], cy:pO[1], r:4, fill:'#16324f'});
+    el('text', {x:pO[0] - 10, y:pO[1] + 16, 'text-anchor':'end', 'font-size':13, fill:'#3c4a58'}, 'A');
+    el('text', {x:pC[0] + 8, y:pC[1] + 16, 'font-size':13, fill:'#3c4a58'}, 'C');
+    el('text', {x:pB[0] - 4, y:pB[1] - 10, 'text-anchor':'middle', 'font-size':13, fill:'#3c4a58'}, 'B');
+
+    const corr = 2 * b * c * Math.cos(rad);
+    $('#oA').textContent   = fmt(a, 2) + ' m';
+    $('#oA2').textContent  = fmt(a * a, 2) + ' m²';
+    $('#oSum').textContent = fmt(b * b + c * c, 0) + ' m²';
+    $('#oCor').textContent = fmt(corr, 2) + ' m²';
+    $('#oPit').textContent = fmt(Math.sqrt(b * b + c * c), 2) + ' m';
+
+    if (Math.abs(A - 90) < 0.6){
+      $('#tEstado').className = 'feedback fb-good';
+      $('#tEstado').innerHTML = 'Â = 90°: el corrector vale 0 y a = √(b² + c²) = ' +
+        fmt(Math.sqrt(b * b + c * c), 2) + ' m. La ley del coseno se ha convertido en Pitágoras.';
+    } else if (A < 90){
+      $('#tEstado').className = 'feedback fb-neutral';
+      $('#tEstado').innerHTML = 'Ángulo agudo: el corrector es positivo y se resta, así que el lado ' +
+        'a = ' + fmt(a, 2) + ' m queda por debajo de los ' + fmt(Math.sqrt(b * b + c * c), 2) +
+        ' m de Pitágoras.';
+    } else {
+      $('#tEstado').className = 'feedback fb-neutral';
+      $('#tEstado').innerHTML = 'Ángulo obtuso: el corrector es negativo, y restar un negativo suma. El lado ' +
+        'a = ' + fmt(a, 2) + ' m supera los ' + fmt(Math.sqrt(b * b + c * c), 2) + ' m de Pitágoras.';
+    }
+  }
+
+  function actualiza(){
+    const A = parseFloat($('#tAng').value);
+    $('#tAngV').textContent = fmt(A, 0) + '°';
+    dibuja(A);
+  }
+  $('#tAng').addEventListener('input', actualiza);
+  $('#btn90').addEventListener('click', function(){
+    $('#tAng').value = 90;
+    actualiza();
+  });
+  actualiza();
+})();
+</script>
+
+<h2>4. La ley del seno</h2>
+<p>Con la ley del coseno se calcula un lado; para calcular un ángulo sirve también, despejando el coseno. Pero hay
+una segunda ley, más corta para los ángulos, que relaciona cada lado con el seno de su ángulo opuesto:</p>
+<div class="formula">    a         b         c
+─────── = ─────── = ───────
+ sen Â     sen B̂     sen Ĉ</div>
+<p>Su ventaja es que cada igualdad solo emplea dos lados y dos ángulos, así que basta conocer un lado con su ángulo
+opuesto —un <em>par completo</em>— más un tercer dato para despejar. Su límite es el mismo: necesita siempre ese
+par. Si no se conoce ningún lado junto a su ángulo opuesto, la ley del seno no se puede usar y hay que ir a la del
+coseno.</p>
+<p>En un triángulo rectángulo funciona, por supuesto, pero es absurdo emplearla: con un ángulo de 90° sobra
+información y la tangente o Pitágoras dan el resultado en un paso y sin redondeos intermedios. Regla práctica: si
+hay un ángulo recto, la ley del seno no se toca.</p>
+<div class="warn">
+<p><strong>La ambigüedad del arcoseno.</strong> El seno de 60° y el de 120° valen lo mismo, 0,8660. Por eso, cuando
+se despeja un ángulo con la ley del seno, la calculadora devuelve siempre el valor agudo y hay que preguntarse si
+el ángulo podía ser obtuso. Dos criterios resuelven el caso: la suma de los tres ángulos tiene que dar exactamente
+180°, y <strong>el lado mayor es siempre opuesto al ángulo mayor</strong>. Si el ángulo que sale agudo es mayor que
+otro conocido y su lado es menor, está mal: hay que tomar el suplementario,
+<span class="num">180° − arcsen x</span>. En el problema 2 esto pasa de verdad, como se ve abajo.</p>
+</div>
+
+<h2>5. El problema 2 de la ficha, resuelto entero</h2>
+<p>«Desde una estación se visan dos puntos, P y Q. La distancia al punto P es de 40 m, la distancia al punto Q es
+de 60 m y el ángulo entre las dos visuales es de 50°. Calcula la distancia entre P y Q y los dos ángulos del
+triángulo». La figura es un triángulo con un vértice en la estación, que llamaremos O. Los lados son
+<span class="num">b = 60</span> (visual a Q) y <span class="num">c = 40</span> (visual a P), con el ángulo
+<span class="num">Ô = 50°</span> comprendido entre ellos. Lo que se busca es el lado <span class="num">a</span>,
+el que une P con Q.</p>
+<ol class="pasos">
+  <li><p><strong>Elegir la ley.</strong> Se conocen dos lados y el ángulo <em>entre</em> ellos, y no se conoce
+  ningún lado con su ángulo opuesto. Ese es el caso de la ley del coseno, sin discusión posible.</p></li>
+
+  <li><p><strong>Sustituir el cuadrado del lado.</strong> Con b = 60, c = 40 y cos 50° = 0,6428:</p>
+  <div class="formula">a² = 40² + 60² − 2 · 40 · 60 · cos 50°
+a² = 1 600 + 3 600 − 4 800 · 0,6428
+a² = 5 200 − 3 085,38 = 2 114,62</div></li>
+
+  <li><p><strong>Sacar la raíz.</strong> Aquí se comete el error más tonto de todo el ejercicio: quedarse con el
+  cuadrado.</p>
+  <div class="formula">a = √2 114,62 = <em>45,98 m</em></div></li>
+
+  <li><p><strong>El primer ángulo, por la ley del seno.</strong> Ya hay un par completo: el lado
+  <span class="num">a = 45,98</span> con su ángulo opuesto <span class="num">Ô = 50°</span>. Con el lado de 40 m,
+  que es el opuesto al ángulo en P:</p>
+  <div class="formula">sen P̂ / 40 = sen 50° / 45,98
+sen P̂ = 40 · 0,7660 / 45,98 = 30,64 / 45,98 = 0,6663
+P̂ = arcsen 0,6663 = <em>41,79°</em></div></li>
+
+  <li><p><strong>El segundo ángulo, por suma.</strong> No hace falta volver a la ley del seno, y además es mejor no
+  hacerlo: así el cierre a 180° actúa como comprobación independiente.</p>
+  <div class="formula">Q̂ = 180° − 50° − 41,79° = <em>88,21°</em></div></li>
+
+  <li><p><strong>Comprobar que suma 180°.</strong></p>
+  <div class="formula">50,00° + 41,79° + 88,21° = 180,00°  ✓</div></li>
+
+  <li><p><strong>Comprobar el ángulo mayor con su lado mayor.</strong> El lado de 60 m es el opuesto al ángulo en
+  Q, que ha salido el mayor, 88,21°. Se comprueba por la ley del seno:</p>
+  <div class="formula">sen Q̂ = 60 · sen 50° / 45,98 = 45,96 / 45,98 = 0,9995
+arcsen 0,9995 = 88,21°  ✓     (el otro valor posible, 91,79°, daría una suma de 183,58°: imposible)</div></li>
+</ol>
+<p>Aquí se ve la ambigüedad anunciada, y se ve cómo se resuelve: la calculadora devuelve 88,21° porque es el agudo,
+y en este caso el agudo es el correcto. Pero el mismo número 0,9995 podría haber correspondido a 91,79°, y solo la
+suma de los tres ángulos y la comprobación con el lado mayor deciden cuál es. Un ejercicio en el que la estación
+esté dentro del triángulo de los otros dos puntos da exactamente esa situación.</p>
+<div class="note">
+<p><strong>Por qué el resultado es razonable.</strong> Los dos lados miden 40 y 60 y el ángulo entre ellos es la
+mitad de un recto: los extremos tienen que estar más cerca de lo que estarían a 90° (72,11 m) y más lejos de lo que
+estarían a 0° (20 m). Los 45,98 m caen donde deben. Cuando el resultado no cae entre esos dos topes, el fallo está
+en el ángulo: o no es el comprendido, o está en gonios.</p>
+</div>
+
+<h2>6. Los cuatro errores típicos</h2>
+<ol>
+  <li><p><strong>Usar en el coseno un ángulo que no es el comprendido.</strong> Es el error capital, porque la
+  fórmula devuelve un número y no protesta. El ángulo de la ley del coseno está <em>dentro</em> del triángulo, entre
+  los dos lados que se conocen; si el dato es el ángulo entre una visual y la prolongación de otra —lo que ocurre
+  cuando se mide un ángulo exterior o un azimut—, antes hay que convertirlo con
+  <span class="num">180° − ángulo</span>. Un ángulo de 130° puesto donde iba 50° cambia el lado de 45,98 a
+  91,03 m, y el cálculo está impecablemente hecho.</p></li>
+
+  <li><p><strong>Elegir la ley del seno cuando el triángulo es rectángulo, o cuando falta el par completo.</strong>
+  En un rectángulo sobra información y la tangente llega antes. Y sin un lado con su ángulo opuesto, la ley del
+  seno no se puede despejar: si se intenta, aparece una ecuación con dos incógnitas y el ejercicio se atasca sin
+  que se entienda por qué. Ese atasco es la señal de que tocaba el coseno.</p></li>
+
+  <li><p><strong>Quedarse con el arcoseno agudo en un caso obtuso.</strong> En el problema 2 la respuesta buena era
+  la aguda, pero no siempre lo es. La calculadora no avisa y el resultado es plausible. Los dos controles que lo
+  detectan son la suma a 180° y la correspondencia entre lado mayor y ángulo mayor.</p></li>
+
+  <li><p><strong>Olvidar la raíz cuadrada, o hacerla antes de tiempo.</strong> La ley del coseno da
+  <span class="num">a²</span>, no <span class="num">a</span>: entregar 2 114,62 en lugar de 45,98 m es un fallo de
+  una línea que se lleva el ejercicio entero. El control de magnitud lo detecta al instante, porque 2 114 m no
+  puede ser la distancia entre dos puntos que están a 40 y 60 m de la estación.</p></li>
+</ol>
+
+<h2>7. Cómo se escribe en el examen</h2>
+<div class="formula">1)  Croquis con el ángulo comprendido marcado entre los dos lados conocidos.
+2)  Datos:  b = __ m    c = __ m    Â = __°  (comprendido)
+3)  Ley del coseno:  a² = b² + c² − 2bc·cos Â = ____  →  a = ____ m
+4)  Ángulos por ley del seno:  sen Ĉ = c·sen Â / a  →  Ĉ = ____°
+    y el tercero por diferencia:  B̂ = 180° − Â − Ĉ = ____°
+5)  Compruebo:  suma = 180,00°  ✓   y el lado mayor está frente al ángulo mayor.</div>
+
+<p>Con esto queda cerrada la parte de triángulos. En la práctica profesional todo el cálculo topográfico se hace
+con estas dos leyes —o, lo que es lo mismo, con coordenadas—, y el <a href="gen_05_ley_coseno.html">generador
+B4</a> produce ejercicios de dos lados y ángulo comprendido con números nuevos, tanto para hallar el tercer lado
+como para hallar un ángulo. Si al hacer cinco seguidos el croquis y la elección de la ley salen antes de escribir
+nada, el peldaño está superado. La lección 9 da el paso siguiente: convertir esos ángulos y esas distancias en
+coordenadas sobre el plano.</p>
+</main>
+<nav class="pager"><a href="07_dos_posiciones.html">&larr; Dos posiciones: la altura inaccesible</a><span class="sp"></span><a href="index.html">Índice</a><span class="sp"></span><a href="09_de_gonios_a_coordenadas.html">De gonios a coordenadas &rarr;</a></nav>
+</div>
+<script>refrescaSliders();</script>
+</body>
+</html>

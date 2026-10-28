@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Generador · Interpretar el enunciado</title>
+<style>
+:root{
+  --ink:#1b2530; --navy:#16324f; --navy2:#2c5a84; --line:#d3d9df; --bg:#f7f8f9;
+  --soft:#edf1f4; --ok:#1f6b3a; --bad:#8f2222; --warnc:#7a5a00;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:19px/1.62 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+.wrap{max-width:980px;margin:0 auto;padding:26px 26px 90px}
+header.top{border-bottom:2px solid var(--navy);padding-bottom:12px;margin-bottom:26px}
+.kicker{font-size:13.5px;letter-spacing:.14em;text-transform:uppercase;color:#5b6875;font-weight:600}
+h1{font-size:31px;line-height:1.22;margin:.22em 0 .28em;color:var(--navy);font-weight:660;letter-spacing:-.01em}
+.sub{font-size:19px;color:#3c4a58;margin:0}
+h2{font-size:22.5px;margin:2.1em 0 .45em;color:var(--navy);font-weight:650;
+   border-left:4px solid var(--navy);padding-left:11px;line-height:1.3}
+h2:first-of-type{margin-top:1.2em}
+h3{font-size:19.5px;margin:1.5em 0 .3em;font-weight:650;color:#22303d}
+h4{font-size:17px;margin:1.2em 0 .3em;font-weight:650;color:#22303d}
+p{margin:.62em 0}
+.lead{font-size:20px;color:#2c3a48}
+ul,ol{padding-left:1.4em;margin:.55em 0}
+li{margin:.3em 0}
+li>ul,li>ol{margin:.3em 0}
+a{color:var(--navy2)}
+strong{font-weight:660}
+.num{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.formula{
+  font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:17px;line-height:1.7;
+  background:var(--soft);border-left:3px solid var(--navy);padding:11px 15px;margin:1em 0;
+  overflow-x:auto;white-space:pre-wrap;
+}
+.formula em{font-style:normal;color:var(--navy);font-weight:600}
+.demo{background:#fff;border:1px solid var(--line);padding:16px 16px 18px;margin:1.3em 0}
+.demo .tat{font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:#5b6875;
+  font-weight:650;margin:0 0 12px}
+.ctrl{display:grid;grid-template-columns:165px 1fr 135px;gap:12px;align-items:center;margin:.55em 0}
+.ctrl label{font-size:17px}
+.ctrl .val{text-align:right;font-family:ui-monospace,monospace;font-size:18px;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:#16324f;height:22px}
+input[type=number],input[type=text],select{
+  font:inherit;font-size:18px;padding:6px 9px;border:1px solid #b7c0c9;background:#fff;
+  color:var(--ink);border-radius:0;width:100%
+}
+input:focus,select:focus,button:focus{outline:2px solid var(--navy2);outline-offset:1px}
+input.ok{border-color:var(--ok);background:#f1f7f3}
+input.bad{border-color:var(--bad);background:#fdf3f3}
+button{
+  font:inherit;font-size:16px;padding:7px 15px;border:1px solid var(--navy);border-radius:0;
+  background:var(--navy);color:#fff;cursor:pointer
+}
+button:hover{background:#1d4368}
+button.ghost{background:#fff;color:var(--navy)}
+button.ghost:hover{background:var(--soft)}
+.botones{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:9px;margin:12px 0 0}
+.readout div{background:var(--soft);padding:8px 11px}
+.readout b{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  color:#5b6875;font-weight:650;margin-bottom:2px}
+.readout span{font-family:ui-monospace,monospace;font-size:18px;font-variant-numeric:tabular-nums}
+.note{background:#fbfaf4;border-left:3px solid #b08a2e;padding:11px 15px;margin:1.1em 0}
+.warn{background:#fcf4f4;border-left:3px solid var(--bad);padding:11px 15px;margin:1.1em 0}
+.good{background:#f1f7f3;border-left:3px solid var(--ok);padding:11px 15px;margin:1.1em 0}
+.feedback{margin-top:11px;font-size:17.5px;line-height:1.55}
+.feedback.good::before{content:"";}
+.fb-good{color:var(--ok)}
+.fb-bad{color:var(--bad)}
+.fb-neutral{color:#3c4a58}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:17px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--soft);font-weight:650;font-size:16px}
+td.num,th.num{font-family:ui-monospace,monospace;font-variant-numeric:tabular-nums}
+nav.strip{display:flex;gap:15px;align-items:center;flex-wrap:wrap;font-size:15.5px;
+  border-bottom:1px solid var(--line);padding:0 0 10px;margin:-4px 0 24px;color:#5b6875}
+nav.strip a{color:var(--navy2);text-decoration:none;border-bottom:1px solid #c5d3e0}
+nav.strip a:hover{border-bottom-color:var(--navy2)}
+nav.strip .act{color:#5b6875;font-weight:650}
+nav.strip .sep{color:#ccd4db}
+nav.pager{display:flex;justify-content:space-between;gap:14px;margin-top:54px;padding-top:16px;
+  border-top:1px solid var(--line);font-size:16px}
+nav.pager a{color:var(--navy);text-decoration:none;border-bottom:1px solid #a9bdd0;padding-bottom:1px}
+nav.pager a:hover{border-bottom-color:var(--navy)}
+nav.pager .sp{flex:1}
+svg{display:block;max-width:100%;height:auto;font-family:ui-monospace,monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.tiny{font-size:15.5px;color:#5b6875;line-height:1.5}
+.pasos{counter-reset:p;list-style:none;padding-left:0}
+.pasos>li{counter-increment:p;position:relative;padding-left:42px;margin:.85em 0}
+.pasos>li::before{
+  content:counter(p);position:absolute;left:0;top:.05em;width:28px;height:28px;border:1.5px solid var(--navy);
+  color:var(--navy);font-size:15px;font-weight:700;text-align:center;line-height:25px;
+  font-family:ui-monospace,monospace
+}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin:1.2em 0}
+.card{background:#fff;border:1px solid var(--line);padding:14px 16px;display:block;
+  text-decoration:none;color:var(--ink)}
+.card:hover{border-color:var(--navy);background:#fbfcfd}
+.card .n{font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:#5b6875;font-weight:650}
+.card .t{font-size:19px;color:var(--navy);font-weight:650;margin:.15em 0 .25em;line-height:1.28;min-height:2.56em}
+.card .d{font-size:16px;color:#46545f;line-height:1.45}
+.tag{display:inline-block;font-size:13px;border:1px solid var(--line);background:var(--soft);
+  padding:1px 7px;margin:4px 4px 0 0;color:#46545f}
+kbd{font-family:ui-monospace,monospace;font-size:15px;border:1px solid #b7c0c9;border-bottom-width:2px;
+  padding:1px 5px;background:#fff}
+.checkline{display:flex;gap:10px;align-items:baseline;margin:.4em 0}
+.checkline input[type=checkbox]{width:18px;height:18px;accent-color:#16324f;flex:none}
+@media (max-width:740px){
+  body{font-size:18px}
+  .wrap{padding:18px 16px 70px}
+  h1{font-size:26px} h2{font-size:20.5px}
+  .ctrl{grid-template-columns:110px 1fr 105px;gap:8px}
+  .grid2{grid-template-columns:1fr}
+}
+@media print{
+  body{background:#fff}
+  .demo{break-inside:avoid}
+  nav.pager{display:none}
+}
+</style>
+
+<script>
+/* ---------- utilidades comunes (idénticas en todas las páginas) ---------- */
+const $  = (s, r) => (r||document).querySelector(s);
+const $$ = (s, r) => Array.from((r||document).querySelectorAll(s));
+
+/* Lee un número escrito por el alumno: admite coma o punto decimal,
+   espacios, el símbolo de grado y el sufijo de gonios. */
+function leerNum(v){
+  if (typeof v === 'number') return v;
+  let s = String(v == null ? '' : v).trim();
+  s = s.replace(/\s+/g,'').replace(/[°º]/g,'').replace(/(rad|gon|g|m|s)$/i,'');
+  if (s === '') return NaN;
+  if (s.includes(',') && s.includes('.')) s = s.replace(/\./g,'').replace(',', '.');
+  else if (s.includes(',')) s = s.replace(',', '.');
+  return parseFloat(s);
+}
+/* Formato español: coma decimal, cifras fijas. */
+function fmt(x, d){
+  d = (d === undefined) ? 2 : d;
+  if (!isFinite(x)) return '—';
+  return x.toFixed(d).replace('.', ',');
+}
+/* Sexagesimal: {g,m,s} a partir de grados decimales */
+function aSexa(x){
+  let neg = x < 0; x = Math.abs(x);
+  let g = Math.floor(x + 1e-12);
+  let mm = (x - g) * 60;
+  let m = Math.floor(mm + 1e-9);
+  let s = (mm - m) * 60;
+  if (s >= 59.9995){ s = 0; m += 1; }
+  if (m >= 60){ m -= 60; g += 1; }
+  return {g:(neg?-g:g), m:m, s:s};
+}
+/* Centesimal: {g,m,s} */
+function aCentes(x){
+  let neg = x < 0; x = Math.abs(x);
+  let g = Math.floor(x + 1e-12);
+  let mm = (x - g) * 100;
+  let m = Math.floor(mm + 1e-9);
+  let s = (mm - m) * 100;
+  if (s >= 99.995){ s = 0; m += 1; }
+  if (m >= 100){ m -= 100; g += 1; }
+  return {g:(neg?-g:g), m:m, s:s};
+}
+function txtSexa(x, ds){
+  ds = (ds === undefined) ? 1 : ds;
+  const f = Math.pow(10, ds);
+  let total = Math.round(Math.abs(x) * 3600 * f);
+  const g = Math.floor(total / (3600 * f));
+  let rem = total - g * 3600 * f;
+  const m = Math.floor(rem / (60 * f));
+  rem = rem - m * 60 * f;
+  const si = String(Math.floor(rem / f)).padStart(2, '0');
+  const dec = ds > 0 ? ',' + String(rem % f).padStart(ds, '0') : '';
+  return (x < 0 ? '−' : '') + g + '° ' + String(m).padStart(2, '0') + '\u2032 ' + si + dec + '\u2033';
+}
+function txtCentes(x, ds){
+  ds = (ds === undefined) ? 1 : ds;
+  const f = Math.pow(10, ds);
+  let total = Math.round(Math.abs(x) * 10000 * f);
+  const g = Math.floor(total / (10000 * f));
+  let rem = total - g * 10000 * f;
+  const m = Math.floor(rem / (100 * f));
+  rem = rem - m * 100 * f;
+  const si = String(Math.floor(rem / f)).padStart(2, '0');
+  const dec = ds > 0 ? ',' + String(rem % f).padStart(ds, '0') : '';
+  return (x < 0 ? '−' : '') + g + 'g ' + String(m).padStart(2, '0') + 'm ' + si + dec + 's';
+}
+/* Retorno de estado en un campo: ok / mal */
+function marcar(el, estado){
+  el.classList.remove('ok','bad');
+  if (estado === 1) el.classList.add('ok');
+  else if (estado === 0) el.classList.add('bad');
+}
+function fb(el, tipo, texto){
+  el.className = 'feedback ' + (tipo === 1 ? 'fb-good' : tipo === 0 ? 'fb-bad' : 'fb-neutral');
+  el.innerHTML = texto;
+  return tipo;
+}
+/* Formatea un ángulo en radianes como múltiplo exacto de π si el denominador es pequeño */
+function aPi(x){
+  const r = x / Math.PI;
+  for (let q = 1; q <= 24; q++){
+    const p = r * q;
+    if (Math.abs(p - Math.round(p)) < 1e-9){
+      const n = Math.round(p);
+      if (q === 1) return (n === 1 ? 'π' : n + 'π');
+      if (n === 1) return 'π/' + q;
+      return n + 'π/' + q;
+    }
+  }
+  return null;
+}
+/* Sincroniza el relleno visual de los sliders (solo estética) */
+function refrescaSliders(root){
+  $$('input[type=range]', root || document).forEach(function(r){
+    const p = (r.value - r.min) / (r.max - r.min) * 100;
+    r.style.background = 'linear-gradient(90deg,#16324f ' + p + '%,#cfd7de ' + p + '%)';
+    r.style.height = '6px';
+    r.style.borderRadius = '0';
+    r.style.appearance = 'none';
+    r.style.webkitAppearance = 'none';
+  });
+}
+</script>
+<style>
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:16px;height:16px;background:#16324f;border:2px solid #fff;
+  box-shadow:0 0 0 1px #16324f;cursor:pointer
+}
+input[type=range]::-moz-range-thumb{
+  width:14px;height:14px;background:#16324f;border:2px solid #fff;box-shadow:0 0 0 1px #16324f;cursor:pointer
+}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<header class="top"><div class="kicker">Día 2 · Generador B5</div><h1>Generador · Interpretar el enunciado</h1><p class="sub">Los enunciados ambiguos de la ficha: decidir la figura antes de calcular</p></header><nav class="strip"><a href="index.html">Índice</a><span class="sep">·</span><span class="act">Generador B5</span><span class="sep">·</span><a href="06_triangulo_rectangulo.html">Lección 6 &rarr;</a><span class="sep">·</span><a href="07_dos_posiciones.html">Lección 7 &rarr;</a></nav>
+<main>
+<p class="lead">Los diez problemas de la ficha tienen un defecto común que no está en la trigonometría: el enunciado no dice con
+precisión qué es cada dato. «El lado de la base mide 50 m» admite dos lecturas y dan resultados distintos. «Tras
+desplazarse 25 m» no aclara en qué sentido, y solo una de las dos es geométricamente posible. «El ángulo de
+inclinación respecto al terreno» nombra un ángulo que en realidad se mide respecto a la horizontal. El cálculo es lo
+fácil; decidir la figura es lo que determina si el número final vale o no vale.</p>
+
+<p>Este generador no inventa ejercicios al azar: recorre diez casos curados, sacados de esa ficha más uno del mismo
+tipo, y en cada uno separa el trabajo en dos pasos. Primero se elige qué figura o qué lectura del dato es la correcta
+y se explica por qué las otras no lo son. Después se calcula. El orden importa: si el primer paso está torcido, el
+segundo produce un número perfectamente presentable y completamente falso, que es exactamente lo que ocurre en el
+examen.</p>
+
+<h2>Cómo se trabaja cada caso</h2>
+<ol>
+  <li><strong>Paso 1, la interpretación.</strong> Pulsa la opción que describa la figura o el dato tal como lo dice el
+  enunciado, no como te gustaría que lo dijera. En cuanto eliges, aparece un croquis de <em>esa</em> lectura y la
+  explicación: si es la correcta, por qué; si no lo es, qué se rompe al adoptarla. Puedes cambiar de opción hasta dar
+  con la buena, y el marcador cuenta los fallos de interpretación por separado.</li>
+  <li><strong>Paso 2, el número.</strong> Con la figura ya fijada, escribe el resultado en el campo, con coma o con
+  punto decimal. El margen de tolerancia está indicado en cada caso. Pulsa <strong>Comprobar resultado</strong>.</li>
+  <li>Si el número no cuadra, abre <strong>Ver solución paso a paso</strong>: lleva el desarrollo completo, la
+  comprobación por la otra vía y el valor que se obtiene con la lectura equivocada, para que veas de qué orden es el
+  error.</li>
+  <li>Pulsa <strong>Siguiente caso</strong> para recorrer los diez en orden, o salta a uno concreto con los botones
+  numerados. Los diez volverán a estar disponibles al dar la vuelta.</li>
+</ol>
+
+<h2>Los diez casos</h2>
+
+<div class="demo" id="maquina">
+  <p class="tat">Caso <span id="numC">1</span> de 10 &nbsp;·&nbsp; <span id="tituloC">—</span></p>
+  <div class="botones" id="selector" style="margin-bottom:10px"></div>
+  <div id="enun" style="margin:16px 0 6px;font-size:19px;line-height:1.55"></div>
+  <div id="fig" style="margin:14px 0 6px"></div>
+  <p style="margin:16px 0 4px"><strong>Paso 1.</strong> ¿Qué figura o qué dato es el correcto?</p>
+  <div id="opciones" style="display:grid;gap:8px;margin:10px 0 6px"></div>
+  <div class="feedback" id="fb1"></div>
+  <p style="margin:18px 0 4px"><strong>Paso 2.</strong> Con esa figura, el resultado numérico.</p>
+  <div id="campos" style="margin:10px 0 4px"></div>
+  <div class="botones">
+    <button id="bCheck">Comprobar resultado</button>
+    <button id="bSig" class="ghost">Siguiente caso</button>
+  </div>
+  <div class="feedback" id="fb2"></div>
+  <details id="soldet" style="margin-top:14px">
+    <summary style="cursor:pointer;font-size:16.5px;color:#16324f">Ver solución paso a paso</summary>
+    <div id="sol" style="margin-top:10px"></div>
+  </details>
+</div>
+
+<div class="readout" style="margin-top:-6px">
+  <div><b>Caso</b><span id="mCaso">1 / 10</span></div>
+  <div><b>Resultados correctos</b><span id="mAci">0</span></div>
+  <div><b>Intentos</b><span id="mInt">0</span></div>
+  <div><b>Fallos de interpretación</b><span id="mInterp">0</span></div>
+</div>
+
+<script>
+(function(){
+  /* ---------- croquis ---------- */
+  function L(x1, y1, x2, y2, c, w, d){
+    return '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="' + (c || '#16324f') +
+      '" stroke-width="' + (w || 1.8) + '"' + (d ? ' stroke-dasharray="' + d + '"' : '') + '/>';
+  }
+  function T(x, y, t, anc, size, fill){
+    return '<text x="' + x + '" y="' + y + '" text-anchor="' + (anc || 'middle') + '" font-size="' + (size || 13) +
+      '" fill="' + (fill || '#16324f') + '">' + t + '</text>';
+  }
+  function C(x, y, r, fill){
+    return '<circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="' + (fill || '#16324f') + '"/>';
+  }
+  function arco(cx, cy, r, a1, a2){
+    const p1 = [cx + r * Math.cos(a1 * Math.PI / 180), cy - r * Math.sin(a1 * Math.PI / 180)];
+    const p2 = [cx + r * Math.cos(a2 * Math.PI / 180), cy - r * Math.sin(a2 * Math.PI / 180)];
+    const grande = Math.abs(a2 - a1) > 180 ? 1 : 0;
+    const barrido = a2 > a1 ? 0 : 1;
+    return '<path d="M ' + p1[0] + ' ' + p1[1] + ' A ' + r + ' ' + r + ' 0 ' + grande + ' ' + barrido + ' ' +
+      p2[0] + ' ' + p2[1] + '" fill="none" stroke="#8f2222" stroke-width="1.5"/>';
+  }
+  function escuadra(x, y, s){
+    return '<path d="M ' + (x - s) + ' ' + y + ' L ' + (x - s) + ' ' + (y - s) + ' L ' + x + ' ' + (y - s) +
+      '" fill="none" stroke="#5b6875" stroke-width="1.2"/>';
+  }
+  function wrap(inner, nota){
+    let s = '<svg viewBox="0 0 600 300" width="600" height="300" role="img" aria-label="Croquis del caso">' +
+      L(40, 268, 560, 268, '#dfe4e8', 1) + inner;
+    if (nota) s += T(300, 292, nota, 'middle', 12.5, '#8f2222');
+    return s + '</svg>';
+  }
+  /* triángulo rectángulo: cateto horizontal + vertical + visual */
+  function figRecto(base, alto, angLab, ang, nota){
+    const x0 = 90, y0 = 250, W = 430;
+    let B = W, H = W * Math.tan(ang * Math.PI / 180);
+    if (H > 180){ H = 180; B = H / Math.tan(ang * Math.PI / 180); }
+    let s = L(x0, y0, x0 + B, y0, '#16324f', 2.2);
+    s += L(x0 + B, y0, x0 + B, y0 - H, '#16324f', 2.2);
+    s += L(x0, y0, x0 + B, y0 - H, '#16324f', 1.7, '6 4');
+    s += escuadra(x0 + B, y0, 13);
+    s += arco(x0, y0, 48, 0, ang);
+    s += C(x0, y0, 3.5, '#5b6875');
+    s += T(x0 + B / 2, y0 + 20, base, 'middle', 13.5);
+    s += T(x0 + B + 10, y0 - H / 2, alto, 'start', 13.5);
+    s += T(x0 + 66, y0 - 12, angLab, 'start', 13, '#8f2222');
+    return wrap(s, nota);
+  }
+  /* rectángulo con diagonal: los 50 m son la diagonal */
+  function figHip(diag, base, alto, ang, nota){
+    const x0 = 110, y0 = 250, W = 350;
+    let B = W, H = W * Math.tan(ang * Math.PI / 180);
+    if (H > 175){ H = 175; B = H / Math.tan(ang * Math.PI / 180); }
+    let s = L(x0, y0, x0 + B, y0, '#16324f', 2.2);
+    s += L(x0 + B, y0, x0 + B, y0 - H, '#16324f', 2.2);
+    s += L(x0, y0 - H, x0 + B, y0 - H, '#b7c0c9', 1.4, '5 4');
+    s += L(x0, y0 - H, x0, y0, '#b7c0c9', 1.4, '5 4');
+    s += L(x0, y0, x0 + B, y0 - H, '#16324f', 2.2);
+    s += escuadra(x0 + B, y0, 13);
+    s += arco(x0, y0, 44, 0, ang);
+    s += T(x0 + B / 2, y0 + 20, base, 'middle', 13.5);
+    s += T(x0 + B + 10, y0 - H / 2, alto, 'start', 13.5);
+    s += T(x0 + B * 0.42, y0 - H * 0.62, diag, 'end', 13.5);
+    s += T(x0 + 58, y0 - 10, ang.toFixed(0) + '°', 'start', 13, '#8f2222');
+    return wrap(s, nota);
+  }
+  /* dos posiciones alineadas con la base */
+  function figDosPos(sep, angLejos, angCerca, alto, etLejos, etCerca, nota){
+    const y0 = 250;
+    const tl = Math.tan(angLejos * Math.PI / 180), tc = Math.tan(angCerca * Math.PI / 180);
+    let far = 430, near = 430 * tl / tc, H = 430 * tl;
+    const k = Math.min(1, 175 / H, 425 / Math.max(far, near));
+    far *= k; near *= k; H *= k;
+    const minX = Math.min(0, far - near) - 45, maxX = far + 82;
+    const dx = (600 - (maxX - minX)) / 2 - minX;
+    const X0 = dx, XN = dx + far - near, XB = dx + far;
+    let s = L(X0 - 30, y0, XB + 26, y0, '#16324f', 2.2);
+    s += L(XB, y0, XB, y0 - H, '#16324f', 2.4);
+    s += L(X0, y0, XB, y0 - H, '#16324f', 1.7, '6 4');
+    s += L(XN, y0, XB, y0 - H, '#16324f', 2);
+    s += escuadra(XB, y0, 12);
+    s += arco(X0, y0, 44, 0, angLejos);
+    s += arco(XN, y0, 44, 0, angCerca);
+    s += C(X0, y0, 3.5, '#5b6875') + C(XN, y0, 3.5, '#5b6875');
+    if (XN < X0){
+      s += T(X0 + 6, y0 + 22, etLejos, 'start', 13);
+      s += T(XN - 6, y0 + 22, etCerca, 'end', 13);
+    } else if ((XN - X0) < 96 && X0 > 100){
+      s += T(X0 - 6, y0 + 22, etLejos, 'end', 13);
+      s += T(XN + 6, y0 + 22, etCerca, 'start', 13);
+    } else {
+      s += T(X0, y0 + 22, etLejos, 'middle', 13);
+      s += T(XN, y0 + 22, etCerca, 'middle', 13);
+    }
+    s += T((X0 + XN) / 2, y0 + 45, sep, 'middle', 13.5);
+    s += T(X0 + 60, y0 - 10, angLejos + '°', 'start', 12.5, '#8f2222');
+    s += T(XN + 56, y0 - 12, angCerca + '°', 'start', 12.5, '#8f2222');
+    s += T(XB + 10, y0 - H / 2, alto, 'start', 13.5);
+    if (near >= far) s += T(300, 26, 'las dos posiciones se cruzan: β tiene que ser mayor', 'middle', 12.5, '#8f2222');
+    return wrap(s, nota);
+  }
+  /* dos visuales desde un mismo punto, con el lado que las une */
+  function figTri(aLab, bLab, angLab, ang, ladoLab){
+    const A = [110, 245], k = 320 / 60;
+    const P1 = [A[0] + 60 * k, A[1]];
+    const P2 = [A[0] + 40 * k * Math.cos(ang * Math.PI / 180), A[1] - 40 * k * Math.sin(ang * Math.PI / 180)];
+    let s = L(A[0], A[1], P1[0] + 20, P1[1], '#16324f', 2);
+    s += L(A[0], A[1], P2[0], P2[1], '#16324f', 2);
+    s += L(P1[0], P1[1], P2[0], P2[1], '#16324f', 2.4);
+    s += arco(A[0], A[1], 52, 0, ang);
+    s += C(A[0], A[1], 4) + C(P1[0], P1[1], 4) + C(P2[0], P2[1], 4);
+    s += T(A[0] - 14, A[1] + 20, 'A', 'middle', 14);
+    s += T((A[0] + P2[0]) / 2 - 16, (A[1] + P2[1]) / 2 - 6, aLab, 'middle', 13);
+    s += T((A[0] + P1[0]) / 2, A[1] + 22, bLab, 'middle', 13);
+    s += T(A[0] + 70, A[1] - 14, angLab, 'start', 13, '#8f2222');
+    s += T((P1[0] + P2[0]) / 2 + 10, (P1[1] + P2[1]) / 2 - 8, ladoLab, 'start', 13.5);
+    return wrap(s, null);
+  }
+  /* observador elevado: altura conocida y distancia horizontal buscada */
+  function figDepres(altoLab, angLab, horizLab, ang){
+    const D = [110, 72], y0 = 245, V = y0 - D[1];
+    const dx = V / Math.tan(ang * Math.PI / 180);
+    const Tx = D[0] + dx;
+    let s = L(D[0], D[1], 520, D[1], '#b7c0c9', 1.4, '5 4');
+    s += L(D[0], D[1], D[0], y0, '#16324f', 2.2);
+    s += L(70, y0, 545, y0, '#16324f', 2.2);
+    s += L(D[0], D[1], Tx, y0, '#16324f', 2.2);
+    s += arco(D[0], D[1], 52, 0, -ang);
+    s += C(D[0], D[1], 4) + C(Tx, y0, 4.5, '#8f2222');
+    s += T(D[0] - 8, D[1] + V / 2, altoLab, 'end', 13.5);
+    s += T((D[0] + Tx) / 2, y0 - 10, horizLab, 'middle', 13.5);
+    s += T(D[0] + 58, D[1] + 22, angLab, 'start', 13, '#8f2222');
+    s += T(524, D[1] - 8, 'horizontal', 'end', 11.5, '#5b6875');
+    return wrap(s, null);
+  }
+  function dibuja(f){
+    if (!f) return '<p class="tiny">Sin croquis: en este caso la decisión no está en la figura, sino en qué datos ' +
+      'entran en la fórmula y con qué orden.</p>';
+    if (f.t === 'recto') return figRecto(f.base, f.alto, f.angLab, f.ang, f.nota);
+    if (f.t === 'hip') return figHip(f.diag, f.base, f.alto, f.ang, f.nota);
+    if (f.t === 'dospos') return figDosPos(f.sep, f.lejos, f.cerca, f.alto, f.etLejos, f.etCerca, f.nota);
+    if (f.t === 'tri') return figTri(f.a, f.b, f.angLab, f.ang, f.lado);
+    if (f.t === 'depres') return figDepres(f.alto, f.angLab, f.horiz, f.ang);
+    return '';
+  }
+
+  /* ---------- los diez casos curados ---------- */
+  const CASOS = [
+  {titulo: 'La parcela: ¿los 50 m son la base o la diagonal?',
+   enun: 'Desde una esquina de una parcela se mide la diagonal hacia la esquina opuesta y se obtiene un ángulo de ' +
+         '<span class="num">35°</span> respecto a la base. El enunciado añade que «el lado de la base mide ' +
+         '<span class="num">50 m</span>». ¿Qué anchura tiene la parcela?',
+   ops: [
+     {t: 'Los 50 m son el lado de la base. La diagonal es la hipotenusa y la anchura es el cateto opuesto a los 35°',
+      ok: true,
+      why: 'El enunciado dice literalmente que la base mide 50 m, y el ángulo se toma desde la base: el triángulo ' +
+           'rectángulo tiene por catetos la base (50 m) y la anchura, y por hipotenusa la diagonal, que no se conoce. ' +
+           'La anchura es el cateto opuesto al ángulo, así que se despeja con la tangente.',
+      fig: {t:'recto', base:'base = 50 m', alto:'anchura = ?', angLab:'35°', ang:35}},
+     {t: 'Los 50 m son la diagonal. Entonces la anchura es el cateto opuesto a los 35°',
+      ok: false,
+      why: 'Esta lectura da 28,68 m y es internamente coherente, pero contradice el enunciado: si la diagonal midiera ' +
+           '50 m, la base no podría medir 50 m, porque la hipotenusa es siempre el lado más largo del triángulo ' +
+           'rectángulo. Además el texto dice «el lado de la base mide 50 m», no «la diagonal mide 50 m».',
+      fig: {t:'hip', diag:'diagonal = 50 m', base:'base = ?', alto:'anchura = ?', ang:35}},
+     {t: 'Los 50 m son la diagonal y la anchura es el cateto contiguo a los 35°',
+      ok: false,
+      why: 'Con la diagonal como dato, la anchura es el cateto opuesto al ángulo (su seno) y el cateto contiguo es la ' +
+           'base. Esta lectura cambia de lado la incógnita y además arrastra el error anterior: da 40,96 m.',
+      fig: {t:'hip', diag:'diagonal = 50 m', base:'base = ?', alto:'anchura = ?', ang:35}}
+   ],
+   pide: 'Anchura', suf: 'm', tol: 0.05, val: 35.01,
+   sol: '<div class="formula">Lectura correcta: los 50 m son la base.\n' +
+        'anchura = 50 · tan 35° = 50 · 0,7002 = 35,01 m\n\n' +
+        'La otra lectura, para comparar:\n' +
+        'anchura = 50 · sen 35° = 50 · 0,5736 = 28,68 m\n' +
+        'base    = 50 · cos 35° = 50 · 0,8192 = 40,96 m</div>' +
+        '<p>Comprobación de la lectura correcta: la diagonal de esa parcela sería ' +
+        'la raíz de 50² + 35,01² = 61,04 m, mayor que la base, como tiene que ser. En cambio, con la lectura de la ' +
+        'diagonal la base saldría de 40,96 m, y eso choca con la frase «el lado de la base mide 50 m». El dato manda ' +
+        'sobre la comodidad del cálculo.</p>' +
+        '<p>Lo importante de este caso: con el mismo enunciado hay dos resultados posibles, 35,01 m y 28,68 m, y los ' +
+        'dos se calculan sin un solo error aritmético. La diferencia está en haber leído qué era el dato, no en la ' +
+        'trigonometría. Si en el examen el enunciado no aclara qué es cada número, la respuesta honesta es resolver ' +
+        'con la lectura que el texto sostiene y dejar escrito el supuesto.</p>'},
+
+  {titulo: 'El río: ¿te acercas o te alejas?',
+   enun: 'La anchura de un río se determina colocando un jalón en la orilla opuesta. Desde un punto se observa el ' +
+         'jalón bajo un ángulo de <span class="num">60°</span> respecto a la orilla, y tras desplazarse ' +
+         '<span class="num">25 m</span> perpendicularmente a la orilla el ángulo pasa a ser de ' +
+         '<span class="num">45°</span>. ¿Qué anchura tiene el río?',
+   ops: [
+     {t: 'El desplazamiento fue alejándose de la orilla: al ganar distancia el ángulo baja de 60° a 45°',
+      ok: true,
+      why: 'Cuanto más lejos estás del jalón, más pequeño es el ángulo con que lo ves: por eso el ángulo baja. La ' +
+           'segunda posición es la lejana, y el ángulo mayor, 60°, es el de la primera. La resta es tan 60 − tan 45, ' +
+           'siempre el mayor menos el menor.',
+      fig: {t:'dospos', sep:'25 m', lejos:45, cerca:60, alto:'ancho = ?', etLejos:'2ª posición', etCerca:'1ª posición'}},
+     {t: 'El desplazamiento fue acercándose a la orilla: el ángulo baja porque el jalón queda más alto',
+      ok: false,
+      why: 'Al acercarse el ángulo tiene que subir, no bajar. La altura del jalón no cambia con el desplazamiento: lo ' +
+           'que cambia es el cateto horizontal, y si lo acortas el ángulo crece. Esta lectura obligaría a que las dos ' +
+           'posiciones estuvieran cruzadas, y el croquis lo delata.',
+      fig: {t:'dospos', sep:'25 m', lejos:60, cerca:45, alto:'ancho = ?', etLejos:'1ª posición', etCerca:'2ª posición'}},
+     {t: 'Da igual el sentido: la fórmula da la misma anchura acercándose que alejándose',
+      ok: false,
+      why: 'El número sale igual porque la fórmula no sabe de sentidos, pero la resta se hace mayor menos menor: si ' +
+           'inviertes el orden el resultado sale negativo, y un ancho negativo no significa nada. Los datos solo son ' +
+           'coherentes si el desplazamiento te aleja; si el enunciado dijera que te acercas, habría que rehacerlo.',
+      fig: null}
+   ],
+   pide: 'Anchura del río', suf: 'm', tol: 0.05, val: 59.15,
+   sol: '<div class="formula">Posición 1: α = 60°   Posición 2 (más lejos): β = 45°   d = 25 m\n\n' +
+        'ancho = d · tan α · tan β / (tan α − tan β)\n' +
+        '      = 25 · 1,7321 · 1 / (1,7321 − 1)\n' +
+        '      = 43,3013 / 0,7321 = 59,15 m</div>' +
+        '<p>Comprobación por las dos posiciones. Desde la primera, la distancia horizontal al jalón es ' +
+        '59,15 / tan 60° = 34,15 m. Desde la segunda, 59,15 / tan 45° = 59,15 m. La diferencia entre las dos es ' +
+        '25,00 m, que es exactamente el desplazamiento del enunciado. La geometría cierra, y solo con la segunda ' +
+        'posición más lejos.</p>' +
+        '<p>Si se resta al revés, tan 45 − tan 60 = −0,7321, y el ancho sale −59,15 m. Un ancho negativo no es un ' +
+        'ancho: es la señal de que la resta está invertida. Y si de verdad te hubieras acercado, el ángulo tendría que ' +
+        'haber subido de 60° a 81° para el mismo desplazamiento, no bajado a 45°.</p>'},
+
+  {titulo: 'El molino: los ángulos vienen en orden inverso',
+   enun: 'Un molino de viento se observa desde dos puntos alineados con su base, separados ' +
+         '<span class="num">50 m</span>. Desde el punto más lejano el ángulo de elevación es de ' +
+         '<span class="num">18°</span> y desde el más cercano, de <span class="num">27°</span>. ¿Qué altura tiene ' +
+         'el molino?',
+   ops: [
+     {t: 'El de 27° es el de la posición cercana y el de 18° el de la lejana; la resta es tan 27 − tan 18',
+      ok: true,
+      why: 'El enunciado ya dice cuál es cada uno: lejano 18°, cercano 27°. Y la geometría lo confirma, porque al ' +
+           'acercarse el ángulo crece. La incógnita intermedia es la distancia del punto cercano al pie del molino, ' +
+           'y la resta va del ángulo mayor al menor.',
+      fig: {t:'dospos', sep:'50 m', lejos:18, cerca:27, alto:'altura = ?', etLejos:'lejano', etCerca:'cercano'}},
+     {t: 'El de 18° es el de la posición cercana y el de 27° el de la lejana: al acercarse el ángulo disminuye',
+      ok: false,
+      why: 'Es justo al revés de cómo funciona la perspectiva: acercarse agranda el ángulo. Con esta lectura el ' +
+           'croquis coloca la posición «cercana» por detrás de la lejana, y la resta sale negativa.',
+      fig: {t:'dospos', sep:'50 m', lejos:27, cerca:18, alto:'altura = ?', etLejos:'cercano', etCerca:'lejano'}},
+     {t: 'Los 50 m son la distancia horizontal del molino al punto cercano, así que la altura es 50 · tan 27',
+      ok: false,
+      why: 'Los 50 m son la separación entre los dos puntos de observación, no la distancia al molino. Con esta ' +
+           'lectura se desprecia el segundo ángulo, y el dato del enunciado que sobra siempre es el que hay que usar.',
+      fig: {t:'recto', base:'50 m', alto:'altura = ?', angLab:'27°', ang:27}}
+   ],
+   pide: 'Altura del molino', suf: 'm', tol: 0.05, val: 44.84,
+   sol: '<div class="formula">x = distancia del punto cercano al pie del molino\n\n' +
+        'x · tan 27° = (x + 50) · tan 18°\n' +
+        'x · (0,5095 − 0,3249) = 50 · 0,3249\n' +
+        'x = 16,245 / 0,1846 = 88,00 m\n\n' +
+        'h = 88,00 · tan 27° = 88,00 · 0,5095 = 44,84 m\n\n' +
+        'Fórmula directa:\n' +
+        'h = 50 · tan 18° · tan 27° / (tan 27° − tan 18°) = 44,84 m</div>' +
+        '<p>Comprobación desde el punto lejano: está a 88,00 + 50,00 = 138,00 m, y 138,00 · tan 18° = ' +
+        '138,00 · 0,3249 = 44,84 m. Las dos vías dan lo mismo, que es la garantía de que los ángulos están en su ' +
+        'sitio.</p>' +
+        '<p>Este caso y el del poste que viene después son el mismo problema con los datos en otro orden. En uno el ' +
+        'enunciado nombra las posiciones y en el otro no; en los dos, el ángulo grande es siempre el de la posición ' +
+        'cercana, y la resta se hace grande menos pequeño.</p>'},
+
+  {titulo: 'El poste: los 20 m son la separación, no la distancia',
+   enun: 'Desde un punto A se observa la parte superior de un poste con un ángulo de <span class="num">25°</span>. ' +
+         'Al acercarse <span class="num">20 m</span>, el ángulo pasa a ser de <span class="num">40°</span>. ¿Qué ' +
+         'altura tiene el poste?',
+   ops: [
+     {t: 'Los 20 m separan las dos posiciones, y el ángulo mayor, 40°, corresponde a la posición más cercana',
+      ok: true,
+      why: '«Al acercarse 20 m» describe el movimiento entre las dos posiciones, no la distancia al poste. El ángulo ' +
+           'crece al acercarse, así que 40° es la posición cercana y 25° la lejana. Es el mismo esquema que el molino.',
+      fig: {t:'dospos', sep:'20 m', lejos:25, cerca:40, alto:'altura = ?', etLejos:'lejos', etCerca:'cerca'}},
+     {t: 'Los 20 m son la distancia de la posición más cercana al pie del poste',
+      ok: false,
+      why: 'Entonces el segundo ángulo sobraría, y con él la mitad del enunciado. Además, si la posición cercana ' +
+           'estuviera a 20 m, la altura sería 16,78 m y la lejana quedaría a 36,0 m, una separación de 16 m que no ' +
+           'es la que dice el texto.',
+      fig: {t:'recto', base:'20 m', alto:'altura = ?', angLab:'40°', ang:40}},
+     {t: 'Los 20 m son la distancia de la posición más lejana al pie del poste',
+      ok: false,
+      why: 'Con esa lectura la altura saldría 9,33 m (20 · tan 25°), y la posición cercana quedaría por delante de ' +
+           'la lejana sin que el enunciado lo diga. El desplazamiento se mide entre las dos visuales, no desde el pie.',
+      fig: {t:'recto', base:'20 m', alto:'altura = ?', angLab:'25°', ang:25}}
+   ],
+   pide: 'Altura del poste', suf: 'm', tol: 0.05, val: 21.00,
+   sol: '<div class="formula">x = distancia del punto cercano al pie del poste\n\n' +
+        'x · tan 40° = (x + 20) · tan 25°\n' +
+        'x · (0,8391 − 0,4663) = 20 · 0,4663\n' +
+        'x = 9,326 / 0,3728 = 25,02 m\n\n' +
+        'h = 25,02 · tan 40° = 25,02 · 0,8391 = 21,00 m\n\n' +
+        'Fórmula directa:\n' +
+        'h = 20 · tan 25° · tan 40° / (tan 40° − tan 25°) = 20,99 m</div>' +
+        '<p>Comprobación desde el punto A: está a 25,02 + 20,00 = 45,02 m, y 45,02 · tan 25° = 45,02 · 0,4663 = ' +
+        '20,99 m. La diferencia con los 21,00 m de la otra vía es de un centímetro, puro redondeo de las tangentes.</p>' +
+        '<p>Las dos lecturas equivocadas dan 16,78 m y 9,33 m: valores presentables y falsos. La forma de detectarlo ' +
+        'es comprobar si con ellos el segundo ángulo encaja. Si tomas x = 20 m desde el pie, la visual a 25° corta la ' +
+        'vertical del poste a 16,78 m, y desde ese mismo punto a 20 m del pie el ángulo sería de 40°, no de 25°: el ' +
+        'enunciado se contradice.</p>'},
+
+  {titulo: 'El edificio: la altura, no la distancia',
+   enun: 'Un topógrafo necesita calcular la altura de un edificio midiendo el ángulo de elevación desde dos posiciones ' +
+         'separadas <span class="num">30 m</span>. En la primera posición el ángulo es de ' +
+         '<span class="num">20°</span> y en la segunda, de <span class="num">35°</span>. ¿Qué altura tiene el ' +
+         'edificio?',
+   ops: [
+     {t: 'Los 35° corresponden a la posición cercana; se calcula la distancia a esa posición y después la altura',
+      ok: true,
+      why: 'El ángulo sube al acercarse, así que 35° es el cercano y 20° el lejano. El método tiene dos pasos y hay ' +
+           'que devolver el segundo: la distancia calculada es una incógnita intermedia, no el resultado que se pide.',
+      fig: {t:'dospos', sep:'30 m', lejos:20, cerca:35, alto:'altura = ?', etLejos:'1ª posición', etCerca:'2ª posición'}},
+     {t: 'Lo que se pide es la distancia horizontal desde la posición más lejana hasta el edificio, que es 62,48 m',
+      ok: false,
+      why: 'Se pide la altura. Los 62,48 m son la distancia del punto lejano al pie del edificio, un valor que sale ' +
+           'en el camino y que se confunde con el resultado final con alarmante frecuencia: es casi el triple de la ' +
+           'altura real.',
+      fig: {t:'dospos', sep:'30 m', lejos:20, cerca:35, alto:'altura = ?', etLejos:'1ª posición', etCerca:'2ª posición'}},
+     {t: 'Los 30 m son la altura del edificio y hay que despejar el ángulo',
+      ok: false,
+      why: 'Los 30 m son la separación entre las dos estaciones. Una altura no se da como dato cuando es justo lo ' +
+           'que se pregunta, y además 30 m de altura con esos ángulos no cuadran con ninguna distancia posible.',
+      fig: null}
+   ],
+   pide: 'Altura del edificio', suf: 'm', tol: 0.05, val: 22.74,
+   sol: '<div class="formula">x = distancia de la 2ª posición (la cercana) al pie del edificio\n\n' +
+        'x · tan 35° = (x + 30) · tan 20°\n' +
+        'x · (0,7002 − 0,3640) = 30 · 0,3640\n' +
+        'x = 10,92 / 0,3362 = 32,48 m\n\n' +
+        'Altura:  h = 32,48 · tan 35° = 32,48 · 0,7002 = 22,74 m\n\n' +
+        'Fórmula directa:\n' +
+        'h = 30 · tan 20° · tan 35° / (tan 35° − tan 20°) = 22,74 m</div>' +
+        '<p>Comprobación desde la posición lejana: está a 32,48 + 30,00 = 62,48 m del pie, y ' +
+        '62,48 · tan 20° = 62,48 · 0,3640 = 22,74 m. La misma altura por los dos lados.</p>' +
+        '<p>De ahí sale la confusión: los 62,48 m son un número que aparece en la cuenta y que mucha gente entrega ' +
+        'como respuesta. Un edificio de 22,74 m visto desde 62 m se ve bajo 20°; visto desde 32 m, bajo 35°. Comprobar ' +
+        'el orden de magnitud con la distancia evita el error: a 30 m de separación, una altura de 62,5 m obligaría a ' +
+        'ángulos de 62,5° y 45°, no de 20° y 35°.</p>'},
+
+  {titulo: 'La pendiente: «respecto al terreno» es respecto a la horizontal',
+   enun: 'En un camino rural hay una diferencia de altura de <span class="num">15 m</span> en una distancia ' +
+         'horizontal de <span class="num">100 m</span>. El enunciado pide «el ángulo de inclinación respecto al ' +
+         'terreno». ¿Cuál es ese ángulo?',
+   ops: [
+     {t: 'El ángulo se mide respecto a la horizontal, así que tan α = 15/100 y α = 8,53°',
+      ok: true,
+      why: 'La inclinación de un terreno se mide siempre desde el plano horizontal: es el ángulo que forma la rampa ' +
+           'con la horizontal, y su tangente es el desnivel entre la distancia horizontal. La expresión «respecto al ' +
+           'terreno» del enunciado es una redacción descuidada del propio profesor.',
+      fig: {t:'recto', base:'100 m (horizontal)', alto:'15 m', angLab:'α = ?', ang:8.53}},
+     {t: 'El ángulo se mide respecto al terreno inclinado, así que hay que usar el seno: α = 8,63°',
+      ok: false,
+      why: 'Solo sería así si los 100 m se hubieran medido sobre la rampa y no en horizontal. El enunciado dice ' +
+           '«distancia horizontal», así que los 100 m son la proyección. Además, el ángulo de una pendiente se define ' +
+           'siempre desde la horizontal, nunca desde la propia rampa.',
+      fig: {t:'recto', base:'100 m (horizontal)', alto:'15 m', angLab:'α = ?', ang:8.53,
+            nota:'con 8,63° el cateto horizontal no mediría 100 m'}},
+     {t: 'El 15 sobre 100 ya es la pendiente en porcentaje, y en grados son directamente 15°',
+      ok: false,
+      why: 'Confunde porcentaje con grados. Una pendiente del 15 % es tan α = 0,15, es decir 8,53°, no 15°. El ' +
+           'porcentaje es cien veces la tangente; el ángulo es el arco cuya tangente vale 0,15.',
+      fig: {t:'recto', base:'100 m (horizontal)', alto:'15 m', angLab:'15°', ang:15,
+            nota:'con 15° el desnivel sería de 26,79 m, no de 15 m'}}
+   ],
+   pide: 'Ángulo de inclinación', suf: '°', tol: 0.05, val: 8.53,
+   sol: '<div class="formula">tan α = desnivel / distancia horizontal = 15 / 100 = 0,15\n' +
+        'α = arctan 0,15 = 8,53°\n\n' +
+        'La pendiente en porcentaje es ese mismo cociente por 100:\n' +
+        'p = 0,15 × 100 = 15 %</div>' +
+        '<p>Comprobación: tan 8,53° = 0,1500, y 100 · tan 8,53° = 15,00 m, que es el desnivel del enunciado. El ' +
+        'resultado tiene que ser pequeño, porque un 15 % es una rampa suave: en carretera, las pendientes fuertes ' +
+        'rondan el 10 % y las señales de tráfico avisan a partir del 5 %.</p>' +
+        '<p>La lectura del seno da 8,63° y la del «15 % son 15°» da 15°, que es casi el doble. La diferencia entre ' +
+        '8,53 y 8,63 es de una décima de grado: parece pequeña, pero viene de haber usado la hipotenusa en lugar del ' +
+        'cateto horizontal, y ese mismo error en una distancia de 500 m se convierte en medio metro. Se admite un ' +
+        'margen de 0,05° para que el resultado del seno no pase por bueno.</p>'},
+
+  {titulo: 'Los dos mojones: cuándo hace falta la ley del coseno',
+   enun: 'Un topógrafo observa dos mojones desde un punto A. El ángulo entre las dos visuales es de ' +
+         '<span class="num">50°</span>. La distancia de A al primer mojón es <span class="num">40 m</span> y al ' +
+         'segundo, <span class="num">60 m</span>. ¿Qué distancia separa los dos mojones?',
+   ops: [
+     {t: 'El 50° está en el vértice A, entre las dos visuales: es el ángulo opuesto al lado que se busca y va a la ley del coseno',
+      ok: true,
+      why: 'Los dos lados conocidos salen de A y el ángulo está también en A: se conocen dos lados y el ángulo que ' +
+           'forman, que es exactamente el caso de la ley del coseno. El lado buscado queda enfrente del ángulo.',
+      fig: {t:'tri', a:'40 m', b:'60 m', angLab:'50°', ang:50, lado:'distancia = ?'}},
+     {t: 'El 50° es lo que cada visual forma con la línea que une los mojones, así que el triángulo tiene dos ángulos de 50°',
+      ok: false,
+      why: 'Con dos ángulos de 50° el tercero sería de 80°, y el triángulo quedaría determinado por otros datos. El ' +
+           'enunciado dice «el ángulo entre las dos visuales», es decir, el que está en A y abarca las dos.',
+      fig: {t:'tri', a:'40 m', b:'60 m', angLab:'50°', ang:50, lado:'distancia = ?'}},
+     {t: 'Con dos lados y un ángulo se resuelve con Pitágoras, porque los 40 y los 60 m son perpendiculares',
+      ok: false,
+      why: 'Pitágoras exige un ángulo recto, y aquí entre las visuales hay 50°, no 90°. Aplicarlo daría 72,11 m, que ' +
+           'corresponde a un ángulo de 90° entre las visuales: casi 26 m de más.',
+      fig: {t:'tri', a:'40 m', b:'60 m', angLab:'50°', ang:50, lado:'distancia = ?'}}
+   ],
+   pide: 'Distancia entre los mojones', suf: 'm', tol: 0.05, val: 45.98,
+   sol: '<div class="formula">d² = a² + b² − 2 · a · b · cos 50°\n' +
+        '   = 40² + 60² − 2 · 40 · 60 · 0,6428\n' +
+        '   = 1 600 + 3 600 − 3 085,4\n' +
+        '   = 2 114,6\n' +
+        'd  = 45,98 m</div>' +
+        '<p>Comprobación de sentido: la distancia buscada tiene que estar entre 60 − 40 = 20 m (si las visuales ' +
+        'estuvieran en la misma dirección) y 60 + 40 = 100 m (si fueran opuestas). 45,98 m está dentro del intervalo, ' +
+        'más cerca del mínimo porque el ángulo es agudo.</p>' +
+        '<p>Y la comprobación inversa, que es la que convence: con los tres lados, la ley del coseno devuelve el ' +
+        'ángulo. cos A = (40² + 60² − 45,98²) / (2 · 40 · 60) = (1 600 + 3 600 − 2 114,6) / 4 800 = 0,6428, y ' +
+        'arccos 0,6428 = 50,0°. El triángulo está bien resuelto.</p>'},
+
+  {titulo: 'El dron: la altura es un cateto, no la distancia',
+   enun: 'Un dron vuela a <span class="num">120 m</span> de altura sobre un terreno horizontal. El ángulo de ' +
+         'depresión hacia un tractor es de <span class="num">55°</span>. ¿Qué distancia horizontal hay entre el ' +
+         'dron y el tractor?',
+   ops: [
+     {t: 'Los 120 m son el cateto vertical y la distancia horizontal es el otro cateto: se divide, d = 120 / tan 55',
+      ok: true,
+      why: 'El ángulo de depresión se mide desde la horizontal del dron, y los 120 m son el cateto opuesto a ese ' +
+           'ángulo. El cateto contiguo, que es la distancia horizontal, se despeja dividiendo. Desde el tractor, el ' +
+           'ángulo de elevación es el mismo por alternos internos.',
+      fig: {t:'depres', alto:'120 m', angLab:'55°', horiz:'d = ?', ang:55}},
+     {t: 'Los 120 m son la distancia horizontal y la altura hay que calcularla con 120 · tan 55',
+      ok: false,
+      why: 'El enunciado dice «vuela a 120 m de altura»: es una altura, no una distancia en el plano. Además, ' +
+           'multiplicar da 171,38 m, casi el doble de la altura, y a 55° la distancia horizontal tiene que ser menor ' +
+           'que la altura.',
+      fig: null},
+     {t: 'La depresión se mide desde la vertical, así que hay que usar el seno: d = 120 · sen 55',
+      ok: false,
+      why: 'El ángulo de depresión se mide desde la horizontal, no desde la vertical. Con la vertical el ángulo ' +
+           'sería de 35°, y además el seno daría 98,30 m, que no usa ni el cateto correcto ni la razón correcta.',
+      fig: null}
+   ],
+   pide: 'Distancia horizontal', suf: 'm', tol: 0.05, val: 84.03,
+   sol: '<div class="formula">tan 55° = altura / distancia horizontal = 120 / d\n' +
+        'd = 120 / tan 55° = 120 / 1,4281 = 84,03 m</div>' +
+        '<p>Comprobación: tan 55° = 120 / 84,03 = 1,4281, que es el valor de la tangente de 55°. Y el control de ' +
+        'orden de magnitud: a 55° de depresión, el dron está más alto que lejos, así que la distancia horizontal ' +
+        'tiene que ser menor que los 120 m. 84,03 < 120.</p>' +
+        '<p>La lectura equivocada, multiplicando, da 171,38 m, y ahí el control de orden de magnitud salta: con ' +
+        '84 m de altura y 171 m de distancia horizontal el ángulo sería de 26°, no de 55°. Cuando el resultado ' +
+        'contradice una desigualdad tan simple, el error no está en la calculadora, está en haber elegido la ' +
+        'operación.</p>'},
+
+  {titulo: 'La sombra del silo: la sombra es un cateto',
+   enun: 'Un silo proyecta una sombra de <span class="num">36 m</span> cuando el ángulo de elevación del sol es de ' +
+         '<span class="num">37°</span>. ¿Qué altura tiene el silo?',
+   ops: [
+     {t: 'La sombra es el cateto horizontal y el ángulo está en el extremo de la sombra: h = 36 · tan 37',
+      ok: true,
+      why: 'La sombra se mide sobre el suelo, así que es un cateto. El rayo de sol forma 37° con el suelo en el ' +
+           'extremo de la sombra, y la altura es el cateto opuesto a ese ángulo: se multiplica por la tangente.',
+      fig: {t:'recto', base:'sombra = 36 m', alto:'h = ?', angLab:'37°', ang:37}},
+     {t: 'La sombra es la hipotenusa del triángulo, así que h = 36 · sen 37',
+      ok: false,
+      why: 'La sombra no es una visual ni una rampa: es la proyección del silo sobre el suelo, un cateto. Tomarla ' +
+           'como hipotenusa da 21,67 m, seis metros menos que el valor correcto.',
+      fig: {t:'recto', base:'sombra = 36 m', alto:'h = ?', angLab:'37°', ang:37}},
+     {t: 'El ángulo de 37° está en lo alto del silo, entre la vertical y el rayo de sol',
+      ok: false,
+      why: 'La elevación del sol se mide respecto a la horizontal, desde el suelo. El ángulo entre la vertical y el ' +
+           'rayo sería su complementario, 53°, y con él la cuenta es la misma solo si se usa la cotangente, cosa que ' +
+           'casi nadie hace bien bajo presión.',
+      fig: {t:'recto', base:'sombra = 36 m', alto:'h = ?', angLab:'53°', ang:53}}
+   ],
+   pide: 'Altura del silo', suf: 'm', tol: 0.05, val: 27.13,
+   sol: '<div class="formula">h = 36 · tan 37° = 36 · 0,7536 = 27,13 m</div>' +
+        '<p>Comprobación: el rayo de sol baja a 37°, menos de 45°, así que el sol está bajo y la sombra es más larga ' +
+        'que el objeto. Se cumple: 27,13 < 36. Si el ángulo hubiera sido de 45°, la sombra y la altura serían ' +
+        'iguales, que es la comprobación más rápida de este tipo de problema.</p>' +
+        '<p>Las dos lecturas equivocadas dan 21,67 m (con el seno) y 28,75 m (con el coseno). Son valores parecidos ' +
+        'al bueno, y por eso el error pasa desapercibido: solo una comprobación de orden de magnitud o el cálculo ' +
+        'por la vía inversa, arctan(27,13/36) = 37,0°, lo delata.</p>'},
+
+  {titulo: 'La torre: un ángulo medido desde la vertical',
+   enun: 'Desde un punto situado a <span class="num">30 m</span> de la base de una torre, el ángulo entre la visual ' +
+         'a lo alto y la vertical que pasa por ese punto es de <span class="num">68°</span>. ¿Qué altura tiene la ' +
+         'torre?',
+   ops: [
+     {t: 'El ángulo se mide desde la vertical: el ángulo en la base del triángulo es 90 − 68 = 22°, y la altura es 30 · tan 22',
+      ok: true,
+      why: 'Si el ángulo con la vertical es 68°, el que forma la visual con el suelo es su complementario, 22°. Con ' +
+           'ese ángulo la altura es el cateto opuesto y los 30 m el contiguo. Es el mismo triángulo con el ángulo ' +
+           'traspuesto.',
+      fig: {t:'depres', alto:'?', angLab:'68°', horiz:'30 m', ang:68}},
+     {t: 'El ángulo de 68° es la elevación medida desde el suelo, así que h = 30 · tan 68',
+      ok: false,
+      why: 'El enunciado no dice elevación: dice «entre la visual y la vertical». Tomarlo como elevación da 74,25 m, ' +
+           'más del doble de la distancia, y entonces el ángulo con la vertical sería de 22°, no de 68°.',
+      fig: {t:'recto', base:'30 m', alto:'h = ?', angLab:'68°', ang:68,
+            nota:'a 68° de elevación la torre mediría 74,25 m'}},
+     {t: 'El ángulo se mide desde la vertical, así que la altura es la hipotenusa y vale 30 · sen 68',
+      ok: false,
+      why: 'La altura nunca es la hipotenusa: es un cateto vertical, perpendicular al suelo. Los 30 m son el cateto ' +
+           'horizontal, así que el seno no interviene en este despeje.',
+      fig: {t:'depres', alto:'?', angLab:'68°', horiz:'30 m', ang:68}}
+   ],
+   pide: 'Altura de la torre', suf: 'm', tol: 0.05, val: 12.12,
+   sol: '<div class="formula">Ángulo con la vertical: 68°  ⇒  ángulo con el suelo: 90° − 68° = 22°\n\n' +
+        'h = 30 · tan 22° = 30 · 0,4040 = 12,12 m\n\n' +
+        'Equivalente:  h = 30 / tan 68° = 30 / 2,4751 = 12,12 m</div>' +
+        '<p>Comprobación de sentido: un ángulo de 68° con la vertical significa que la visual está a solo 22° sobre ' +
+        'la horizontal, es decir, casi horizontal. La torre tiene que ser mucho más baja que la distancia a la que ' +
+        'estás, y lo es: 12,12 m frente a 30 m. Con la cuenta inversa, arctan(30/12,12) = 68,0°, que es el dato del ' +
+        'enunciado.</p>' +
+        '<p>Este caso es nuevo, del mismo tipo que el de la pendiente: el enunciado nombra una referencia distinta ' +
+        'de la habitual, la vertical en lugar de la horizontal. La regla es siempre la misma: identificar desde dónde ' +
+        'se mide el ángulo antes de elegir la razón trigonométrica, porque entre 68° y 22° hay un factor de seis en ' +
+        'el resultado.</p>'}
+  ];
+
+  /* ---------- estado ---------- */
+  let iCaso = 0, sel = -1, interpOk = false, resuelto = false, interpContada = false;
+  let aciertos = 0, intentos = 0, fallosInterp = 0;
+  let caso = null;
+
+  function pintaOpciones(){
+    const cont = $('#opciones');
+    cont.innerHTML = '';
+    caso.ops.forEach(function(o, j){
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'ghost';
+      b.textContent = o.t;
+      b.style.cssText = 'text-align:left;width:100%;padding:11px 14px;font-size:17px;line-height:1.45';
+      if (j === sel){
+        b.style.borderColor = o.ok ? '#1f6b3a' : '#8f2222';
+        b.style.boxShadow = 'inset 0 0 0 1px ' + (o.ok ? '#1f6b3a' : '#8f2222');
+      }
+      b.addEventListener('click', function(){ elige(j); });
+      cont.appendChild(b);
+    });
+  }
+
+  function elige(j){
+    if (resuelto) { return; }
+    const o = caso.ops[j];
+    sel = j;
+    pintaOpciones();
+    $('#fig').innerHTML = dibuja(o.fig);
+    if (!interpContada) { interpContada = true; if (!o.ok){ fallosInterp++; $('#mInterp').textContent = fallosInterp; } }
+    if (o.ok){
+      interpOk = true;
+      fb($('#fb1'), 1, 'Es la lectura correcta. ' + o.why);
+    } else {
+      fb($('#fb1'), 0, 'Esa lectura no se sostiene. ' + o.why + ' Prueba otra opción: el croquis que ves es el de ' +
+        'la lectura que has elegido, y por eso no encaja con los datos.');
+    }
+  }
+
+  function baraja(a){
+    for (let i = a.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      const t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function nuevo(){
+    caso = CASOS[iCaso];
+    /* el orden de las lecturas cambia en cada visita: la correcta no puede ser siempre la primera */
+    caso.ops = baraja(caso.ops.slice());
+    sel = -1; interpOk = false; resuelto = false; interpContada = false;
+    $('#numC').textContent = iCaso + 1;
+    $('#mCaso').textContent = (iCaso + 1) + ' / 10';
+    $('#tituloC').textContent = caso.titulo;
+    $('#enun').innerHTML = caso.enun;
+    $('#fig').innerHTML = '<p class="tiny">Elige una lectura en el paso 1 para ver el croquis que le corresponde.</p>';
+    $('#fb1').className = 'feedback'; $('#fb1').innerHTML = '';
+    $('#fb2').className = 'feedback'; $('#fb2').innerHTML = '';
+    $('#soldet').open = false;
+    $('#sol').innerHTML = caso.sol;
+    const cont = $('#campos');
+    cont.innerHTML = '';
+    const fila = document.createElement('div');
+    fila.style.cssText = 'display:flex;gap:10px;align-items:center;margin:8px 0;flex-wrap:wrap';
+    const lab = document.createElement('span');
+    lab.textContent = caso.pide;
+    lab.style.cssText = 'min-width:150px;font-size:17px;color:#3c4a58';
+    const inp = document.createElement('input');
+    inp.type = 'text';
+    inp.inputMode = 'decimal';
+    inp.id = 'c0';
+    inp.style.width = '150px';
+    inp.addEventListener('keydown', function(e){ if (e.key === 'Enter'){ comprobar(); } });
+    const suf = document.createElement('span');
+    suf.className = 'num';
+    suf.textContent = caso.suf;
+    suf.style.cssText = 'font-size:18px;color:#3c4a58';
+    fila.appendChild(lab); fila.appendChild(inp); fila.appendChild(suf);
+    cont.appendChild(fila);
+    const nota = document.createElement('p');
+    nota.className = 'tiny';
+    nota.textContent = 'Se admite un margen de ' + fmt(caso.tol, 2) + ' ' + caso.suf + ' alrededor del valor exacto.';
+    cont.appendChild(nota);
+    pintaOpciones();
+    $$('#selector button').forEach(function(b, k){
+      if (k === iCaso){ b.classList.remove('ghost'); } else { b.classList.add('ghost'); }
+    });
+  }
+
+  function comprobar(){
+    const inp = $('#c0');
+    if (!interpOk){
+      fb($('#fb2'), null, 'Antes de calcular hay que fijar la figura: elige una lectura en el paso 1. Un número ' +
+        'obtenido sobre la figura equivocada no se puede corregir después, porque la cuenta estará bien hecha.');
+      return;
+    }
+    if (inp.value.trim() === ''){
+      fb($('#fb2'), null, 'Escribe el resultado antes de comprobar.');
+      return;
+    }
+    if (resuelto){
+      fb($('#fb2'), 1, 'Ya está resuelto. Pulsa «Siguiente caso».');
+      return;
+    }
+    intentos++;
+    const v = leerNum(inp.value);
+    const bien = isFinite(v) && Math.abs(v - caso.val) <= caso.tol;
+    marcar(inp, bien ? 1 : 0);
+    if (bien){
+      aciertos++; resuelto = true;
+      fb($('#fb2'), 1, 'Correcto: ' + fmt(caso.val, 2) + ' ' + caso.suf + '. La interpretación del enunciado y la ' +
+        'cuenta están las dos bien, que es lo que se pide en el examen.');
+    } else {
+      const desvio = isFinite(v) ? Math.abs(v - caso.val) : NaN;
+      let pista = 'Vuelve al paso 1 y comprueba qué es cada dato. ';
+      if (isFinite(desvio) && desvio < caso.val * 0.12) pista = 'Estás cerca: el error es de redondeo o de una razón ' +
+        'trigonométrica cambiada. Revisa si has usado seno donde toca la tangente. ';
+      else if (isFinite(desvio) && desvio > caso.val * 0.5) pista = 'El valor se aleja mucho: casi siempre es la ' +
+        'figura, no la cuenta. Revisa si has multiplicado donde había que dividir. ';
+      fb($('#fb2'), 0, 'No es el resultado. ' + pista + 'El desarrollo completo está en «Ver solución paso a paso», ' +
+        'con el valor que se obtiene con la lectura equivocada para que veas de qué orden es el error.');
+    }
+    $('#mAci').textContent = aciertos;
+    $('#mInt').textContent = intentos;
+  }
+
+  /* selector de casos */
+  const sel1 = $('#selector');
+  for (let k = 0; k < CASOS.length; k++){
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'ghost';
+    b.textContent = 'Caso ' + (k + 1);
+    b.style.cssText = 'font-size:15px;padding:6px 11px';
+    (function(n){ b.addEventListener('click', function(){ iCaso = n; nuevo(); }); })(k);
+    sel1.appendChild(b);
+  }
+
+  $('#bCheck').addEventListener('click', comprobar);
+  $('#bSig').addEventListener('click', function(){
+    iCaso = (iCaso + 1) % CASOS.length;
+    nuevo();
+  });
+
+  window.__topoDebug = function(){
+    return {titulo: caso.titulo,
+            enunciado: $('#enun').textContent,
+            respuestas: [caso.val],
+            tolerancias: [caso.tol],
+            interpretacion: caso.ops.filter(function(o){ return o.ok; })[0].t,
+            caso: iCaso + 1, total: CASOS.length};
+  };
+
+  nuevo();
+})();
+</script>
+
+<h2>Por qué estos diez y no otros</h2>
+<p>Cada caso corresponde a una línea concreta de la ficha del curso. La columna de la derecha es el resultado correcto
+con la lectura buena, y sirve para comprobar en un vistazo si has entendido cuál es la lectura buena.</p>
+
+<table>
+  <tr><th style="width:8%">Caso</th><th>Enunciado</th><th style="width:30%">Dónde está el defecto</th>
+      <th style="width:15%">Resultado</th></tr>
+  <tr><td>1</td><td>Anchura de una parcela de 50 m de base y diagonal a 35°</td>
+      <td>No distingue si los 50 m son la base o la diagonal</td><td class="num">35,01 m</td></tr>
+  <tr><td>2</td><td>Ancho de un río tras desplazarse 25 m</td>
+      <td>No dice si el desplazamiento acerca o aleja</td><td class="num">59,15 m</td></tr>
+  <tr><td>3</td><td>Molino visto desde dos puntos a 50 m</td>
+      <td>Da los ángulos en orden inverso, del lejano al cercano</td><td class="num">44,84 m</td></tr>
+  <tr><td>4</td><td>Poste observado antes y después de acercarse 20 m</td>
+      <td>No dice si los 20 m son la separación o la distancia al poste</td><td class="num">21,00 m</td></tr>
+  <tr><td>5</td><td>Edificio desde dos posiciones a 30 m</td>
+      <td>No aclara cuál de los dos ángulos es el de la posición cercana</td><td class="num">22,74 m</td></tr>
+  <tr><td>6</td><td>Pendiente de un camino con 15 m de desnivel en 100 m</td>
+      <td>«Respecto al terreno» cuando el ángulo se mide respecto a la horizontal</td><td class="num">8,53°</td></tr>
+  <tr><td>7</td><td>Dos mojones vistos desde A con 50° entre las visuales</td>
+      <td>No dice si el ángulo está en A o en cada mojón</td><td class="num">45,98 m</td></tr>
+  <tr><td>8</td><td>Dron a 120 m con depresión de 55°</td>
+      <td>No aclara qué es la altura y qué la distancia horizontal</td><td class="num">84,03 m</td></tr>
+  <tr><td>9</td><td>Sombra de 36 m con el sol a 37°</td>
+      <td>No dice desde dónde se mide la elevación del sol</td><td class="num">27,13 m</td></tr>
+  <tr><td>10</td><td>Torre a 30 m de distancia, ángulo de 68° con la vertical</td>
+      <td>La referencia del ángulo es la vertical en lugar de la horizontal</td><td class="num">12,12 m</td></tr>
+</table>
+
+<h2>Las tres preguntas que hay que hacerse antes de calcular</h2>
+<p>Los diez casos se resuelven con la misma rutina de tres preguntas. Con práctica se contestan en veinte segundos y
+ahorran el ejercicio entero.</p>
+<ol>
+  <li><p><strong>¿Qué es cada número?</strong> Un dato puede ser una distancia horizontal, una distancia medida sobre
+  el terreno, una altura o una separación entre dos estaciones. La diferencia entre las tres primeras es pequeña en
+  una ladera suave y enorme en una pendiente fuerte. En el caso de la pendiente, 100 m sobre el terreno y 100 m en
+  horizontal dan 8,63° y 8,53°: poco, pero en el caso 3 la diferencia entre tomar los 50 m como separación o como
+  distancia al molino es de 44,84 m frente a 25,48 m.</p></li>
+  <li><p><strong>¿Desde dónde se mide el ángulo?</strong> Desde la horizontal del observador, desde la vertical o
+  desde el suelo en la base del objeto. Un ángulo de 68° desde la vertical son 22° desde el suelo, y con esa confusión
+  la torre pasa de 12,12 m a 74,25 m. La pregunta se contesta buscando en el enunciado la palabra que nombra la
+  referencia: «elevación», «depresión», «con la vertical», «respecto a la horizontal».</p></li>
+  <li><p><strong>¿Qué se pide exactamente?</strong> La altura de un edificio o la distancia a la que está. En el
+  método de dos posiciones aparece una distancia intermedia que en el caso 5 vale 62,48 m y que mucha gente entrega
+  como respuesta cuando la pregunta era la altura, que son 22,74 m. Antes de escribir el resultado, vuelve a leer la
+  última línea del enunciado y comprueba que lo que has calculado es eso.</p></li>
+</ol>
+
+<div class="note">
+<p><strong>Cuando el enunciado no dice si te acercas o te alejas.</strong> La geometría lo decide por ti: si el
+ángulo disminuye al desplazarte, te has alejado, y si aumenta, te has acercado. No hay excepciones, porque el ángulo
+solo depende de la distancia horizontal al objeto. Si los datos del enunciado describen un sentido imposible, la
+salida correcta no es forzar la cuenta: es escribir que el enunciado es contradictorio y resolver con el sentido que
+la geometría permite. En el caso del río, el ángulo baja de 60° a 45°, luego el desplazamiento aleja, y la fórmula se
+aplica con el ángulo mayor en la primera posición.</p>
+</div>
+
+<h2>Antes de seguir</h2>
+<p>Si los diez casos salen, el problema ya no es de lectura: es de mecánica. El patrón del triángulo rectángulo, con
+la elevación, la depresión, la sombra y la pendiente, está desarrollado con demostraciones interactivas en la
+<a href="06_triangulo_rectangulo.html">lección 06, el triángulo rectángulo en el campo</a>. El método de las dos
+posiciones, que es el que resuelven los casos 3, 4 y 5, tiene su propia lámina en la página anterior del itinerario.</p>
+<p>Y los errores que no son de interpretación sino de calculadora y de redondeo, con la forma de detectarlos antes de
+entregar, están reunidos en la <a href="10_calculadora_y_errores.html">lección 10</a>. Merece la pena leerla después de
+fallar dos casos seguidos: casi siempre el fallo está ahí y no en la trigonometría.</p>
+</main>
+<nav class="pager"><a href="gen_06_conceptos.html">&larr; Generador · Conceptos básicos</a><span class="sp"></span><a href="index.html">Índice</a><span class="sp"></span><a href="gen_08_coordenadas.html">Generador · Gonios a coordenadas &rarr;</a></nav>
+</div>
+<script>refrescaSliders();</script>
+</body>
+</html>

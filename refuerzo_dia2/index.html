@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Topografía agraria — refuerzo · Día 2</title>
+<style>
+:root{
+  --ink:#1b2530; --navy:#16324f; --navy2:#2c5a84; --line:#d3d9df; --bg:#f7f8f9;
+  --soft:#edf1f4; --ok:#1f6b3a; --bad:#8f2222; --warnc:#7a5a00;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:19px/1.62 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+.wrap{max-width:980px;margin:0 auto;padding:26px 26px 90px}
+header.top{border-bottom:2px solid var(--navy);padding-bottom:12px;margin-bottom:26px}
+.kicker{font-size:13.5px;letter-spacing:.14em;text-transform:uppercase;color:#5b6875;font-weight:600}
+h1{font-size:31px;line-height:1.22;margin:.22em 0 .28em;color:var(--navy);font-weight:660;letter-spacing:-.01em}
+.sub{font-size:19px;color:#3c4a58;margin:0}
+h2{font-size:22.5px;margin:2.1em 0 .45em;color:var(--navy);font-weight:650;
+   border-left:4px solid var(--navy);padding-left:11px;line-height:1.3}
+h2:first-of-type{margin-top:1.2em}
+h3{font-size:19.5px;margin:1.5em 0 .3em;font-weight:650;color:#22303d}
+h4{font-size:17px;margin:1.2em 0 .3em;font-weight:650;color:#22303d}
+p{margin:.62em 0}
+.lead{font-size:20px;color:#2c3a48}
+ul,ol{padding-left:1.4em;margin:.55em 0}
+li{margin:.3em 0}
+li>ul,li>ol{margin:.3em 0}
+a{color:var(--navy2)}
+strong{font-weight:660}
+.num{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.formula{
+  font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace;font-size:17px;line-height:1.7;
+  background:var(--soft);border-left:3px solid var(--navy);padding:11px 15px;margin:1em 0;
+  overflow-x:auto;white-space:pre-wrap;
+}
+.formula em{font-style:normal;color:var(--navy);font-weight:600}
+.demo{background:#fff;border:1px solid var(--line);padding:16px 16px 18px;margin:1.3em 0}
+.demo .tat{font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:#5b6875;
+  font-weight:650;margin:0 0 12px}
+.ctrl{display:grid;grid-template-columns:165px 1fr 135px;gap:12px;align-items:center;margin:.55em 0}
+.ctrl label{font-size:17px}
+.ctrl .val{text-align:right;font-family:ui-monospace,monospace;font-size:18px;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:#16324f;height:22px}
+input[type=number],input[type=text],select{
+  font:inherit;font-size:18px;padding:6px 9px;border:1px solid #b7c0c9;background:#fff;
+  color:var(--ink);border-radius:0;width:100%
+}
+input:focus,select:focus,button:focus{outline:2px solid var(--navy2);outline-offset:1px}
+input.ok{border-color:var(--ok);background:#f1f7f3}
+input.bad{border-color:var(--bad);background:#fdf3f3}
+button{
+  font:inherit;font-size:16px;padding:7px 15px;border:1px solid var(--navy);border-radius:0;
+  background:var(--navy);color:#fff;cursor:pointer
+}
+button:hover{background:#1d4368}
+button.ghost{background:#fff;color:var(--navy)}
+button.ghost:hover{background:var(--soft)}
+.botones{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:9px;margin:12px 0 0}
+.readout div{background:var(--soft);padding:8px 11px}
+.readout b{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  color:#5b6875;font-weight:650;margin-bottom:2px}
+.readout span{font-family:ui-monospace,monospace;font-size:18px;font-variant-numeric:tabular-nums}
+.note{background:#fbfaf4;border-left:3px solid #b08a2e;padding:11px 15px;margin:1.1em 0}
+.warn{background:#fcf4f4;border-left:3px solid var(--bad);padding:11px 15px;margin:1.1em 0}
+.good{background:#f1f7f3;border-left:3px solid var(--ok);padding:11px 15px;margin:1.1em 0}
+.feedback{margin-top:11px;font-size:17.5px;line-height:1.55}
+.feedback.good::before{content:"";}
+.fb-good{color:var(--ok)}
+.fb-bad{color:var(--bad)}
+.fb-neutral{color:#3c4a58}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:17px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--soft);font-weight:650;font-size:16px}
+td.num,th.num{font-family:ui-monospace,monospace;font-variant-numeric:tabular-nums}
+nav.strip{display:flex;gap:15px;align-items:center;flex-wrap:wrap;font-size:15.5px;
+  border-bottom:1px solid var(--line);padding:0 0 10px;margin:-4px 0 24px;color:#5b6875}
+nav.strip a{color:var(--navy2);text-decoration:none;border-bottom:1px solid #c5d3e0}
+nav.strip a:hover{border-bottom-color:var(--navy2)}
+nav.strip .act{color:#5b6875;font-weight:650}
+nav.strip .sep{color:#ccd4db}
+nav.pager{display:flex;justify-content:space-between;gap:14px;margin-top:54px;padding-top:16px;
+  border-top:1px solid var(--line);font-size:16px}
+nav.pager a{color:var(--navy);text-decoration:none;border-bottom:1px solid #a9bdd0;padding-bottom:1px}
+nav.pager a:hover{border-bottom-color:var(--navy)}
+nav.pager .sp{flex:1}
+svg{display:block;max-width:100%;height:auto;font-family:ui-monospace,monospace}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+.tiny{font-size:15.5px;color:#5b6875;line-height:1.5}
+.pasos{counter-reset:p;list-style:none;padding-left:0}
+.pasos>li{counter-increment:p;position:relative;padding-left:42px;margin:.85em 0}
+.pasos>li::before{
+  content:counter(p);position:absolute;left:0;top:.05em;width:28px;height:28px;border:1.5px solid var(--navy);
+  color:var(--navy);font-size:15px;font-weight:700;text-align:center;line-height:25px;
+  font-family:ui-monospace,monospace
+}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin:1.2em 0}
+.card{background:#fff;border:1px solid var(--line);padding:14px 16px;display:block;
+  text-decoration:none;color:var(--ink)}
+.card:hover{border-color:var(--navy);background:#fbfcfd}
+.card .n{font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;color:#5b6875;font-weight:650}
+.card .t{font-size:19px;color:var(--navy);font-weight:650;margin:.15em 0 .25em;line-height:1.28;min-height:2.56em}
+.card .d{font-size:16px;color:#46545f;line-height:1.45}
+.tag{display:inline-block;font-size:13px;border:1px solid var(--line);background:var(--soft);
+  padding:1px 7px;margin:4px 4px 0 0;color:#46545f}
+kbd{font-family:ui-monospace,monospace;font-size:15px;border:1px solid #b7c0c9;border-bottom-width:2px;
+  padding:1px 5px;background:#fff}
+.checkline{display:flex;gap:10px;align-items:baseline;margin:.4em 0}
+.checkline input[type=checkbox]{width:18px;height:18px;accent-color:#16324f;flex:none}
+.dlbar{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+  background:#fff;border:1px solid var(--line);border-left:4px solid var(--navy);padding:12px 15px;margin:0 0 26px}
+.dlbar .txt{font-size:16px;color:#46545f;line-height:1.45}
+.dlbar .txt b{color:var(--navy);font-weight:650}
+.dlbar a.btn{display:inline-block;text-decoration:none;font-size:16px;padding:8px 15px;
+  border:1px solid var(--navy);background:#fff;color:var(--navy);white-space:nowrap}
+.dlbar a.btn:hover{background:var(--soft)}
+@media print{.dlbar{display:none}}
+@media (max-width:740px){
+  body{font-size:18px}
+  .wrap{padding:18px 16px 70px}
+  h1{font-size:26px} h2{font-size:20.5px}
+  .ctrl{grid-template-columns:110px 1fr 105px;gap:8px}
+  .grid2{grid-template-columns:1fr}
+}
+@media print{
+  body{background:#fff}
+  .demo{break-inside:avoid}
+  nav.pager{display:none}
+}
+</style>
+
+<script>
+/* ---------- utilidades comunes (idénticas en todas las páginas) ---------- */
+const $  = (s, r) => (r||document).querySelector(s);
+const $$ = (s, r) => Array.from((r||document).querySelectorAll(s));
+
+/* Lee un número escrito por el alumno: admite coma o punto decimal,
+   espacios, el símbolo de grado y el sufijo de gonios. */
+function leerNum(v){
+  if (typeof v === 'number') return v;
+  let s = String(v == null ? '' : v).trim();
+  s = s.replace(/\s+/g,'').replace(/[°º]/g,'').replace(/(rad|gon|g|m|s)$/i,'');
+  if (s === '') return NaN;
+  if (s.includes(',') && s.includes('.')) s = s.replace(/\./g,'').replace(',', '.');
+  else if (s.includes(',')) s = s.replace(',', '.');
+  return parseFloat(s);
+}
+/* Formato español: coma decimal, cifras fijas. */
+function fmt(x, d){
+  d = (d === undefined) ? 2 : d;
+  if (!isFinite(x)) return '—';
+  return x.toFixed(d).replace('.', ',');
+}
+/* Sexagesimal: {g,m,s} a partir de grados decimales */
+function aSexa(x){
+  let neg = x < 0; x = Math.abs(x);
+  let g = Math.floor(x + 1e-12);
+  let mm = (x - g) * 60;
+  let m = Math.floor(mm + 1e-9);
+  let s = (mm - m) * 60;
+  if (s >= 59.9995){ s = 0; m += 1; }
+  if (m >= 60){ m -= 60; g += 1; }
+  return {g:(neg?-g:g), m:m, s:s};
+}
+/* Centesimal: {g,m,s} */
+function aCentes(x){
+  let neg = x < 0; x = Math.abs(x);
+  let g = Math.floor(x + 1e-12);
+  let mm = (x - g) * 100;
+  let m = Math.floor(mm + 1e-9);
+  let s = (mm - m) * 100;
+  if (s >= 99.995){ s = 0; m += 1; }
+  if (m >= 100){ m -= 100; g += 1; }
+  return {g:(neg?-g:g), m:m, s:s};
+}
+function txtSexa(x, ds){
+  ds = (ds === undefined) ? 1 : ds;
+  const f = Math.pow(10, ds);
+  let total = Math.round(Math.abs(x) * 3600 * f);
+  const g = Math.floor(total / (3600 * f));
+  let rem = total - g * 3600 * f;
+  const m = Math.floor(rem / (60 * f));
+  rem = rem - m * 60 * f;
+  const si = String(Math.floor(rem / f)).padStart(2, '0');
+  const dec = ds > 0 ? ',' + String(rem % f).padStart(ds, '0') : '';
+  return (x < 0 ? '−' : '') + g + '° ' + String(m).padStart(2, '0') + '\u2032 ' + si + dec + '\u2033';
+}
+function txtCentes(x, ds){
+  ds = (ds === undefined) ? 1 : ds;
+  const f = Math.pow(10, ds);
+  let total = Math.round(Math.abs(x) * 10000 * f);
+  const g = Math.floor(total / (10000 * f));
+  let rem = total - g * 10000 * f;
+  const m = Math.floor(rem / (100 * f));
+  rem = rem - m * 100 * f;
+  const si = String(Math.floor(rem / f)).padStart(2, '0');
+  const dec = ds > 0 ? ',' + String(rem % f).padStart(ds, '0') : '';
+  return (x < 0 ? '−' : '') + g + 'g ' + String(m).padStart(2, '0') + 'm ' + si + dec + 's';
+}
+/* Retorno de estado en un campo: ok / mal */
+function marcar(el, estado){
+  el.classList.remove('ok','bad');
+  if (estado === 1) el.classList.add('ok');
+  else if (estado === 0) el.classList.add('bad');
+}
+function fb(el, tipo, texto){
+  el.className = 'feedback ' + (tipo === 1 ? 'fb-good' : tipo === 0 ? 'fb-bad' : 'fb-neutral');
+  el.innerHTML = texto;
+  return tipo;
+}
+/* Formatea un ángulo en radianes como múltiplo exacto de π si el denominador es pequeño */
+function aPi(x){
+  const r = x / Math.PI;
+  for (let q = 1; q <= 24; q++){
+    const p = r * q;
+    if (Math.abs(p - Math.round(p)) < 1e-9){
+      const n = Math.round(p);
+      if (q === 1) return (n === 1 ? 'π' : n + 'π');
+      if (n === 1) return 'π/' + q;
+      return n + 'π/' + q;
+    }
+  }
+  return null;
+}
+/* Sincroniza el relleno visual de los sliders (solo estética) */
+function refrescaSliders(root){
+  $$('input[type=range]', root || document).forEach(function(r){
+    const p = (r.value - r.min) / (r.max - r.min) * 100;
+    r.style.background = 'linear-gradient(90deg,#16324f ' + p + '%,#cfd7de ' + p + '%)';
+    r.style.height = '6px';
+    r.style.borderRadius = '0';
+    r.style.appearance = 'none';
+    r.style.webkitAppearance = 'none';
+  });
+}
+</script>
+<style>
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:16px;height:16px;background:#16324f;border:2px solid #fff;
+  box-shadow:0 0 0 1px #16324f;cursor:pointer
+}
+input[type=range]::-moz-range-thumb{
+  width:14px;height:14px;background:#16324f;border:2px solid #fff;box-shadow:0 0 0 1px #16324f;cursor:pointer
+}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<header class="top"><div class="kicker">Bloque 2 de 2</div><h1>Topografía agraria — refuerzo · Día 2</h1><p class="sub">Trigonometría aplicada: triángulo rectángulo, dos posiciones, ley del coseno y coordenadas</p></header>
+<div class="dlbar">
+  <div class="txt"><b>Este bloque completo, en un solo archivo.</b><br>Descárgalo en tu equipo para trabajar sin conexión.</div>
+  <a class="btn" href="../descargas/refuerzo_dia2.zip" download="refuerzo_dia2.zip">Descargar el bloque (.zip)</a>
+</div>
+<main>
+<p class="lead">Este es el material del <strong>segundo día</strong> de refuerzo del módulo de Topografía Agraria. Contiene
+cinco láminas y siete generadores de ejercicios. Cada lámina explica <strong>un solo paso</strong>, con una demostración
+que se puede mover con el ratón y con el error típico señalado justo donde aparece.</p>
+
+<h2>De dónde venimos</h2>
+<p>El día 1 quedó cerrado lo que no es topografía sino aritmética: los tres sistemas de notación angular, el reparto por
+60 y por 100, los radianes y las tres razones trigonométricas. Aquí se supone todo eso sabido y se aplica al campo. Si
+al empezar la lámina 6 notas que no manejas bien alguna conversión, no sigas: vuelve a las cinco láminas del día 1, que
+son cortas, y luego retoma esta carpeta por donde lo dejaste.</p>
+
+<h3>Láminas de hoy</h3>
+<div class="cards">
+  <a class="card" href="06_triangulo_rectangulo.html">
+    <div class="n">Paso 6</div>
+    <div class="t">El triángulo rectángulo en el campo</div>
+    <div class="d">Elevación, depresión, sombras y pendientes: el patrón que resuelve media ficha.</div>
+  </a>
+  <a class="card" href="07_dos_posiciones.html">
+    <div class="n">Paso 7 · Núcleo</div>
+    <div class="t">Dos posiciones: la altura inaccesible</div>
+    <div class="d">La fórmula de los problemas 5, 7 y 10 de la ficha, demostrada término a término y con comprobación cruzada.</div>
+  </a>
+  <a class="card" href="08_ley_del_coseno.html">
+    <div class="n">Paso 8</div>
+    <div class="t">Triángulos no rectángulos</div>
+    <div class="d">Ley del coseno y ley del seno, con el problema 2 resuelto sin atajos.</div>
+  </a>
+  <a class="card" href="09_de_gonios_a_coordenadas.html">
+    <div class="n">Paso 9 · El eslabón que falta</div>
+    <div class="t">De gonios a coordenadas</div>
+    <div class="d">La estación devuelve gonios; de ahí salen ΔX y ΔY. Lo que las dos fichas del curso no conectan.</div>
+  </a>
+  <a class="card" href="10_calculadora_y_errores.html">
+    <div class="n">Paso 10 · Transversal</div>
+    <div class="t">Calculadora, redondeo y comprobación</div>
+    <div class="d">Los errores que hunden un ejercicio resuelto correctamente, y cómo detectarlos antes de entregar.</div>
+  </a>
+</div>
+
+<h3>Generadores de ejercicios</h3>
+<p>Cada generador produce ejercicios nuevos, con números distintos cada vez. Escribes la respuesta, pulsas
+<strong>Comprobar</strong> y recibes la corrección; si no sale, <strong>Ver solución</strong> despliega el desarrollo
+completo paso a paso, y <strong>Otro ejercicio</strong> plantea uno nuevo. Las respuestas se admiten con coma o con
+punto decimal.</p>
+<div class="cards">
+  <a class="card" href="gen_02_triangulo_rectangulo.html">
+    <div class="n">Generador B1</div>
+    <div class="t">Triángulo rectángulo</div>
+    <div class="d">Sombra, dron, colina y antena. Una visual, una incógnita. Practica la lámina 6.</div>
+  </a>
+  <a class="card" href="gen_03_angulo_y_pendiente.html">
+    <div class="n">Generador B2</div>
+    <div class="t">Ángulo y pendiente</div>
+    <div class="d">De dos lados al ángulo con arctan, en grados y en porcentaje. El camino inverso del B1.</div>
+  </a>
+  <a class="card" href="gen_04_dos_posiciones.html">
+    <div class="n">Generador B3</div>
+    <div class="t">Dos posiciones</div>
+    <div class="d">El ejercicio núcleo, con comprobación cruzada de la altura desde las dos posiciones.</div>
+  </a>
+  <a class="card" href="gen_05_ley_coseno.html">
+    <div class="n">Generador B4</div>
+    <div class="t">Ley del coseno</div>
+    <div class="d">Dos lados y el ángulo entre ellos: el tercer lado, y también un ángulo.</div>
+  </a>
+  <a class="card" href="gen_07_enunciados.html">
+    <div class="n">Generador B5</div>
+    <div class="t">Interpretar el enunciado</div>
+    <div class="d">Los enunciados ambiguos de la ficha original: decidir la figura antes de calcular.</div>
+  </a>
+  <a class="card" href="gen_06_conceptos.html">
+    <div class="n">Generador C</div>
+    <div class="t">Conceptos básicos</div>
+    <div class="d">Preguntas cortas sobre bases, unidades, ángulos de elevación y errores de calculadora.</div>
+  </a>
+  <a class="card" href="gen_08_coordenadas.html">
+    <div class="n">Generador D</div>
+    <div class="t">Gonios a coordenadas</div>
+    <div class="d">Ángulo en gonios, distancia, y de ahí a ΔX, ΔY y azimut.</div>
+  </a>
+</div>
+
+<h2>Cómo trabajarlo</h2>
+<ol class="pasos">
+  <li>Lámina 6 y generador B1 en la misma sesión: la lámina enseña el patrón y el generador lo repite con otros números.
+      Lo importante no es acertar el número, sino dibujar el croquis antes de operar.</li>
+  <li>Lámina 7 y generador B3 son el núcleo del módulo. Los tres problemas de altura inaccesible de la ficha (5, 7 y 10)
+      son este mismo problema. No pases a la 8 sin resolver cinco del B3 sin mirar la fórmula.</li>
+  <li>Lámina 8 y generador B4 cierran la trigonometría de triángulos. Después, el generador B5 trabaja lo que ninguno de
+      los anteriores: leer el enunciado y decidir qué figura es, que es donde se pierden los puntos.</li>
+  <li>Lámina 9 y generador D conectan el cálculo con el plano: de gonios a ΔX, ΔY y azimut, y el cierre de la poligonal.</li>
+  <li>Cierra el día con la lámina 10 y diez preguntas del generador C. Los errores de calculadora y de redondeo se
+      penalizan siempre, aunque el número sea correcto.</li>
+</ol>
+
+<h2>Si algo no sale</h2>
+<table>
+  <tr><th style="width:34%">Si el fallo es…</th><th>Vuelve a…</th></tr>
+  <tr><td>«No sé qué triángulo dibujar»</td><td>Lámina 6 (elevación y depresión) y generador B5 (enunciados)</td></tr>
+  <tr><td>«Me salen dos ecuaciones y no sé seguir»</td><td>Lámina 7 completa: la deducción de la fórmula, no el resultado</td></tr>
+  <tr><td>«No sé cuándo usar el coseno»</td><td>Lámina 8: si el triángulo no es rectángulo, es coseno o seno</td></tr>
+  <tr><td>El resultado es absurdo (miles de metros, un ángulo imposible)</td><td>Lámina 10: el modo de la calculadora y el redondeo</td></tr>
+  <tr><td>«Apruebo los ejercicios pero no entiendo para qué»</td><td>Lámina 9: de gonios a coordenadas</td></tr>
+  <tr><td>Se atasca una conversión de ángulos</td><td>Las láminas del día 1 (paquete aparte): 1 a 5</td></tr>
+</table>
+
+<div class="note">
+<p><strong>Para el alumno.</strong> Las páginas funcionan sin conexión y sin instalar nada: basta abrir
+<span class="num">index.html</span> con el navegador. No se envía ningún dato a ninguna parte; los ejercicios se
+generan en el propio ordenador.</p>
+<p>Alguna frase del texto menciona láminas del <strong>día 1</strong> (notación, conversiones, razones), que están en el
+otro paquete. Todo lo necesario para resolver lo de hoy está explicado en estas páginas.</p>
+</div>
+
+<p class="tiny">Técnico Superior en Gestión Forestal · Módulo de Topografía Agraria · Bloque 2: trigonometría aplicada y coordenadas</p>
+</main>
+<nav class="pager"><span class="sp"></span><span class="tiny">Técnico Superior en Gestión Forestal · Módulo de Topografía Agraria · Bloque 2 de 2 · Trigonometría aplicada y coordenadas</span><span class="sp"></span></nav>
+</div>
+<script>refrescaSliders();</script>
+</body>
+</html>
