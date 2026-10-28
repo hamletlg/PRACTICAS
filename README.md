@@ -1,34 +1,34 @@
-# PRACTICAS — material de refuerzo autocontenido
+# PRACTICAS
 
-Sitio estático publicado con GitHub Pages. Cada práctica es una carpeta independiente de
-páginas HTML que se abren en el navegador sin instalar nada, sin registrarse y sin conexión.
-No hay servidor, ni cuentas, ni registro de resultados: la corrección ocurre en el navegador
-del alumno.
+Material de refuerzo en HTML estático publicado con GitHub Pages.
 
 ## Estructura
 
-    index.html                 Portada del sitio: lista de prácticas y descargas.
-    refuerzo_dia2/             Topografía agraria — refuerzo · Día 2 (12 páginas + LEEME.txt)
-    descargas/refuerzo_dia2.zip  El mismo bloque empaquetado, para descargar desde la web.
-    .nojekyll                  Evita que GitHub Pages procese el sitio con Jekyll.
+    index.html                     Portada e índice de bloques
+    refuerzo_dia2/                 Bloque Día 2 — Topografía agraria (13 ficheros)
+    descargas/refuerzo_dia2.zip    Paquete del bloque (163 KB)
+    .nojekyll                      Desactiva Jekyll en Pages
 
-## Añadir una práctica nueva
+Cada bloque es autónomo: HTML, CSS y JavaScript en línea, sin dependencias, sin
+compilación y sin peticiones externas.
 
-1. Copiar la carpeta completa (con su `index.html` dentro) a la raíz del repositorio.
+## Publicar
+
+    git push origin main
+
+Pages sirve la raíz de `main`. URL: https://hamletlg.github.io/PRACTICAS/
+
+## Añadir un bloque
+
+1. Copiar la carpeta del bloque a la raíz del repositorio.
 2. Copiar su `.zip` a `descargas/`.
-3. Añadir un bloque `<div class="pr">` en `index.html` con el enlace de apertura
-   (`carpeta/index.html`) y el de descarga (`descargas/archivo.zip`, con atributo `download`).
-4. Commit y push a `main`. GitHub Pages publica solo, en un minuto.
+3. Añadir en `index.html` la entrada del bloque y su descarga con atributo `download`.
+4. Commit y push.
 
-## Sobre el .zip
+## Notas
 
-`descargas/refuerzo_dia2.zip` es el paquete original tal y como se entrega al alumnado
-(md5 `05d5b1fb62000eab827d65e49961febf`). La única diferencia con la carpeta `refuerzo_dia2/`
-del repositorio es el botón «Descargar el bloque (.zip)», que solo tiene sentido en la web:
-dentro del zip no habría nada que descargar porque el material ya está en el equipo.
-
-## Publicación
-
-- Pages: rama `main`, carpeta `/ (root)`.
-- URL: https://hamletlg.github.io/PRACTICAS/
-- Práctica: https://hamletlg.github.io/PRACTICAS/refuerzo_dia2/
+- `descargas/refuerzo_dia2.zip` es el paquete original de entrega
+  (md5 `05d5b1fb62000eab827d65e49961febf`). No incluye el botón de descarga que sí
+  lleva la copia publicada en `refuerzo_dia2/index.html`.
+- Los enlaces entre páginas son relativos: sirve la carpeta por HTTP
+  (`python3 -m http.server`) para probarlos antes de publicar.
